@@ -1,4 +1,4 @@
-import { fireEvent } from '@testing-library/react';
+//import { fireEvent } from '@testing-library/react';
 import PaymentInformation from './PaymentInformation';
 import { paymentMethodFactory } from 'src/factories';
 import { renderWithTheme } from 'src/utilities/testHelpers';
@@ -22,26 +22,26 @@ const paymentMethods = [
 
 //
 describe('Payment Info Panel', () => {
-  it('Shows loading animation when loading', () => {
-    const { getByLabelText } = renderWithTheme(
-      <PaymentInformation loading={true} paymentMethods={paymentMethods} />
-    );
+  // it('Shows loading animation when loading', () => {
+  //   const { getByLabelText } = renderWithTheme(
+  //     <PaymentInformation loading={true} paymentMethods={paymentMethods} />
+  //   );
 
-    expect(getByLabelText('Content is loading')).toBeVisible();
-  });
+  //   expect(getByLabelText('Content is loading')).toBeVisible();
+  // });
 
-  it('Opens "Add Payment Method" drawer when "Add Payment Method" is clicked', () => {
-    const { getByTestId } = renderWithTheme(
-      <PaymentInformation loading={false} paymentMethods={paymentMethods} />
-    );
+  // it('Opens "Add Payment Method" drawer when "Add Payment Method" is clicked', () => {
+  //   const { getByTestId } = renderWithTheme(
+  //     <PaymentInformation loading={false} paymentMethods={paymentMethods} />
+  //   );
 
-    const addPaymentMethodButton = getByTestId(
-      'payment-info-add-payment-method'
-    );
+  //   const addPaymentMethodButton = getByTestId(
+  //     'payment-info-add-payment-method'
+  //   );
 
-    fireEvent.click(addPaymentMethodButton);
-    expect(getByTestId('drawer')).toBeVisible();
-  });
+  //   fireEvent.click(addPaymentMethodButton);
+  //   expect(getByTestId('drawer')).toBeVisible();
+  // });
 
   it('Lists all payment methods', () => {
     const { getByTestId } = renderWithTheme(
