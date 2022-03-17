@@ -21,6 +21,7 @@ const paymentMethods = [
 ];
 
 //
+//
 describe('Payment Info Panel', () => {
   // it('Shows loading animation when loading', () => {
   //   const { getByLabelText } = renderWithTheme(
