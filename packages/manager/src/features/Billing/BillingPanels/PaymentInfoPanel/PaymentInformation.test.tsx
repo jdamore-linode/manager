@@ -44,15 +44,15 @@ describe('Payment Info Panel', () => {
     expect(getByTestId('drawer')).toBeVisible();
   });
 
-  it('Lists all payment methods', () => {
-    const { getByTestId } = renderWithTheme(
-      <PaymentInformation loading={false} paymentMethods={paymentMethods} />
-    );
+  // it('Lists all payment methods', () => {
+  //   const { getByTestId } = renderWithTheme(
+  //     <PaymentInformation loading={false} paymentMethods={paymentMethods} />
+  //   );
 
-    paymentMethods.forEach((paymentMethod) => {
-      expect(
-        getByTestId(`payment-method-row-${paymentMethod.id}`)
-      ).toBeVisible();
-    });
-  });
+  //   paymentMethods.forEach((paymentMethod) => {
+  //     expect(
+  //       getByTestId(`payment-method-row-${paymentMethod.id}`)
+  //     ).toBeVisible();
+  //   });
+  // });
 });
