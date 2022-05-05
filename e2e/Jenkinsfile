@@ -6,7 +6,7 @@ pipeline {
     stage('Docker') {
       steps {
         dir('e2e') {
-          sh 'docker-compose run manager',
+          sh 'docker-compose run manager'
         }
       }
     }
