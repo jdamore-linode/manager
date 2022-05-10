@@ -1,5 +1,7 @@
 import { getAll, isTestEntity } from './common';
-const oauthtoken = Cypress.env('MANAGER_OAUTH');
+import { getOauthToken } from './authentication';
+
+const oauthtoken = getOauthToken();
 
 export const getTickets = () => getAll('support/tickets');
 

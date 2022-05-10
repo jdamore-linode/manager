@@ -10,8 +10,9 @@ import { randomLabel, randomString } from 'support/util/random';
 import { CreateLinodeRequest } from '@linode/api-v4/lib/linodes/types';
 import { linodeFactory } from '@src/factories';
 import { makeResourcePage } from '@src/mocks/serverHandlers';
+import { getOauthToken } from './authentication';
 
-const oauthtoken = Cypress.env('MANAGER_OAUTH');
+const oauthtoken = getOauthToken();
 const testLinodeTag = testTag;
 
 export const createMockLinodeList = (data?: {}, listNumber: number = 1) => {

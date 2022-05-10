@@ -4,7 +4,14 @@
 
 import { baseRequest } from '@linode/api-v4/lib/request';
 
-const oauthToken = Cypress.env('MANAGER_OAUTH');
+// TODO Document.
+export const getOauthToken = () => {
+  const cypressInstance = Cypress.env('CYPRESS_INSTANCE');
+  if (cypressInstance) {
+    return Cypress.env(`MANAGER_OAUTH_${cypressInstance}`);
+  }
+  return Cypress.env('MANAGER_OAUTH');
+};
 
 /**
  * Intercepts all Linode API v4 requests and applies an authorization header.
@@ -23,7 +30,7 @@ export const authenticate = function () {
         ...config.headers,
         common: {
           ...config.headers.common,
-          authorization: `Bearer ${oauthToken}`,
+          authorization: `Bearer ${getOauthToken()}`,
         },
       },
     };

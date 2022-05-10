@@ -1,7 +1,8 @@
 import { imageFactory, objectStorageBucketFactory } from '@src/factories';
 import { makeResourcePage } from '@src/mocks/serverHandlers';
 import { apiCheckErrors, deleteById, getAll, isTestEntity } from './common';
-const oauthtoken = Cypress.env('MANAGER_OAUTH');
+import { getOauthToken } from './authentication';
+const oauthtoken = getOauthToken();
 const apiroot = Cypress.env('REACT_APP_API_ROOT') + '/';
 
 export const getAccessKeys = () => getAll('object-storage/keys');

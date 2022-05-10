@@ -1,8 +1,9 @@
 import { entityPrefix } from '../constants/cypress';
+import { getOauthToken } from './authentication';
 
 const apiroot = Cypress.env('REACT_APP_API_ROOT') + '/';
 const apirootBeta = Cypress.env('REACT_APP_API_ROOT') + 'beta/';
-const oauthtoken = Cypress.env('MANAGER_OAUTH');
+const oauthtoken = getOauthToken();
 export const apiCheckErrors = (resp, failOnError = true) => {
   let errs = undefined;
   if (resp.body && resp.body.ERRORARRAY && resp.body.ERRORARRAY.length > 0) {

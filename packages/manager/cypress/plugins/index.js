@@ -21,12 +21,13 @@ function getConfiguration() {
   const conf = require('dotenv').config({
     path: dotenvPath,
   });
+  const osEnvVars = process.env;
   if (conf.error) {
     throw Error(
       `Could not load .env from Cypress plugin/index.js: ${conf.error}`
     );
   }
-  return { env: conf.parsed };
+  return { env: { ...conf.parsed, ...osEnvVars } };
 }
 
 /**

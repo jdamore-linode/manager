@@ -7,10 +7,11 @@ import {
 } from './common';
 import { deleteLinodeById } from './linodes';
 import { randomLabel, randomString } from 'support/util/random';
+import { getOauthToken } from './authentication';
 
 const relativeApiPath = 'volumes';
 const testVolumeTag = testTag;
-const oauthtoken = Cypress.env('MANAGER_OAUTH');
+const oauthtoken = getOauthToken();
 const apiroot = Cypress.env('REACT_APP_API_ROOT') + '/';
 
 const makeVolumeCreateReq = (linodeID, volume) => {

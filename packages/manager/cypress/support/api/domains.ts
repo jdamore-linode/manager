@@ -1,8 +1,9 @@
 import { getAll, deleteById, apiCheckErrors } from './common';
 import { isTestLabel } from 'support/api/common';
 import { randomDomainName } from 'support/util/random';
+import { getOauthToken } from './authentication';
 
-const oauthtoken = Cypress.env('MANAGER_OAUTH');
+const oauthtoken = getOauthToken();
 const relativeApiPath = 'domains';
 
 export const getDomains = () => getAll(relativeApiPath);

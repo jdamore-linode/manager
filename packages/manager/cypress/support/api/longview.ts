@@ -1,5 +1,6 @@
 import { apiCheckErrors, deleteById, getAll, isTestEntity } from './common';
-const oauthtoken = Cypress.env('MANAGER_OAUTH');
+import { getOauthToken } from './authentication';
+const oauthtoken = getOauthToken();
 
 export const getClients = () => getAll('longview/clients');
 
