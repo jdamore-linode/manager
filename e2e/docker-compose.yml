@@ -1,8 +1,37 @@
 ---
 services:
-  manager:
-    image: node:14.17-alpine
-    command: 'npm install -g yarn && yarn install:all && yarn build'
-    working_dir: /home/node/app
-    volumes:
-      - ../:/home/node/app
+  cypress-runner-1:
+    build:
+      context: ..
+      dockerfile: ./e2e/manager/Dockerfile
+      target: cypress-runner
+    environment:
+      - CYPRESS_INSTANCE=1
+      - CYPRESS_RECORD_KEY=
+
+  cypress-runner-2:
+    build:
+      context: ..
+      dockerfile: ./e2e/manager/Dockerfile
+      target: cypress-runner
+    environment:
+      - CYPRESS_INSTANCE=2
+      - CYPRESS_RECORD_KEY=
+
+  cypress-runner-3:
+    build:
+      context: ..
+      dockerfile: ./e2e/manager/Dockerfile
+      target: cypress-runner
+    environment:
+      - CYPRESS_INSTANCE=3
+      - CYPRESS_RECORD_KEY=
+
+  cypress-runner-4:
+    build:
+      context: ..
+      dockerfile: ./e2e/manager/Dockerfile
+      target: cypress-runner
+    environment:
+      - CYPRESS_INSTANCE=4
+      - CYPRESS_RECORD_KEY=
