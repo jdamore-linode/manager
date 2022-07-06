@@ -76,15 +76,15 @@ export const NotificationButton: React.FC<{}> = (_) => {
             >
               <Bell />
               {numNotifications > 0 ? (
-                <span className={iconClasses.badge}>{numNotifications}</span>
+                <div className={iconClasses.badge}>
+                  <p>{numNotifications}</p>
+                </div>
               ) : null}
             </MenuButton>
           </TopMenuIcon>
           <MenuPopover className={classes.menuPopover}>
             <MenuItems className={classes.menuItem}>
-              {isExpanded && (
-                <NotificationMenu open={isExpanded} data={notificationData} />
-              )}
+              <NotificationMenu open={isExpanded} data={notificationData} />
             </MenuItems>
           </MenuPopover>
         </>
