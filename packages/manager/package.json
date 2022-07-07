@@ -102,7 +102,7 @@
     "postinstall": "patch-package",
     "compare": "./scripts/jira-changelog.sh",
     "start": "node scripts/start.js",
-    "start:ci": "yarn http-server ./build -p 3000 --proxy http://localhost:3000? -a localhost -s --max-http-header-size=1000000",
+    "start:ci": "NODE_OPTIONS=--max-http-header-size=1000000 yarn http-server ./build -p 3000 --proxy http://localhost:3000? -a localhost -s",
     "lint": "yarn run eslint . --ext .js,.ts,.tsx --quiet",
     "build": "node scripts/build.js",
     "precommit": "lint-staged && yarn typecheck",
