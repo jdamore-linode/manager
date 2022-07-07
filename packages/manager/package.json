@@ -114,7 +114,7 @@
     "build-storybook": "build-storybook",
     "cy:run": "cypress run -b chrome",
     "cy:e2e": "cypress run --headless -b chrome",
-    "cy:ci": "yarn run wait-on -d 3500 -i 3500 http://localhost:3000 && yarn cy:e2e",
+    "cy:ci": "/usr/local/bin/cypress run --headless -b chrome",
     "cy:debug": "cypress open",
     "cy:rec-snap": "cypress run --headless -b chrome --env visualRegMode=record --spec ./cypress/integration/**/*visual*.spec.ts",
     "release": "./scripts/release_changelog.sh",
