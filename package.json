@@ -37,7 +37,7 @@
     "cy:run": "yarn workspace linode-manager cy:run",
     "cy:e2e": "yarn workspace linode-manager cy:e2e",
     "cy:ci": "yarn workspace linode-manager cy:ci",
-    "cy:ci:serve": "yarn run npm-run-all --parallel --race start:manager:ci cy:ci",
+    "cy:ci:serve": "yarn run npm-run-all --parallel --race start:manager:ci cy:e2e",
     "cy:debug": "yarn workspace linode-manager cy:debug",
     "cy:rec-snap": "yarn workspace linode-manager cy:rec-snap"
   },
