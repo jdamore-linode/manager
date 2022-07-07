@@ -114,7 +114,7 @@
     "build-storybook": "build-storybook",
     "cy:run": "cypress run -b chrome",
     "cy:e2e": "cypress run --headless -b chrome",
-    "cy:ci": "/usr/local/bin/cypress run --headless -b chrome",
+    "cy:ci": "NO_COLOR=1 /usr/local/bin/cypress run --headless -b chrome",
     "cy:debug": "cypress open",
     "cy:rec-snap": "cypress run --headless -b chrome --env visualRegMode=record --spec ./cypress/integration/**/*visual*.spec.ts",
     "release": "./scripts/release_changelog.sh",
