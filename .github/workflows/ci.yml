@@ -127,7 +127,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: unit-test-coverage-report
-          path: packages/manager/coverage
+          path: packages/manager/coverage/lcov-report
 
   build-manager:
     runs-on: ubuntu-latest
