@@ -12,6 +12,7 @@ import {
 
 const mockImages = imageFactory.buildList(10);
 
+// This is a test comment!.
 const mockProps: CombinedProps = {
   category: 'community',
   classes: {
