@@ -27,6 +27,14 @@ function getConfiguration() {
     );
   }
 
+  console.log({
+    envFile: conf.parsed,
+  });
+
+  console.log({
+    env: process.env,
+  });
+
   const env = {
     ...conf.parsed,
     ...process.env,
