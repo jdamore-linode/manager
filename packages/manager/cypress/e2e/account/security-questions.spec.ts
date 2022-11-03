@@ -54,7 +54,7 @@ const editQuestion = (questionNumber: number) => {
       .findByTitle('Edit')
       .should('be.visible')
       .should('be.enabled')
-      .click({ scrollBehavior: 'center' });
+      .click();
   });
 };
 
