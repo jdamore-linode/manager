@@ -258,6 +258,17 @@ describe('Account security questions', () => {
       .should('be.visible')
       .should('be.disabled');
 
+    // Wait one second for React re-renders to finish.
+    // This mitigates a flakiness issue we have where the "Edit" button
+    // sometimes re-renders or otherwise becomes detached after Cypress finds
+    // it but before it executes a click, leading to the test failing.
+    //
+    // It's not clear why the element gets detached from the DOM, but if that
+    // issue is ever identified/resolved, then this `cy.wait()` can be removed.
+    // This may ultimately be a Cypress issue as I have not been able to
+    // reproduce the issue outside of Cypress.
+    cy.wait(1000);
+
     // Begin editing question 1, but cancel before saving changes.
     editQuestion(1);
     assertSecurityQuestionAnswer(1, securityQuestionAnswers[0]);
