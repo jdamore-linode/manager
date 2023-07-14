@@ -49,7 +49,7 @@ describeRegions('Volume Create', (region: Region) => {
     ui.toast.assertMessage(`Volume ${label} successfully created.`);
   });
 
-  it.only('Can create a Volume attached to a Linode', () => {
+  it('Can create a Volume attached to a Linode', () => {
     const linodePayload = createLinodeRequestFactory.build({
       label: randomLabel(),
       region: region.id,

@@ -8,7 +8,14 @@ import {
   FibonacciBackoffMethod,
   attemptWithBackoff,
 } from './backoff';
-import { LinodeStatus, ImageStatus, getImage, getLinode } from '@linode/api-v4';
+import {
+  LinodeStatus,
+  ImageStatus,
+  getImage,
+  getLinode,
+  VolumeStatus,
+  getVolume,
+} from '@linode/api-v4';
 
 /// Describes a backoff configuration for a poll. This may be a partial BackoffOptions object,
 /// an instance of a BackoffMethod implementation, or undefined.
@@ -107,6 +114,33 @@ export const pollLinodeStatus = async (
     status === desiredStatus;
 
   return poll(getLinodeStatus, checkLinodeStatus, backoffOptions, label);
+};
+
+/**
+ * Polls a Volume with the given ID until it has the given status.
+ *
+ * @param volumeId - ID of Volume whose status should be polled.
+ * @param desiredStatus - Desired status of Volume that is being polled.
+ * @param backoffMethod - Backoff method implementation to manage re-attempts.
+ * @param label - Optional label to assign to poll for logging and troubleshooting.
+ *
+ * @returns A Promise that resolves to the polled Volume's status or rejects on timeout.
+ */
+export const pollVolumeStatus = async (
+  volumeId: number,
+  desiredStatus: VolumeStatus,
+  backoffOptions: PollBackoffConfiguration = undefined,
+  label: string | undefined = undefined
+) => {
+  const getVolumeStatus = async () => {
+    const volume = await getVolume(volumeId);
+    return volume.status;
+  };
+
+  const checkVolumeStatus = (status: VolumeStatus): boolean =>
+    status === desiredStatus;
+
+  return poll(getVolumeStatus, checkVolumeStatus, backoffOptions, label);
 };
 
 /**
