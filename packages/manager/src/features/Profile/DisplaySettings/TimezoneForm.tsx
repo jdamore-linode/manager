@@ -1,15 +1,16 @@
-import * as React from 'react';
-import ActionsPanel from 'src/components/ActionsPanel';
-import Box from 'src/components/core/Box';
-import Button from 'src/components/Button';
-import Select, { Item } from 'src/components/EnhancedSelect/Select';
-import timezones from 'src/assets/timezones/timezones';
-import Typography from 'src/components/core/Typography';
-import { CircleProgress } from 'src/components/CircleProgress';
-import { DateTime } from 'luxon';
 import { styled } from '@mui/material/styles';
-import { useMutateProfile, useProfile } from 'src/queries/profile';
+import { DateTime } from 'luxon';
 import { useSnackbar } from 'notistack';
+import * as React from 'react';
+
+import timezones from 'src/assets/timezones/timezones';
+import ActionsPanel from 'src/components/ActionsPanel';
+import { Box } from 'src/components/Box';
+import { Button } from 'src/components/Button/Button';
+import { CircleProgress } from 'src/components/CircleProgress';
+import Select, { Item } from 'src/components/EnhancedSelect/Select';
+import { Typography } from 'src/components/Typography';
+import { useMutateProfile, useProfile } from 'src/queries/profile';
 
 interface Props {
   loggedInAsCustomer: boolean;
@@ -48,7 +49,7 @@ export const TimezoneForm = (props: Props) => {
   const { loggedInAsCustomer } = props;
   const { enqueueSnackbar } = useSnackbar();
   const { data: profile } = useProfile();
-  const { mutateAsync: updateProfile, isLoading, error } = useMutateProfile();
+  const { error, isLoading, mutateAsync: updateProfile } = useMutateProfile();
   const [value, setValue] = React.useState<Item<string> | null>(null);
   const timezone = profile?.timezone ?? '';
 
@@ -134,7 +135,7 @@ const StyledLoggedInAsCustomerNotice = styled('div', {
   label: 'StyledLoggedInAsCustomerNotice',
 })(({ theme }) => ({
   backgroundColor: theme.color.red,
-  padding: 16,
   marginBottom: 8,
+  padding: 16,
   textAlign: 'center',
 }));

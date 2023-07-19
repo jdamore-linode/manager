@@ -1,15 +1,16 @@
-import { renderWithTheme } from 'src/utilities/testHelpers';
 import * as React from 'react';
 
-import CardBase from './index';
+import { renderWithTheme } from 'src/utilities/testHelpers';
+
+import { CardBase } from './CardBase';
 
 describe('CardBase component', () => {
   it('should render header decorations when supplied', () => {
     const { getByText } = renderWithTheme(
       <CardBase
         heading="Test"
-        subheadings={['']}
         headingDecoration={<span>Hello World</span>}
+        subheadings={['']}
       />
     );
 

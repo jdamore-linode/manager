@@ -1,35 +1,39 @@
 import { UserDefinedField } from '@linode/api-v4/lib/stackscripts';
+import { Theme } from '@mui/material/styles';
+import { WithStyles, createStyles, withStyles } from '@mui/styles';
 import * as React from 'react';
 import { compose } from 'recompose';
-import Paper from 'src/components/core/Paper';
-import { createStyles, withStyles, WithStyles } from '@mui/styles';
-import { Theme } from '@mui/material/styles';
+
 import { ErrorState } from 'src/components/ErrorState/ErrorState';
-import Loading from 'src/components/LandingLoading';
+import { LandingLoading } from 'src/components/LandingLoading/LandingLoading';
 import { Notice } from 'src/components/Notice/Notice';
+import Paper from 'src/components/core/Paper';
 import AppPanelSection from 'src/features/Linodes/LinodesCreate/AppPanelSection';
 import { getQueryParamFromQueryString } from 'src/utilities/queryParams';
+
 import Panel from './Panel';
 import { AppsData } from './types';
 
-type ClassNames = 'panel' | 'loading';
+type ClassNames = 'loading' | 'panel';
 
 const styles = (theme: Theme) =>
   createStyles({
-    panel: {
-      marginBottom: theme.spacing(3),
-      height: 450,
-      overflowY: 'auto',
-      boxShadow: `${theme.color.boxShadow} 0px -15px 10px -10px inset`,
-    },
     loading: {
       '& >div:first-of-type': {
         height: 450,
       },
     },
+    panel: {
+      boxShadow: `${theme.color.boxShadow} 0px -15px 10px -10px inset`,
+      height: 450,
+      marginBottom: theme.spacing(3),
+      overflowY: 'auto',
+    },
   });
 
 interface Props extends AppsData {
+  disabled: boolean;
+  error?: string;
   handleClick: (
     id: number,
     label: string,
@@ -37,20 +41,120 @@ interface Props extends AppsData {
     stackScriptImages: string[],
     userDefinedFields: UserDefinedField[]
   ) => void;
-  openDrawer: (stackScriptLabel: string) => void;
-  disabled: boolean;
-  selectedStackScriptID?: number;
-  error?: string;
-  isSearching: boolean;
   isFiltering: boolean;
+  isSearching: boolean;
+  openDrawer: (stackScriptLabel: string) => void;
   searchValue?: string;
+  selectedStackScriptID?: number;
 }
 
 type CombinedProps = Props & WithStyles<ClassNames>;
 
 class SelectAppPanel extends React.PureComponent<CombinedProps> {
+  componentDidMount() {
+    this.clickAppIfQueryParamExists();
+  }
+
+  componentDidUpdate(prevProps: CombinedProps) {
+    if (
+      typeof prevProps.appInstances === 'undefined' &&
+      typeof this.props.appInstances !== 'undefined'
+    ) {
+      this.clickAppIfQueryParamExists();
+    }
+  }
+
+  render() {
+    const {
+      appInstances,
+      appInstancesError,
+      appInstancesLoading,
+      classes,
+      disabled,
+      error,
+      handleClick,
+      isFiltering,
+      isSearching,
+      openDrawer,
+      searchValue,
+      selectedStackScriptID,
+    } = this.props;
+
+    if (appInstancesError) {
+      return (
+        <Panel className={classes.panel} error={error} title="Select App">
+          <ErrorState errorText={appInstancesError} />
+        </Panel>
+      );
+    }
+
+    if (appInstancesLoading || !appInstances) {
+      return (
+        <Panel className={classes.panel} error={error} title="Select App">
+          <span className={classes.loading}>
+            <LandingLoading />
+          </span>
+        </Panel>
+      );
+    }
+
+    if (!appInstances) {
+      return null;
+    }
+
+    const newApps = appInstances.filter((app) => {
+      return ['appwrite', 'illa builder', 'owncloud', 'seatable'].includes(
+        app.label.toLowerCase().trim()
+      );
+    });
+
+    const popularApps = appInstances.slice(0, 10);
+
+    // sort mutates original array so make a copy first
+    const allApps = [...appInstances].sort((a, b) =>
+      a.label.toLowerCase().localeCompare(b.label.toLowerCase())
+    );
+
+    const isFilteringOrSearching = isFiltering || isSearching;
+
+    return (
+      <Paper className={classes.panel} data-qa-tp="Select Image">
+        {error && <Notice error text={error} />}
+        {!isFilteringOrSearching ? (
+          <AppPanelSection
+            apps={newApps}
+            disabled={disabled}
+            handleClick={handleClick}
+            heading="New apps"
+            openDrawer={openDrawer}
+            selectedStackScriptID={selectedStackScriptID}
+          />
+        ) : null}
+        {!isFilteringOrSearching ? (
+          <AppPanelSection
+            apps={popularApps}
+            disabled={disabled}
+            handleClick={handleClick}
+            heading="Popular apps"
+            openDrawer={openDrawer}
+            selectedStackScriptID={selectedStackScriptID}
+          />
+        ) : null}
+        <AppPanelSection
+          apps={allApps}
+          disabled={disabled}
+          handleClick={handleClick}
+          heading={isFilteringOrSearching ? '' : 'All apps'}
+          openDrawer={openDrawer}
+          searchValue={searchValue}
+          selectedStackScriptID={selectedStackScriptID}
+        />
+      </Paper>
+    );
+  }
+
   clickAppIfQueryParamExists = () => {
-    const { handleClick, appInstances } = this.props;
+    const { appInstances, handleClick } = this.props;
     const appIDFromURL = getQueryParamFromQueryString(location.search, 'appID');
     const matchedApp = appInstances
       ? appInstances.find((eachApp) => eachApp.id === +appIDFromURL)
@@ -90,108 +194,6 @@ class SelectAppPanel extends React.PureComponent<CombinedProps> {
       }
     }
   };
-
-  componentDidMount() {
-    this.clickAppIfQueryParamExists();
-  }
-
-  componentDidUpdate(prevProps: CombinedProps) {
-    if (
-      typeof prevProps.appInstances === 'undefined' &&
-      typeof this.props.appInstances !== 'undefined'
-    ) {
-      this.clickAppIfQueryParamExists();
-    }
-  }
-
-  render() {
-    const {
-      disabled,
-      selectedStackScriptID,
-      classes,
-      error,
-      appInstances,
-      appInstancesError,
-      appInstancesLoading,
-      handleClick,
-      openDrawer,
-      isSearching,
-      isFiltering,
-      searchValue,
-    } = this.props;
-
-    if (appInstancesError) {
-      return (
-        <Panel className={classes.panel} error={error} title="Select App">
-          <ErrorState errorText={appInstancesError} />
-        </Panel>
-      );
-    }
-
-    if (appInstancesLoading || !appInstances) {
-      return (
-        <Panel className={classes.panel} error={error} title="Select App">
-          <span className={classes.loading}>
-            <Loading />
-          </span>
-        </Panel>
-      );
-    }
-
-    if (!appInstances) {
-      return null;
-    }
-
-    const newApps = appInstances.filter((app) => {
-      return ['appwrite', 'illa builder', 'owncloud', 'seatable'].includes(
-        app.label.toLowerCase().trim()
-      );
-    });
-
-    const popularApps = appInstances.slice(0, 10);
-
-    // sort mutates original array so make a copy first
-    const allApps = [...appInstances].sort((a, b) =>
-      a.label.toLowerCase().localeCompare(b.label.toLowerCase())
-    );
-
-    const isFilteringOrSearching = isFiltering || isSearching;
-
-    return (
-      <Paper className={classes.panel} data-qa-tp="Select Image">
-        {error && <Notice text={error} error />}
-        {!isFilteringOrSearching ? (
-          <AppPanelSection
-            heading="New apps"
-            apps={newApps}
-            disabled={disabled}
-            selectedStackScriptID={selectedStackScriptID}
-            handleClick={handleClick}
-            openDrawer={openDrawer}
-          />
-        ) : null}
-        {!isFilteringOrSearching ? (
-          <AppPanelSection
-            heading="Popular apps"
-            apps={popularApps}
-            disabled={disabled}
-            selectedStackScriptID={selectedStackScriptID}
-            handleClick={handleClick}
-            openDrawer={openDrawer}
-          />
-        ) : null}
-        <AppPanelSection
-          heading={isFilteringOrSearching ? '' : 'All apps'}
-          apps={allApps}
-          disabled={disabled}
-          selectedStackScriptID={selectedStackScriptID}
-          handleClick={handleClick}
-          openDrawer={openDrawer}
-          searchValue={searchValue}
-        />
-      </Paper>
-    );
-  }
 }
 
 const styled = withStyles(styles);

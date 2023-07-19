@@ -1,35 +1,29 @@
 import { enableManaged } from '@linode/api-v4/lib/managed';
 import { APIError } from '@linode/api-v4/lib/types';
-import * as React from 'react';
-import Accordion from 'src/components/Accordion';
-import ActionsPanel from 'src/components/ActionsPanel';
-import Button from 'src/components/Button';
-import { ConfirmationDialog } from 'src/components/ConfirmationDialog/ConfirmationDialog';
-import Typography from 'src/components/core/Typography';
-import ExternalLink from 'src/components/ExternalLink';
 import Grid from '@mui/material/Unstable_Grid2';
-import { SupportLink } from 'src/components/SupportLink';
-import withLinodes, {
-  DispatchProps,
-} from 'src/containers/withLinodes.container';
-import { pluralize } from 'src/utilities/pluralize';
-import { updateAccountSettingsData } from 'src/queries/accountSettings';
+import * as React from 'react';
 import { useQueryClient } from 'react-query';
+
+import { Accordion } from 'src/components/Accordion';
+import ActionsPanel from 'src/components/ActionsPanel';
+import { Button } from 'src/components/Button/Button';
+import { ConfirmationDialog } from 'src/components/ConfirmationDialog/ConfirmationDialog';
+import ExternalLink from 'src/components/ExternalLink';
+import { SupportLink } from 'src/components/SupportLink';
+import { Typography } from 'src/components/Typography';
+import { updateAccountSettingsData } from 'src/queries/accountSettings';
+import { useLinodesQuery } from 'src/queries/linodes/linodes';
+import { pluralize } from 'src/utilities/pluralize';
 
 interface Props {
   isManaged: boolean;
 }
 
-interface StateProps {
-  linodeCount: number;
-}
-
-type CombinedProps = Props & StateProps & DispatchProps;
-
 interface ContentProps {
   isManaged: boolean;
   openConfirmationModal: () => void;
 }
+
 export const ManagedContent = (props: ContentProps) => {
   const { isManaged, openConfirmationModal } = props;
 
@@ -52,8 +46,8 @@ export const ManagedContent = (props: ContentProps) => {
           +$100/month per Linode.{'  '}
           <ExternalLink
             fixedIcon
-            text="Learn more."
             link="https://linode.com/managed"
+            text="Learn more."
           />
         </Typography>
       </Grid>
@@ -66,12 +60,15 @@ export const ManagedContent = (props: ContentProps) => {
   );
 };
 
-export const EnableManaged = (props: CombinedProps) => {
-  const { isManaged, linodeCount } = props;
+export const EnableManaged = (props: Props) => {
+  const { isManaged } = props;
   const queryClient = useQueryClient();
+  const { data: linodes } = useLinodesQuery();
   const [isOpen, setOpen] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string | undefined>();
   const [isLoading, setLoading] = React.useState<boolean>(false);
+
+  const linodeCount = linodes?.results ?? 0;
 
   const handleClose = () => {
     setOpen(false);
@@ -94,16 +91,16 @@ export const EnableManaged = (props: CombinedProps) => {
       .catch(handleError);
   };
 
-  const actions = () => (
+  const actions = (
     <ActionsPanel>
-      <Button buttonType="secondary" onClick={handleClose} data-qa-cancel>
+      <Button buttonType="secondary" data-qa-cancel onClick={handleClose}>
         Cancel
       </Button>
       <Button
         buttonType="primary"
-        onClick={handleSubmit}
-        loading={isLoading}
         data-qa-submit-managed-enrollment
+        loading={isLoading}
+        onClick={handleSubmit}
       >
         Add Linode Managed
       </Button>
@@ -112,18 +109,18 @@ export const EnableManaged = (props: CombinedProps) => {
 
   return (
     <>
-      <Accordion heading="Linode Managed" defaultExpanded={true}>
+      <Accordion defaultExpanded={true} heading="Linode Managed">
         <ManagedContent
           isManaged={isManaged}
           openConfirmationModal={() => setOpen(true)}
         />
       </Accordion>
       <ConfirmationDialog
-        open={isOpen}
+        actions={actions}
         error={error}
         onClose={() => handleClose()}
+        open={isOpen}
         title="Just to confirm..."
-        actions={actions}
       >
         <Typography variant="subtitle1">
           Linode Managed costs an additional{' '}
@@ -137,9 +134,3 @@ export const EnableManaged = (props: CombinedProps) => {
     </>
   );
 };
-
-export default withLinodes<StateProps, Props>(
-  (ownProps, entities, loading, error) => ({
-    linodeCount: entities.length,
-  })
-)(EnableManaged);

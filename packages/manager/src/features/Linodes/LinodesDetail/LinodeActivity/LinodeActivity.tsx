@@ -1,35 +1,25 @@
 import { Params } from '@linode/api-v4';
 import * as React from 'react';
-import { compose } from 'recompose';
+import { useParams } from 'react-router-dom';
+
 import EventsLanding from 'src/features/Events/EventsLanding';
 import { getEventsForEntity } from 'src/utilities/getEventsForEntity';
-import { withLinodeDetailContext } from '../linodeDetailContext';
 
-type CombinedProps = StateProps;
-
-export const LinodeActivity: React.FC<CombinedProps> = (props) => {
-  const { linodeID } = props;
+const LinodeActivity = () => {
+  const { linodeId } = useParams<{ linodeId: string }>();
+  const id = Number(linodeId);
 
   return (
     <EventsLanding
-      entityId={linodeID}
       getEventsRequest={(params: Params = {}) =>
-        getEventsForEntity(params, 'linode', props.linodeID)
+        getEventsForEntity(params, 'linode', id)
       }
-      errorMessage="There was an error retrieving activity for this Linode."
+      data-testid="linode-events-table"
       emptyMessage="No recent activity for this Linode."
-      data-qa-events-landing-for-linode
+      entityId={id}
+      errorMessage="There was an error retrieving activity for this Linode."
     />
   );
 };
 
-interface StateProps {
-  linodeID: number;
-}
-const linodeContext = withLinodeDetailContext(({ linode }) => ({
-  linodeID: linode.id,
-}));
-
-const enhanced = compose<CombinedProps, {}>(linodeContext);
-
-export default enhanced(LinodeActivity);
+export default LinodeActivity;

@@ -1,17 +1,18 @@
-import * as React from 'react';
 import { Notification } from '@linode/api-v4/lib/account';
+import * as React from 'react';
+import { useParams } from 'react-router-dom';
+
 import { MaintenanceBanner } from 'src/components/MaintenanceBanner/MaintenanceBanner';
 import { ProductNotification } from 'src/components/ProductNotification/ProductNotification';
 import { useAllAccountMaintenanceQuery } from 'src/queries/accountMaintenance';
 import { useNotificationsQuery } from 'src/queries/accountNotifications';
+import { useLinodeQuery } from 'src/queries/linodes/linodes';
+
 import MigrationNotification from './MigrationNotification';
-import { useParams } from 'react-router-dom';
-import { useLinodes } from 'src/hooks/useLinodes';
 
 const Notifications = () => {
   const { linodeId } = useParams<{ linodeId: string }>();
-  const { linodes } = useLinodes();
-  const linode = linodes.itemsById[Number(linodeId)];
+  const { data: linode } = useLinodeQuery(Number(linodeId));
 
   const { data: notifications, refetch } = useNotificationsQuery();
 
@@ -47,11 +48,11 @@ const Notifications = () => {
         }
         return (
           <MigrationNotification
-            linodeID={linode.id}
-            requestNotifications={refetch}
+            linodeID={Number(linode?.id)}
+            migrationTime={notification.when}
             notificationMessage={notification.message}
             notificationType={notification.type}
-            migrationTime={notification.when}
+            requestNotifications={refetch}
           />
         );
       default:

@@ -1,19 +1,21 @@
-import * as React from 'react';
 import { act, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import * as React from 'react';
+
 import { sshKeyFactory } from 'src/factories';
 import { rest, server } from 'src/mocks/testServer';
 import { renderWithTheme } from 'src/utilities/testHelpers';
-import SSHKeyCreationDrawer from './CreateSSHKeyDrawer';
+
+import { CreateSSHKeyDrawer } from './CreateSSHKeyDrawer';
 
 const props = {
-  open: true,
   onClose: jest.fn(),
+  open: true,
 };
 
 describe('SSHKeyCreationDrawer', () => {
   it('should have an input field for label', () => {
-    const { getByText } = renderWithTheme(<SSHKeyCreationDrawer {...props} />);
+    const { getByText } = renderWithTheme(<CreateSSHKeyDrawer {...props} />);
     // Check for inputs
     getByText('Label');
     getByText('SSH Public Key');
@@ -25,7 +27,7 @@ describe('SSHKeyCreationDrawer', () => {
 
   it('should be submittable and should show client side validation errors', async () => {
     const { getAllByRole, getByTestId, getByText } = renderWithTheme(
-      <SSHKeyCreationDrawer {...props} />
+      <CreateSSHKeyDrawer {...props} />
     );
 
     const inputs = getAllByRole('textbox');
@@ -53,7 +55,7 @@ describe('SSHKeyCreationDrawer', () => {
     );
 
     const { getAllByRole, getByTestId } = renderWithTheme(
-      <SSHKeyCreationDrawer {...props} />
+      <CreateSSHKeyDrawer {...props} />
     );
 
     const inputs = getAllByRole('textbox');

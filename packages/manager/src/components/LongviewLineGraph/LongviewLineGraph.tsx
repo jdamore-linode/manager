@@ -1,47 +1,45 @@
-import * as React from 'react';
-import { compose } from 'recompose';
-import Divider from 'src/components/core/Divider';
-import { makeStyles } from '@mui/styles';
 import { Theme } from '@mui/material/styles';
-import Typography from 'src/components/core/Typography';
+import * as React from 'react';
+import { makeStyles } from 'tss-react/mui';
+
+import { Divider } from 'src/components/Divider';
 import { ErrorState } from 'src/components/ErrorState/ErrorState';
 import {
   DataSet,
   LineGraph,
   LineGraphProps,
 } from 'src/components/LineGraph/LineGraph';
+import { Typography } from 'src/components/Typography';
 
-const useStyles = makeStyles((theme: Theme) => ({
-  title: {
-    color: theme.color.headline,
-    fontWeight: 'bold',
-    fontSize: '1rem',
-    '& > span': {
-      color: theme.palette.text.primary,
-    },
-  },
+const useStyles = makeStyles()((theme: Theme) => ({
   message: {
-    position: 'absolute',
     left: '50%',
+    position: 'absolute',
     top: '45%',
     transform: 'translate(-50%, -50%)',
   },
+  title: {
+    '& > span': {
+      color: theme.palette.text.primary,
+    },
+    color: theme.color.headline,
+    fontSize: '1rem',
+    fontWeight: 'bold',
+  },
 }));
 
-export interface Props extends LineGraphProps {
-  title: string;
-  subtitle?: string;
+export interface LongViewLineGraphProps extends LineGraphProps {
+  ariaLabel?: string;
   error?: string;
   loading?: boolean;
-  ariaLabel?: string;
+  subtitle?: string;
+  title: string;
 }
 
-type CombinedProps = Props;
+export const LongviewLineGraph = React.memo((props: LongViewLineGraphProps) => {
+  const { classes } = useStyles();
 
-const LongviewLineGraph: React.FC<CombinedProps> = (props) => {
-  const classes = useStyles();
-
-  const { error, loading, title, subtitle, ariaLabel, ...rest } = props;
+  const { ariaLabel, error, loading, subtitle, title, ...rest } = props;
 
   const message = error // Error state is separate, don't want to put text on top of it
     ? undefined
@@ -61,7 +59,7 @@ const LongviewLineGraph: React.FC<CombinedProps> = (props) => {
           </React.Fragment>
         )}
       </Typography>
-      <Divider spacingTop={16} spacingBottom={16} />
+      <Divider spacingBottom={16} spacingTop={16} />
       <div style={{ position: 'relative' }}>
         {error ? (
           <div style={{ height: props.chartHeight || '300px' }}>
@@ -74,7 +72,7 @@ const LongviewLineGraph: React.FC<CombinedProps> = (props) => {
       </div>
     </React.Fragment>
   );
-};
+});
 
 export const isDataEmpty = (data: DataSet[]) => {
   return data.every(
@@ -84,5 +82,3 @@ export const isDataEmpty = (data: DataSet[]) => {
       thisSeries.data.every((thisPoint) => thisPoint[1] === null)
   );
 };
-
-export default compose<CombinedProps, Props>(React.memo)(LongviewLineGraph);

@@ -1,27 +1,23 @@
 import * as React from 'react';
+
 import { CircleProgress } from 'src/components/CircleProgress';
 
-const DEFAULT_DELAY = 1000;
+export const DEFAULT_DELAY = 1000;
 
-interface Props {
-  shouldDelay?: boolean;
+interface LandingLoadingProps {
+  /**  Allow children to be passed in to override the default loading indicator */
+  children?: JSX.Element;
+  /**  If given, the loading indicator will not be rendered for the given duration in milliseconds */
   delayInMS?: number;
+  /** If true, the loading indicator will not be rendered for 1 second which may give user's with fast connections a more fluid experience. */
+  shouldDelay?: boolean;
 }
 
-/**
- *
- * LandingLoading
- *
- * If the `shouldDelay` prop is given, the loading indicator will
- * not be rendered for 1 second, which may give user's with fast
- * connections a more fluid experience. Use the `delayInMS` prop
- * to specify an exact delay duration.
- */
-export const LandingLoading: React.FC<Props> = ({
-  shouldDelay,
-  delayInMS,
+export const LandingLoading = ({
   children,
-}) => {
+  delayInMS,
+  shouldDelay,
+}: LandingLoadingProps): JSX.Element | null => {
   const [showLoading, setShowLoading] = React.useState<boolean>(false);
 
   React.useEffect(() => {
@@ -29,13 +25,15 @@ export const LandingLoading: React.FC<Props> = ({
      * See: https://github.com/facebook/react/issues/14369#issuecomment-468267798
      */
     let didCancel = false;
+    // Reference to the timeoutId so we can cancel it
+    let timeoutId: NodeJS.Timeout | null = null;
 
     if (shouldDelay || typeof delayInMS === 'number') {
       // Used specified duration or default
       const delayDuration =
         typeof delayInMS === 'number' ? delayInMS : DEFAULT_DELAY;
 
-      setTimeout(() => {
+      timeoutId = setTimeout(() => {
         if (!didCancel) {
           setShowLoading(true);
         }
@@ -45,16 +43,13 @@ export const LandingLoading: React.FC<Props> = ({
     }
     return () => {
       didCancel = true;
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
     };
-  }, []);
-  return showLoading ? (
-    !!children ? (
-      /** allows us to pass a custom Loader if we please */
-      <React.Fragment>{children}</React.Fragment>
-    ) : (
-      <CircleProgress />
-    )
-  ) : null;
-};
+  }, [shouldDelay, delayInMS]);
 
-export default LandingLoading;
+  return showLoading
+    ? children || <CircleProgress data-testid="circle-progress" />
+    : null;
+};

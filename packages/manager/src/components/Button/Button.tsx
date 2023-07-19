@@ -1,54 +1,69 @@
-import * as React from 'react';
-import Reload from 'src/assets/icons/reload.svg';
-import _Button, { ButtonProps } from '@mui/material/Button';
-import { TooltipIcon } from 'src/components/TooltipIcon/TooltipIcon';
-import { useTheme, styled, Theme } from '@mui/material/styles';
+import _Button, { ButtonProps as _ButtonProps } from '@mui/material/Button';
+import { Theme, styled, useTheme } from '@mui/material/styles';
 import { SxProps } from '@mui/system';
-import { isPropValid } from '../../utilities/isPropValid';
+import * as React from 'react';
+
+import Reload from 'src/assets/icons/reload.svg';
+import { TooltipIcon } from 'src/components/TooltipIcon';
+
 import { rotate360 } from '../../styles/keyframes';
+import { isPropValid } from '../../utilities/isPropValid';
 
-export type ButtonType = 'primary' | 'secondary' | 'outlined';
+export type ButtonType = 'outlined' | 'primary' | 'secondary';
 
-export interface Props extends ButtonProps {
-  /** The button variant to render */
+export interface ButtonProps extends _ButtonProps {
+  /**
+   * The button variant to render
+   * * @default 'secondary'
+   * */
   buttonType?: ButtonType;
   /** Additional css class to pass to the component */
   className?: string;
+  /**
+   * Reduce the padding on the x-axis
+   * @default false
+   */
+  compactX?: boolean;
+  /**
+   * Reduce the padding on the y-axis
+   * @default false
+   */
+  compactY?: boolean;
+  /**
+   * Show a loading indicator
+   * @default false
+   */
+  loading?: boolean;
   /** The `sx` prop can be either object or function */
   sx?: SxProps<Theme>;
-  /** Reduce the padding on the x-axis */
-  compactX?: boolean;
-  /** Reduce the padding on the y-axis */
-  compactY?: boolean;
-  /** Show a loading indicator */
-  loading?: boolean;
-  /** Tooltip text */
-  tooltipText?: string;
   /** Tooltip analytics event */
   tooltipAnalyticsEvent?: () => void;
+  /** Tooltip text */
+  tooltipText?: string;
 }
 
 const StyledButton = styled(_Button, {
   shouldForwardProp: (prop) =>
     isPropValid(['compactX', 'compactY', 'loading', 'buttonType'], prop),
-})<Props>(({ theme, ...props }) => ({
-  ...(props.buttonType === 'secondary' &&
-    props.compactX && {
-      minWidth: 50,
-      paddingRight: 0,
-      paddingLeft: 0,
-    }),
-  ...(props.buttonType === 'secondary' &&
-    props.compactY && {
-      minHeight: 20,
-      paddingTop: 0,
-      paddingBottom: 0,
-    }),
+})<ButtonProps>(({ theme, ...props }) => ({
+  ...(props.buttonType === 'secondary' && {
+    color: theme.textColors.linkActiveLight,
+  }),
+  ...(props.compactX && {
+    minWidth: 50,
+    paddingLeft: 0,
+    paddingRight: 0,
+  }),
+  ...(props.compactY && {
+    minHeight: 20,
+    paddingBottom: 0,
+    paddingTop: 0,
+  }),
   ...(props.loading && {
     '& svg': {
       animation: `${rotate360} 2s linear infinite`,
-      margin: '0 auto',
       height: `${theme.spacing(2)}`,
+      margin: '0 auto',
       width: `${theme.spacing(2)}`,
     },
     '&:disabled': {
@@ -59,15 +74,15 @@ const StyledButton = styled(_Button, {
 }));
 
 const Span = styled('span')({
-  display: 'flex',
-  alignItems: 'center',
   '@supports (-moz-appearance: none)': {
     /* Fix text alignment for Firefox */
     marginTop: 2,
   },
+  alignItems: 'center',
+  display: 'flex',
 });
 
-const Button = React.forwardRef<HTMLButtonElement, Props>(
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       // default to secondary as some components never define a buttonType (usually buttons with icons)
@@ -81,10 +96,10 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
       disabled,
       loading,
       sx,
-      tooltipText,
       tooltipAnalyticsEvent,
+      tooltipText,
       ...rest
-    }: Props,
+    },
     ref
   ) => {
     const theme = useTheme();
@@ -109,9 +124,9 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
           compactY={compactY}
           disabled={disabled || loading}
           loading={loading}
+          ref={ref}
           sx={sx}
           variant={variant}
-          ref={ref}
         >
           <Span data-testid="loadingIcon">
             {loading ? <Reload /> : children}
@@ -119,17 +134,13 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
         </StyledButton>
         {tooltipText && (
           <TooltipIcon
+            status="help"
             sxTooltipIcon={sxTooltipIcon}
             text={tooltipText}
             tooltipAnalyticsEvent={tooltipAnalyticsEvent}
-            status="help"
           />
         )}
       </React.Fragment>
     );
   }
 );
-
-Button.displayName = 'Button';
-
-export default Button;

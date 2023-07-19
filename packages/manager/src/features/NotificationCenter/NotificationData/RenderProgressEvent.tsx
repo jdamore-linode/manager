@@ -1,18 +1,20 @@
-import * as React from 'react';
-import BarPercent from 'src/components/BarPercent';
-import Box from 'src/components/core/Box';
-import Divider from 'src/components/core/Divider';
-import Typography from 'src/components/core/Typography';
-import useLinodes from 'src/hooks/useLinodes';
-import { Duration } from 'luxon';
 import { Event } from '@linode/api-v4/lib/account/types';
-import { extendTypesQueryResult } from 'src/utilities/extendType';
-import { isNotNullOrUndefined } from 'src/utilities/nullOrUndefined';
-import { useSpecificTypes } from 'src/queries/types';
+import { Duration } from 'luxon';
+import * as React from 'react';
+
+import BarPercent from 'src/components/BarPercent';
+import { Box } from 'src/components/Box';
+import { Divider } from 'src/components/Divider';
+import { Typography } from 'src/components/Typography';
 import {
   eventLabelGenerator,
   eventMessageGenerator,
 } from 'src/eventMessageGenerator_CMR';
+import { useAllLinodesQuery } from 'src/queries/linodes/linodes';
+import { useSpecificTypes } from 'src/queries/types';
+import { extendTypesQueryResult } from 'src/utilities/extendType';
+import { isNotNullOrUndefined } from 'src/utilities/nullOrUndefined';
+
 import {
   RenderEventGravatar,
   RenderEventStyledBox,
@@ -24,18 +26,15 @@ interface Props {
   onClose: () => void;
 }
 
-export type CombinedProps = Props;
-
-export const RenderProgressEvent: React.FC<Props> = (props) => {
+export const RenderProgressEvent = (props: Props) => {
   const { classes } = useRenderEventStyles();
   const { event } = props;
-  const { linodes } = useLinodes();
-  const _linodes = Object.values(linodes.itemsById);
+  const { data: linodes } = useAllLinodesQuery();
   const typesQuery = useSpecificTypes(
-    _linodes.map((linode) => linode.type).filter(isNotNullOrUndefined)
+    (linodes ?? []).map((linode) => linode.type).filter(isNotNullOrUndefined)
   );
   const types = extendTypesQueryResult(typesQuery);
-  const message = eventMessageGenerator(event, _linodes, types);
+  const message = eventMessageGenerator(event, linodes, types);
 
   if (message === null) {
     return null;
@@ -58,16 +57,16 @@ export const RenderProgressEvent: React.FC<Props> = (props) => {
 
   return (
     <>
-      <RenderEventStyledBox display="flex" data-test-id={event.action}>
+      <RenderEventStyledBox data-test-id={event.action} display="flex">
         <RenderEventGravatar username={event.username} />
-        <Box sx={{ marginTop: '-2px' }} data-test-id={event.action}>
+        <Box data-test-id={event.action} sx={{ marginTop: '-2px' }}>
           {eventMessage}
           <BarPercent
             className={classes.bar}
             max={100}
-            value={event.percent_complete ?? 0}
-            rounded
             narrow
+            rounded
+            value={event.percent_complete ?? 0}
           />
         </Box>
       </RenderEventStyledBox>
@@ -76,7 +75,7 @@ export const RenderProgressEvent: React.FC<Props> = (props) => {
   );
 };
 
-export const formatTimeRemaining = (time: string | null) => {
+export const formatTimeRemaining = (time: null | string) => {
   if (!time) {
     return null;
   }
