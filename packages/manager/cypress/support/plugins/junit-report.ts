@@ -15,6 +15,7 @@ export const enableJunitReport: CypressPlugin = (_on, config) => {
       mochaFile: 'cypress/results/test-results-[hash].xml',
       jenkinsMode: true,
       testsuitesTitle: 'Cloud Manager Cypress Tests',
+      includePending: true,
     };
   }
   return config;
