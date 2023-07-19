@@ -98,8 +98,6 @@ services:
       - ./packages/manager:/home/node/app/packages/manager
       - ./package.json:/home/node/app/package.json
       - ./node_modules:/home/node/app/node_modules
-    networks:
-      manager-e2e:
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:3000']
       interval: 15s
@@ -111,8 +109,6 @@ services:
     environment:
       <<: *default-env
       MANAGER_OAUTH: ${MANAGER_OAUTH}
-    networks:
-      manager-e2e:
 
   # Deprecated Cypress runners.
   # Remove these once pipeline is updated to use new service.
@@ -154,7 +150,3 @@ services:
     environment:
       <<: *default-env
       MANAGER_OAUTH: ${MANAGER_OAUTH_1}
-
-networks:
-  manager-e2e:
-    driver: bridge
