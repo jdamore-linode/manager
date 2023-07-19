@@ -16,7 +16,6 @@ export const enableJunitReport: CypressPlugin = (_on, config) => {
       jenkinsMode: true,
       testsuitesTitle: 'Cloud Manager Cypress Tests',
       includePending: true,
-      testCaseSwitchClassnameAndName: true,
     };
   }
   return config;
