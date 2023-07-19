@@ -98,6 +98,8 @@ services:
       - ./packages/manager:/home/node/app/packages/manager
       - ./package.json:/home/node/app/package.json
       - ./node_modules:/home/node/app/node_modules
+    networks:
+      manager-e2e:
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:3000']
       interval: 15s
