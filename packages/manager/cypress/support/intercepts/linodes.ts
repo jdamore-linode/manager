@@ -144,6 +144,19 @@ export const mockGetLinodeDisks = (
 };
 
 /**
+ * Intercepts DELETE request to delete a Linode.
+ *
+ * @param linodeId - ID of Linode for intercepted request.
+ *
+ * @returns Cypress chainable.
+ */
+export const interceptDeleteLinode = (
+  linodeId: number
+): Cypress.Chainable<null> => {
+  return cy.intercept('DELETE', apiMatcher(`linode/instances/${linodeId}`));
+};
+
+/**
  * Intercepts DELETE request to delete linode and mocks response.
  *
  * @param linodeId - ID of Linode for intercepted request.

@@ -6,30 +6,34 @@ import {
   mockGetDomains,
 } from 'support/intercepts/domains';
 import { randomDomainName } from 'support/util/random';
+import { ui } from 'support/ui';
 
 describe('Create a Domain', () => {
   it('Creates first Domain', () => {
-    // Mock Domains to modify incoming response.
-    const mockDomains = new Array(2).fill(null).map(
-      (item: null, index: number): Domain => {
-        return domainFactory.build({
-          label: `Domain ${index}`,
-        });
-      }
-    );
+    const mockDomains = domainFactory.buildList(2);
+    const newDomainLabel = randomDomainName();
+
     mockGetDomains(mockDomains).as('getDomains');
-    // intercept create Domain request
     interceptCreateDomain().as('createDomain');
+
     cy.visitWithLogin('/domains');
     cy.wait('@getDomains');
-    fbtClick('Create Domain');
-    const label = randomDomainName();
-    getVisible('[id="domain"][data-testid="textfield-input"]').type(label);
+
+    ui.button
+      .findByTitle('Create Domain')
+      .should('be.visible')
+      .should('be.enabled')
+      .click();
+
+    // fbtClick('Create Domain');
+    getVisible('[id="domain"][data-testid="textfield-input"]').type(
+      newDomainLabel
+    );
     getVisible('[id="soa-email-address"][data-testid="textfield-input"]').type(
       'devs@linode.com'
     );
     getClick('[data-testid="submit"]');
     cy.wait('@createDomain');
-    cy.get('[data-qa-header]').should('contain', label);
+    cy.get('[data-qa-header]').should('contain', newDomainLabel);
   });
 });

@@ -1,14 +1,11 @@
 import { createLinode } from 'support/api/linodes';
+import { interceptDeleteLinode } from 'support/intercepts/linodes';
 import { ui } from 'support/ui';
-import { apiMatcher } from 'support/util/intercepts';
 
 describe('delete linode', () => {
   it('deletes linode from linode details page', () => {
     createLinode().then((linode) => {
-      // catch delete request
-      cy.intercept('DELETE', apiMatcher('linode/instances/*')).as(
-        'deleteLinode'
-      );
+      interceptDeleteLinode(linode.id).as('deleteLinode');
       cy.visitWithLogin(`/linodes/${linode.id}`);
 
       // Wait for content to load before performing actions via action menu.
@@ -52,10 +49,7 @@ describe('delete linode', () => {
 
   it('deletes linode from linode landing page', () => {
     createLinode().then((linode) => {
-      // catch delete request
-      cy.intercept('DELETE', apiMatcher('linode/instances/*')).as(
-        'deleteLinode'
-      );
+      interceptDeleteLinode(linode.id).as('deleteLinode');
       cy.visitWithLogin(`/linodes`);
 
       cy.findByText(linode.label).should('be.visible');

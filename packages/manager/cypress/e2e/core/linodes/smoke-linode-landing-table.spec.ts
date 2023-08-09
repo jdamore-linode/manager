@@ -390,6 +390,8 @@ describe('linode landing checks', () => {
 });
 
 describe('linode landing actions', () => {
+  before(() => {});
+
   it('deleting multiple linodes with action menu', () => {
     const mockAccountSettings = accountSettingsFactory.build({
       managed: false,

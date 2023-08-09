@@ -5,9 +5,16 @@ import { authenticate } from 'support/api/authentication';
 import { randomDomainName } from 'support/util/random';
 import { createDomain } from '@linode/api-v4/lib/domains';
 import { ui } from 'support/ui';
+import { cleanUpTestDomains } from 'support/util/cleanup';
 
 authenticate();
 describe('Delete a Domain', () => {
+  before(() => {
+    // Clean up existing test domains.
+    // Necessary to ensure new domain is visible on first page of landing page.
+    cleanUpTestDomains();
+  });
+
   /*
    * - Clicks "Delete" action menu item for domain but cancels operation.
    * - Clicks "Delete" action menu item for domain and confirms operation.

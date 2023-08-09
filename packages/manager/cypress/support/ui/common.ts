@@ -63,31 +63,31 @@ export const interceptOnce = (
  * In case an HTTP error occurs, 2 additional attempts will be made to delete
  * the data with a 45 second delay between attempts.
  */
-export const deleteAllTestData = async () => {
-  const backoff = new SimpleBackoffMethod(45000, {
-    maxAttempts: 3,
-  });
+// export const deleteAllTestData = async () => {
+//   const backoff = new SimpleBackoffMethod(45000, {
+//     maxAttempts: 3,
+//   });
 
-  await attemptWithBackoff(backoff, async () => {
-    // Cancel service transfers first, then Linodes, before attempting to delete
-    // any other entities.
-    await cancelAllTestEntityTransfers();
-    await deleteAllTestLinodes();
+//   await attemptWithBackoff(backoff, async () => {
+//     // Cancel service transfers first, then Linodes, before attempting to delete
+//     // any other entities.
+//     await cancelAllTestEntityTransfers();
+//     await deleteAllTestLinodes();
 
-    // Delete remaining test data.
-    await Promise.all([
-      deleteAllTestLkeClusters(),
-      deleteAllTestNodeBalancers(),
-      deleteAllTestImages(),
-      deleteAllTestClients(),
-      deleteAllTestFirewalls(),
-      deleteAllTestStackScripts(),
-      deleteAllTestDomains(),
-      deleteAllTestBuckets(),
-      deleteAllTestAccessKeys(),
-      deleteAllTestTags(),
-      deleteAllTestVolumes(),
-      deleteAllTestOAuthApps(),
-    ]);
-  });
-};
+//     // Delete remaining test data.
+//     await Promise.all([
+//       deleteAllTestLkeClusters(),
+//       deleteAllTestNodeBalancers(),
+//       deleteAllTestImages(),
+//       deleteAllTestClients(),
+//       deleteAllTestFirewalls(),
+//       deleteAllTestStackScripts(),
+//       deleteAllTestDomains(),
+//       deleteAllTestBuckets(),
+//       deleteAllTestAccessKeys(),
+//       deleteAllTestTags(),
+//       deleteAllTestVolumes(),
+//       deleteAllTestOAuthApps(),
+//     ]);
+//   });
+// };
