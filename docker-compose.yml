@@ -92,9 +92,8 @@ services:
       context: .
       dockerfile: ./packages/manager/Dockerfile
       target: manager
-    container_name: web
     ports:
-      - "3000:3000"
+      - "3000"
     volumes:
       - ./packages/manager:/home/node/app/packages/manager
       - ./package.json:/home/node/app/package.json
@@ -105,7 +104,14 @@ services:
       timeout: 10s
       retries: 10
 
-  # Cypress runners for end-to-end tests.
+  e2e:
+    <<: *default-runner
+    environment:
+      <<: *default-env
+      MANAGER_OAUTH: ${MANAGER_OAUTH}
+
+  # Deprecated Cypress runners.
+  # Remove these once pipeline is updated to use new service.
   e2e-1:
     <<: *default-runner
     container_name: cloud-e2e-1
