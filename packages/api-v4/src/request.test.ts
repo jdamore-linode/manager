@@ -1,5 +1,4 @@
 import adapter from 'axios-mock-adapter';
-import { vi } from 'vitest';
 import { object, string } from 'yup';
 import request, {
   baseRequest,
