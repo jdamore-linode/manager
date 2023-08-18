@@ -14,7 +14,7 @@ const smallPool = nodePoolFactory.build({ count: 2 });
 const props: Props = {
   kubernetesClusterId: 1,
   nodePool: pool,
-  onClose: jest.fn(),
+  onClose: vi.fn(),
   open: true,
 };
 

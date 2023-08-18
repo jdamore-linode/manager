@@ -5,8 +5,8 @@ const errorWithField = [
   { field: 'data.card_number', reason: 'Invalid credit card number' },
 ];
 
-const setFieldError = jest.fn();
-const setError = jest.fn();
+const setFieldError = vi.fn();
+const setError = vi.fn();
 
 describe('handleAPIErrors', () => {
   it('should handle api error with a field', () => {

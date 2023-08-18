@@ -29,13 +29,13 @@ import {
 } from 'src/store';
 
 export const mockMatchMedia = (matches: boolean = true) => {
-  window.matchMedia = jest.fn().mockImplementation((query) => {
+  window.matchMedia = vi.fn().mockImplementation((query) => {
     return {
-      addListener: jest.fn(),
+      addListener: vi.fn(),
       matches,
       media: query,
       onchange: null,
-      removeListener: jest.fn(),
+      removeListener: vi.fn(),
     };
   });
 };

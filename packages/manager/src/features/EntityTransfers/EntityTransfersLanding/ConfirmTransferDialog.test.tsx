@@ -12,7 +12,7 @@ import ConfirmTransferDialog, {
 } from './ConfirmTransferDialog';
 
 const props: Props = {
-  onClose: jest.fn(),
+  onClose: vi.fn(),
   open: true,
   token: 'blahblah',
 };

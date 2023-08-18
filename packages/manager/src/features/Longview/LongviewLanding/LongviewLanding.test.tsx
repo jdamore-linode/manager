@@ -18,8 +18,8 @@ import {
 } from './LongviewClients';
 import { LongviewLanding } from './LongviewLanding';
 
-jest.mock('../request');
-jest.mock('./LongviewClientRow');
+vi.mock('../request');
+vi.mock('./LongviewClientRow');
 
 const clients = longviewClientFactory.buildList(5);
 
@@ -32,10 +32,10 @@ const arrayToData = (data: any[]): Record<string, LongviewClient> => {
 
 const props: CombinedProps = {
   activeSubscription: longviewSubscriptionFactory.build(),
-  createLongviewClient: jest.fn().mockResolvedValue({}),
-  deleteLongviewClient: jest.fn(),
-  getLongviewClients: jest.fn().mockResolvedValue([]),
-  handleAddClient: jest.fn(),
+  createLongviewClient: vi.fn().mockResolvedValue({}),
+  deleteLongviewClient: vi.fn(),
+  getLongviewClients: vi.fn().mockResolvedValue([]),
+  handleAddClient: vi.fn(),
   longviewClientsData: arrayToData(clients),
   longviewClientsError: {},
   longviewClientsLastUpdated: 0,
@@ -43,7 +43,7 @@ const props: CombinedProps = {
   longviewClientsResults: clients.length,
   lvClientData: {},
   newClientLoading: false,
-  updateLongviewClient: jest.fn(),
+  updateLongviewClient: vi.fn(),
   ...reactRouterProps,
 };
 

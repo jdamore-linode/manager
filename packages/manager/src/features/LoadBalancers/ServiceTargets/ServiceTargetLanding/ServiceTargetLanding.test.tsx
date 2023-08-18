@@ -22,7 +22,7 @@ afterEach(() => {
 });
 
 const props = {
-  onDelete: jest.fn(),
+  onDelete: vi.fn(),
 };
 
 const ERROR_STATE_TEST_ID = 'error-state';

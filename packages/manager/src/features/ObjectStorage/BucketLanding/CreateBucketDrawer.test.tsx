@@ -15,10 +15,10 @@ import { CreateBucketDrawer } from './CreateBucketDrawer';
 
 const props = {
   isOpen: true,
-  onClose: jest.fn(),
+  onClose: vi.fn(),
 };
 
-jest.mock('src/components/EnhancedSelect/Select');
+vi.mock('src/components/EnhancedSelect/Select');
 
 describe('CreateBucketDrawer', () => {
   it('Should show a general error notice if the API returns one', async () => {

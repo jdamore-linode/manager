@@ -7,7 +7,7 @@ import { HAControlPlane, Props } from './HAControlPlane';
 
 const props: Props = {
   HIGH_AVAILABILITY_PRICE: 60,
-  setHighAvailability: jest.fn(),
+  setHighAvailability: vi.fn(),
 };
 
 describe('HAControlPlane', () => {
@@ -20,7 +20,7 @@ describe('HAControlPlane', () => {
   it('the component should not render when HIGH_AVAILABILITY_PRICE is undefined ', () => {
     const testProps: Props = {
       HIGH_AVAILABILITY_PRICE: undefined,
-      setHighAvailability: jest.fn(),
+      setHighAvailability: vi.fn(),
     };
     const { queryByTestId } = renderWithTheme(
       <HAControlPlane {...testProps} />

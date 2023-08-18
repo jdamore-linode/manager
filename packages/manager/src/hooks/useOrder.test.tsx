@@ -33,15 +33,16 @@ const handleOrderChangeOrder: OrderSet = {
 };
 
 const mockHistory = {
-  push: jest.fn(),
-  replace: jest.fn(),
+  push: vi.fn(),
+  replace: vi.fn(),
 };
 
+// TODO M3-6428.
 // Used to mock query params
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useHistory: jest.fn(() => mockHistory),
-}));
+// vi.mock('react-router-dom', () => ({
+//   ...vi.requireActual('react-router-dom'),
+//   useHistory: vi.fn(() => mockHistory),
+// }));
 
 const queryClient = queryClientFactory();
 

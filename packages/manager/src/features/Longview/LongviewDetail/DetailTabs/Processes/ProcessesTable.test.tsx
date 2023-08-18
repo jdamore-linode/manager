@@ -6,7 +6,7 @@ import { renderWithTheme } from 'src/utilities/testHelpers';
 import { extendData } from './ProcessesLanding';
 import { ProcessesTable, Props } from './ProcessesTable';
 
-const mockSetSelectedRow = jest.fn();
+const mockSetSelectedRow = vi.fn();
 
 const props: Props = {
   processesData: [],

@@ -27,8 +27,8 @@ const props: CombinedProps = {
     data: mockLongviewSubscriptions,
     lastUpdated: 0,
     loading: false,
-    transformData: jest.fn(),
-    update: jest.fn(),
+    transformData: vi.fn(),
+    update: vi.fn(),
   },
 };
 

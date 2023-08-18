@@ -52,8 +52,8 @@ describe('AddNewMenu', () => {
   });
 
   test('does not render hidden menu item', () => {
-    const mockedUseFlags = jest.fn().mockReturnValue({ aglb: false });
-    jest.mock('src/hooks/useFlags', () => ({
+    const mockedUseFlags = vi.fn().mockReturnValue({ aglb: false });
+    vi.mock('src/hooks/useFlags', () => ({
       __esModule: true,
       useFlags: mockedUseFlags,
     }));

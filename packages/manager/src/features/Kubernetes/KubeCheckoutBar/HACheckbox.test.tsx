@@ -8,7 +8,7 @@ import HACheckbox, { Props } from './HACheckbox';
 
 const props: Props = {
   checked: false,
-  onChange: jest.fn(),
+  onChange: vi.fn(),
 };
 
 const shouldRender = HIGH_AVAILABILITY_PRICE !== undefined;

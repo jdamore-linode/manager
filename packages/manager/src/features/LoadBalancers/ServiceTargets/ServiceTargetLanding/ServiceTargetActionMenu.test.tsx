@@ -6,19 +6,19 @@ import { includesActions } from 'src/utilities/testHelpers';
 import { ServiceTargetActionMenu } from './ServiceTargetActionMenu';
 // import { createServiceTargetFactory } from 'src/factories/aglb';
 
-jest.mock('src/components/ActionMenu/ActionMenu');
-// const mockEditServiceTarget = jest.spyOn<any, any>(
+vi.mock('src/components/ActionMenu/ActionMenu');
+// const mockEditServiceTarget = vi.spyOn<any, any>(
 //     serviceTarget,
 //     'updateServiceTarget'
 //   );
-// const mockDeleteServiceTarget = jest.spyOn<any, any>(
+// const mockDeleteServiceTarget = vi.spyOn<any, any>(
 //   serviceTarget,
 //   'deleteServiceTarget'
 // );
 
 const props = {
   serviceTargetId: 1,
-  toggleDialog: jest.fn(),
+  toggleDialog: vi.fn(),
   label: 'my-service-target',
 };
 

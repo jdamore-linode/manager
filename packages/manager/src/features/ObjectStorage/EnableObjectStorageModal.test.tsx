@@ -6,8 +6,8 @@ import { wrapWithTheme } from 'src/utilities/testHelpers';
 
 import { EnableObjectStorageModal, Props } from './EnableObjectStorageModal';
 
-const handleSubmit = jest.fn();
-const onClose = jest.fn();
+const handleSubmit = vi.fn();
+const onClose = vi.fn();
 
 const props: Props = {
   handleSubmit,

@@ -20,21 +20,21 @@ afterEach(() => {
   queryClient.clear();
 });
 
-jest.mock('src/hooks/useFlags', () => ({
+vi.mock('src/hooks/useFlags', () => ({
   __esModule: true,
-  useFlags: jest.fn().mockReturnValue({ vpc: true }),
+  useFlags: vi.fn().mockReturnValue({ vpc: true }),
 }));
 
-jest.mock('src/queries/linodes/configs.ts', () => ({
-  useAllLinodeConfigsQuery: jest.fn().mockReturnValue({
+vi.mock('src/queries/linodes/configs.ts', () => ({
+  useAllLinodeConfigsQuery: vi.fn().mockReturnValue({
     data: linodeConfigFactory.buildList(1),
     error: {},
     isLoading: false,
   }),
 }));
 
-jest.mock('src/queries/vpcs.ts', () => ({
-  useVPCQuery: jest.fn().mockReturnValue({
+vi.mock('src/queries/vpcs.ts', () => ({
+  useVPCQuery: vi.fn().mockReturnValue({
     data: vpcFactory.build({ label: 'vpc-1' }),
     isLoading: false,
     error: {},

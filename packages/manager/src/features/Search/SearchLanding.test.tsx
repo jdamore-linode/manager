@@ -16,7 +16,7 @@ const props: Props = {
   combinedResults: [],
   entities: [],
   entitiesLoading: false,
-  search: jest.fn(),
+  search: vi.fn(),
   searchResultsByEntity: emptyResults,
   ...reactRouterProps,
 };
@@ -57,7 +57,7 @@ describe('Component', () => {
   });
 
   it('should search when the entity list (from Redux) changes', () => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     const { rerender } = render(wrapWithTheme(<SearchLanding {...props} />));
     expect(props.search).toHaveBeenCalledTimes(1);
 
