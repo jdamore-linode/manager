@@ -4,6 +4,7 @@
     "jsx": "react",
     "lib": ["dom", "es2020"],
     "target": "es5",
+    "types": ["vitest/globals", "@testing-library/jest-dom"],
 
     /* Modules */
     "baseUrl": ".",
