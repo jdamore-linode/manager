@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import Select, { Item } from 'src/components/EnhancedSelect/Select';
 import { Notice } from 'src/components/Notice/Notice';
-import RenderGuard from 'src/components/RenderGuard';
+import { RenderGuard } from 'src/components/RenderGuard';
 
 interface Props {
   error?: string;
@@ -51,7 +51,7 @@ class UserDefinedMultiSelect extends React.Component<CombinedProps, State> {
 
     return (
       <div>
-        {error && <Notice error spacingTop={8} text={error} />}
+        {error && <Notice spacingTop={8} text={error} variant="error" />}
         <Select
           isMulti={true}
           label={field.label}

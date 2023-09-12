@@ -5,9 +5,8 @@ import { Formik, FormikHelpers } from 'formik';
 import { pathOr, pick } from 'ramda';
 import * as React from 'react';
 
-import ActionsPanel from 'src/components/ActionsPanel';
-import { Button } from 'src/components/Button/Button';
-import Drawer from 'src/components/Drawer';
+import { ActionsPanel } from 'src/components/ActionsPanel/ActionsPanel';
+import { Drawer } from 'src/components/Drawer';
 import Select from 'src/components/EnhancedSelect/Select';
 import { Notice } from 'src/components/Notice/Notice';
 import { TextField } from 'src/components/TextField';
@@ -19,18 +18,17 @@ import {
   handleFieldErrors,
   handleGeneralErrors,
 } from 'src/utilities/formikErrorUtils';
+import { handleFormikBlur } from 'src/utilities/formikTrimUtil';
 
 import { ManagedContactGroup, Mode } from './common';
 
-interface Props {
+interface ContactsDrawerProps {
   closeDrawer: () => void;
   contact?: ManagedContact;
   groups: ManagedContactGroup[];
   isOpen: boolean;
   mode: Mode;
 }
-
-type CombinedProps = Props;
 
 const emptyContactPayload: ContactPayload = {
   email: '',
@@ -42,7 +40,7 @@ const emptyContactPayload: ContactPayload = {
   },
 };
 
-const ContactsDrawer: React.FC<CombinedProps> = (props) => {
+const ContactsDrawer = (props: ContactsDrawerProps) => {
   const { closeDrawer, contact, groups, isOpen, mode } = props;
 
   const isEditing = mode === 'edit' && contact;
@@ -113,16 +111,18 @@ const ContactsDrawer: React.FC<CombinedProps> = (props) => {
         validateOnChange={false}
         validationSchema={createContactSchema}
       >
-        {({
-          errors,
-          handleBlur,
-          handleChange,
-          handleSubmit,
-          isSubmitting,
-          setFieldValue,
-          status,
-          values,
-        }) => {
+        {(formikProps) => {
+          const {
+            errors,
+            handleBlur,
+            handleChange,
+            handleSubmit,
+            isSubmitting,
+            setFieldValue,
+            status,
+            values,
+          } = formikProps;
+
           const primaryPhoneError = pathOr('', ['phone', 'primary'], errors);
           // prettier-ignore
           const secondaryPhoneError = pathOr('', ['phone', 'secondary'], errors);
@@ -130,7 +130,11 @@ const ContactsDrawer: React.FC<CombinedProps> = (props) => {
           return (
             <>
               {status && (
-                <Notice error key={status} text={status.generalError} />
+                <Notice
+                  key={status}
+                  text={status.generalError}
+                  variant="error"
+                />
               )}
 
               <form onSubmit={handleSubmit}>
@@ -150,9 +154,10 @@ const ContactsDrawer: React.FC<CombinedProps> = (props) => {
                   errorText={errors.email}
                   label="E-mail"
                   name="email"
-                  onBlur={handleBlur}
+                  onBlur={(e) => handleFormikBlur(e, formikProps)}
                   onChange={handleChange}
                   required
+                  type="email"
                   value={values.email}
                 />
 
@@ -205,15 +210,13 @@ const ContactsDrawer: React.FC<CombinedProps> = (props) => {
                   placeholder="Create or Select a Group"
                 />
 
-                <ActionsPanel>
-                  <Button
-                    buttonType="primary"
-                    loading={isSubmitting}
-                    onClick={() => handleSubmit()}
-                  >
-                    {isEditing ? 'Save Changes' : 'Add Contact'}
-                  </Button>
-                </ActionsPanel>
+                <ActionsPanel
+                  primaryButtonProps={{
+                    label: isEditing ? 'Save Changes' : 'Add Contact',
+                    loading: isSubmitting,
+                    onClick: () => handleSubmit(),
+                  }}
+                />
               </form>
             </>
           );

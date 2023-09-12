@@ -4,8 +4,9 @@ import * as React from 'react';
 
 import { CircleProgress } from 'src/components/CircleProgress';
 import { ErrorState } from 'src/components/ErrorState/ErrorState';
-import { KubernetesPlansPanel } from 'src/features/Linodes/LinodesCreate/SelectPlanPanel/KubernetesPlansPanel';
 import { ExtendedType, extendType } from 'src/utilities/extendType';
+
+import { KubernetesPlansPanel } from '../KubernetesPlansPanel/KubernetesPlansPanel';
 
 const DEFAULT_PLAN_COUNT = 3;
 
@@ -16,6 +17,7 @@ export interface NodePoolPanelProps {
   isPlanPanelDisabled: (planType?: LinodeTypeClass) => boolean;
   isSelectedRegionEligibleForPlan: (planType?: LinodeTypeClass) => boolean;
   regionsData: Region[];
+  selectedRegionId: Region['id'];
   types: ExtendedType[];
   typesError?: string;
   typesLoading: boolean;
@@ -51,6 +53,7 @@ const Panel: React.FunctionComponent<NodePoolPanelProps> = (props) => {
     isPlanPanelDisabled,
     isSelectedRegionEligibleForPlan,
     regionsData,
+    selectedRegionId,
     types,
   } = props;
 
@@ -100,6 +103,7 @@ const Panel: React.FunctionComponent<NodePoolPanelProps> = (props) => {
           regionsData={regionsData}
           resetValues={() => null} // In this flow we don't want to clear things on tab changes
           selectedID={selectedType}
+          selectedRegionID={selectedRegionId}
           updatePlanCount={updatePlanCount}
         />
       </Grid>

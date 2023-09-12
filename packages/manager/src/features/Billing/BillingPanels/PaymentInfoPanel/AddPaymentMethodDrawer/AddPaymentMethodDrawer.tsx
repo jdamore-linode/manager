@@ -1,13 +1,13 @@
 import { PaymentMethod } from '@linode/api-v4/lib/account';
-import Box from '@mui/material/Box';
+import { Box } from 'src/components/Box';
 import Grid from '@mui/material/Unstable_Grid2';
 import { VariantType } from 'notistack';
 import * as React from 'react';
 
 import { Divider } from 'src/components/Divider';
-import Drawer from 'src/components/Drawer';
+import { Drawer } from 'src/components/Drawer';
 import { LinearProgress } from 'src/components/LinearProgress';
-import { Notice } from 'src/components/Notice/Notice';
+import { Notice, NoticeVariant } from 'src/components/Notice/Notice';
 import { TooltipIcon } from 'src/components/TooltipIcon';
 import { Typography } from 'src/components/Typography';
 import { MAXIMUM_PAYMENT_METHODS } from 'src/constants';
@@ -91,14 +91,13 @@ export const AddPaymentMethodDrawer = (props: Props) => {
       {hasMaxPaymentMethods ? (
         <Notice
           text="You reached the maximum number of payment methods on your account. Delete an existing payment method to add a new one."
-          warning
+          variant="warning"
         />
       ) : null}
       {noticeMessage ? (
         <Notice
-          error={noticeMessage.variant === 'error'}
           text={noticeMessage.text}
-          warning={noticeMessage.variant === 'warning'}
+          variant={noticeMessage.variant as NoticeVariant}
         />
       ) : null}
       <>

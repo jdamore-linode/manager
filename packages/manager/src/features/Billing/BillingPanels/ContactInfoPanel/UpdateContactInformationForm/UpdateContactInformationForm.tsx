@@ -5,12 +5,11 @@ import { pathOr } from 'ramda';
 import * as React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
-import ActionsPanel from 'src/components/ActionsPanel';
-import { Button } from 'src/components/Button/Button';
+import { ActionsPanel } from 'src/components/ActionsPanel/ActionsPanel';
 import EnhancedSelect, { Item } from 'src/components/EnhancedSelect/Select';
 import { Notice } from 'src/components/Notice/Notice';
 import { TextField } from 'src/components/TextField';
-import useFlags from 'src/hooks/useFlags';
+import { useFlags } from 'src/hooks/useFlags';
 import { useAccount, useMutateAccount } from 'src/queries/account';
 import { useNotificationsQuery } from 'src/queries/accountNotifications';
 import { getErrorMap } from 'src/utilities/errorUtils';
@@ -157,7 +156,7 @@ const UpdateContactInformationForm = ({ focusEmail, onClose }: Props) => {
       >
         {generalError && (
           <Grid xs={12}>
-            <Notice error text={generalError} />
+            <Notice text={generalError} variant="error" />
           </Grid>
         )}
         <Grid xs={12}>
@@ -170,6 +169,7 @@ const UpdateContactInformationForm = ({ focusEmail, onClose }: Props) => {
             name="email"
             onChange={formik.handleChange}
             required
+            trimmed
             type="email"
             value={formik.values.email}
           />
@@ -323,23 +323,20 @@ const UpdateContactInformationForm = ({ focusEmail, onClose }: Props) => {
           />
         </Grid>
       </Grid>
-      <ActionsPanel className={classes.actions}>
-        <Button
-          buttonType="secondary"
-          data-qa-reset-contact-info
-          onClick={onClose}
-        >
-          Cancel
-        </Button>
-        <Button
-          buttonType="primary"
-          data-qa-save-contact-info
-          loading={isLoading}
-          type="submit"
-        >
-          Save Changes
-        </Button>
-      </ActionsPanel>
+      <ActionsPanel
+        primaryButtonProps={{
+          'data-testid': 'save-contact-info',
+          label: 'Save Changes',
+          loading: isLoading,
+          type: 'submit',
+        }}
+        secondaryButtonProps={{
+          'data-testid': 'reset-contact-info',
+          label: 'Cancel',
+          onClick: onClose,
+        }}
+        className={classes.actions}
+      />
     </form>
   );
 };

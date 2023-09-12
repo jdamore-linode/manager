@@ -1,11 +1,11 @@
 import Grid from '@mui/material/Unstable_Grid2';
 import * as React from 'react';
 
-import LandingHeader from 'src/components/LandingHeader';
+import { LandingHeader } from 'src/components/LandingHeader';
 
 import ImageCreate from './ImageCreate';
 
-export const ImagesCreateContainer: React.FC = () => {
+export const ImagesCreateContainer = () => {
   return (
     <Grid container>
       <LandingHeader

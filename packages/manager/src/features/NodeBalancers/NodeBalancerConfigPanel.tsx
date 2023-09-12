@@ -2,7 +2,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import { styled } from '@mui/material/styles';
 import * as React from 'react';
 
-import ActionsPanel from 'src/components/ActionsPanel';
+import { ActionsPanel } from 'src/components/ActionsPanel/ActionsPanel';
 import { Button } from 'src/components/Button/Button';
 import { Divider } from 'src/components/Divider';
 import Select from 'src/components/EnhancedSelect/Select';
@@ -10,7 +10,7 @@ import { Link } from 'src/components/Link';
 import { Notice } from 'src/components/Notice/Notice';
 import { TextField } from 'src/components/TextField';
 import { Typography } from 'src/components/Typography';
-import FormHelperText from 'src/components/core/FormHelperText';
+import { FormHelperText } from 'src/components/FormHelperText';
 
 import { ActiveCheck } from './NodeBalancerActiveCheck';
 import { NodeBalancerConfigNode } from './NodeBalancerConfigNode';
@@ -181,8 +181,8 @@ export const NodeBalancerConfigPanel = (
       {globalFormError && (
         <Notice
           className={`error-for-scroll-${configIdx}`}
-          error
           text={globalFormError}
+          variant="error"
         />
       )}
       <Grid container spacing={2}>
@@ -354,7 +354,7 @@ export const NodeBalancerConfigPanel = (
         <Grid xs={12}>
           {nodeMessage && (
             <Grid xs={12}>
-              <Notice info text={nodeMessage} />
+              <Notice text={nodeMessage} variant="info" />
             </Grid>
           )}
           <Typography data-qa-backend-ip-header variant="h2">
@@ -408,44 +408,37 @@ export const NodeBalancerConfigPanel = (
           </Grid>
         </Grid>
       </Grid>
-
-      {(forEdit || configIdx !== 0) && (
-        <React.Fragment>
-          <Grid xs={12}>
-            <Divider />
-          </Grid>
-          <Grid
-            alignItems="center"
-            container
-            justifyContent="flex-end"
-            spacing={2}
-          >
-            <StyledActionsPanel>
-              {(forEdit || configIdx !== 0) && (
-                <Button
-                  buttonType="secondary"
-                  data-qa-delete-config
-                  disabled={disabled}
-                  onClick={props.onDelete}
-                >
-                  Delete
-                </Button>
-              )}
-              {forEdit && (
-                <Button
-                  buttonType="primary"
-                  data-qa-save-config
-                  disabled={disabled}
-                  loading={submitting}
-                  onClick={onSave}
-                >
-                  Save
-                </Button>
-              )}
-            </StyledActionsPanel>
-          </Grid>
-        </React.Fragment>
-      )}
+      <React.Fragment>
+        <Grid xs={12}>
+          <Divider />
+        </Grid>
+        <Grid
+          alignItems="center"
+          container
+          justifyContent="flex-end"
+          spacing={2}
+        >
+          <StyledActionsPanel
+            primaryButtonProps={
+              forEdit
+                ? {
+                    'data-testid': 'save-config',
+                    disabled,
+                    label: 'Save',
+                    loading: submitting,
+                    onClick: onSave,
+                  }
+                : undefined
+            }
+            secondaryButtonProps={{
+              'data-testid': 'delete-config',
+              disabled,
+              label: 'Delete',
+              onClick: props.onDelete,
+            }}
+          />
+        </Grid>
+      </React.Fragment>
     </Grid>
   );
 };

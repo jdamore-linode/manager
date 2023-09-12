@@ -14,9 +14,9 @@ import { Notice } from 'src/components/Notice/Notice';
 import { Radio } from 'src/components/Radio/Radio';
 import { TooltipIcon } from 'src/components/TooltipIcon';
 import { Typography } from 'src/components/Typography';
-import FormControl from 'src/components/core/FormControl';
-import FormControlLabel from 'src/components/core/FormControlLabel';
-import RadioGroup from 'src/components/core/RadioGroup';
+import { FormControl } from 'src/components/FormControl';
+import { FormControlLabel } from 'src/components/FormControlLabel';
+import { RadioGroup } from 'src/components/RadioGroup';
 import { useDatabaseMutation } from 'src/queries/databases';
 
 // import { updateDatabaseSchema } from '@linode/validation/src/databases.schema';
@@ -180,7 +180,7 @@ export const MaintenanceWindow = (props: Props) => {
             Maintenance Window
           </Typography>
           {maintenanceUpdateError ? (
-            <Notice error spacingTop={8}>
+            <Notice spacingTop={8} variant="error">
               {maintenanceUpdateError[0].reason}
             </Notice>
           ) : null}

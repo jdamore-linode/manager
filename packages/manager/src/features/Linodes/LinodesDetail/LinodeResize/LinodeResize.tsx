@@ -1,7 +1,6 @@
 import { Disk, LinodeType } from '@linode/api-v4/lib/linodes';
 import { APIError } from '@linode/api-v4/lib/types';
-import { Theme } from '@mui/material/styles';
-import { makeStyles } from '@mui/styles';
+import { styled } from '@mui/material/styles';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import * as React from 'react';
@@ -10,14 +9,14 @@ import { Box } from 'src/components/Box';
 import { Button } from 'src/components/Button/Button';
 import { Checkbox } from 'src/components/Checkbox';
 import { Dialog } from 'src/components/Dialog/Dialog';
-import ExternalLink from 'src/components/ExternalLink';
+import { Link } from 'src/components/Link';
 import { Notice } from 'src/components/Notice/Notice';
 import { TooltipIcon } from 'src/components/TooltipIcon';
 import { TypeToConfirm } from 'src/components/TypeToConfirm/TypeToConfirm';
 import { Typography } from 'src/components/Typography';
 import { resetEventsPolling } from 'src/eventsPolling';
-import PlansPanel from 'src/features/Linodes/LinodesCreate/SelectPlanPanel/PlansPanel';
 import { linodeInTransition } from 'src/features/Linodes/transitions';
+import { PlansPanel } from 'src/features/components/PlansPanel/PlansPanel';
 import { useAllLinodeDisksQuery } from 'src/queries/linodes/disks';
 import {
   useLinodeQuery,
@@ -27,27 +26,12 @@ import { usePreferences } from 'src/queries/preferences';
 import { useGrants } from 'src/queries/profile';
 import { useRegionsQuery } from 'src/queries/regions';
 import { useAllTypes } from 'src/queries/types';
-import { getPermissionsForLinode } from 'src/store/linodes/permissions/permissions.selector';
 import { extendType } from 'src/utilities/extendType';
+import { getPermissionsForLinode } from 'src/utilities/linodes';
 import scrollErrorIntoView from 'src/utilities/scrollErrorIntoView';
 
 import { HostMaintenanceError } from '../HostMaintenanceError';
 import { LinodePermissionsError } from '../LinodePermissionsError';
-
-const useStyles = makeStyles((theme: Theme) => ({
-  resizeTitle: {
-    alignItems: 'center',
-    display: 'flex',
-    minHeight: '44px',
-  },
-  selectPlanPanel: {
-    '& > div': {
-      padding: 0,
-    },
-    marginBottom: theme.spacing(3),
-    marginTop: theme.spacing(5),
-  },
-}));
 
 interface Props {
   linodeId?: number;
@@ -57,17 +41,16 @@ interface Props {
 }
 
 export const LinodeResize = (props: Props) => {
-  const classes = useStyles();
   const { linodeId, onClose, open } = props;
 
   const { data: linode } = useLinodeQuery(
     linodeId ?? -1,
-    linodeId !== undefined
+    linodeId !== undefined && open
   );
 
   const { data: disks, error: disksError } = useAllLinodeDisksQuery(
     linodeId ?? -1,
-    linodeId !== undefined
+    linodeId !== undefined && open
   );
 
   const { data: types } = useAllTypes(open);
@@ -180,24 +163,22 @@ export const LinodeResize = (props: Props) => {
         {hostMaintenance && <HostMaintenanceError />}
         {disksError && (
           <Notice
-            error
             text="There was an error loading your Linode&rsquo;s Disks."
+            variant="error"
           />
         )}
-        {error && <Notice error>{error}</Notice>}
+        {error && <Notice variant="error">{error}</Notice>}
         <Typography data-qa-description>
           If you&rsquo;re expecting a temporary burst of traffic to your
           website, or if you&rsquo;re not using your Linode as much as you
           thought, you can temporarily or permanently resize your Linode to a
           different plan.{' '}
-          <ExternalLink
-            fixedIcon
-            link="https://www.linode.com/docs/platform/disk-images/resizing-a-linode/"
-            text="Learn more."
-          />
+          <Link to="https://www.linode.com/docs/platform/disk-images/resizing-a-linode/">
+            Learn more.
+          </Link>
         </Typography>
 
-        <div className={classes.selectPlanPanel}>
+        <StyledDiv>
           <PlansPanel
             currentPlanHeading={type ? extendType(type).heading : undefined} // lol, why make us pass the heading and not the plan id?
             disabled={tableDisabled}
@@ -207,8 +188,11 @@ export const LinodeResize = (props: Props) => {
             selectedRegionID={linode?.region}
             types={currentTypes.map(extendType)}
           />
-        </div>
-        <Typography className={classes.resizeTitle} variant="h2">
+        </StyledDiv>
+        <Typography
+          sx={{ alignItems: 'center', display: 'flex', minHeight: '44px' }}
+          variant="h2"
+        >
           Auto Resize Disk
           {disksError ? (
             <TooltipIcon
@@ -302,23 +286,32 @@ export const LinodeResize = (props: Props) => {
   );
 };
 
+const StyledDiv = styled('div', { label: 'StyledDiv' })(({ theme }) => ({
+  '& > div': {
+    padding: 0,
+  },
+  marginBottom: theme.spacing(3),
+  marginTop: theme.spacing(5),
+}));
+
 const getError = (error: APIError[] | null) => {
   if (!error) {
     return null;
   }
 
   const errorText = error?.[0]?.reason;
-  if (errorText.match(/allocated more disk/i)) {
+  if (
+    typeof errorText === 'string' &&
+    errorText.match(/allocated more disk/i)
+  ) {
     return (
       <Typography>
         The current disk size of your Linode is too large for the new service
         plan. Please resize your disk to accommodate the new plan. You can read
         our{' '}
-        <ExternalLink
-          hideIcon
-          link="https://www.linode.com/docs/platform/disk-images/resizing-a-linode/"
-          text="Resize Your Linode"
-        />{' '}
+        <Link to="https://www.linode.com/docs/platform/disk-images/resizing-a-linode/">
+          Resize Your Linode
+        </Link>{' '}
         guide for more detailed instructions.
       </Typography>
     );

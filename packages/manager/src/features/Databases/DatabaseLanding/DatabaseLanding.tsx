@@ -5,12 +5,10 @@ import { useHistory } from 'react-router-dom';
 import { CircleProgress } from 'src/components/CircleProgress';
 import { ErrorState } from 'src/components/ErrorState/ErrorState';
 import { Hidden } from 'src/components/Hidden';
-import LandingHeader from 'src/components/LandingHeader';
+import { LandingHeader } from 'src/components/LandingHeader';
 import { PaginationFooter } from 'src/components/PaginationFooter/PaginationFooter';
-import { ProductInformationBanner } from 'src/components/ProductInformationBanner/ProductInformationBanner';
 import { Table } from 'src/components/Table';
 import { TableBody } from 'src/components/TableBody';
-import { TableCell } from 'src/components/TableCell';
 import { TableHead } from 'src/components/TableHead';
 import { TableRow } from 'src/components/TableRow';
 import { TableSortCell } from 'src/components/TableSortCell';
@@ -69,7 +67,6 @@ const DatabaseLanding = () => {
 
   return (
     <React.Fragment>
-      <ProductInformationBanner bannerLocation="Databases" important warning />
       <LandingHeader
         createButtonText="Create Database Cluster"
         docsLink="https://www.linode.com/docs/products/databases/managed-databases/"
@@ -105,9 +102,23 @@ const DatabaseLanding = () => {
                 Configuration
               </TableSortCell>
             </Hidden>
-            <TableCell>Engine</TableCell>
+            <TableSortCell
+              active={orderBy === 'engine'}
+              direction={order}
+              handleClick={handleOrderChange}
+              label="engine"
+            >
+              Engine
+            </TableSortCell>
             <Hidden mdDown>
-              <TableCell>Region</TableCell>
+              <TableSortCell
+                active={orderBy === 'region'}
+                direction={order}
+                handleClick={handleOrderChange}
+                label="region"
+              >
+                Region
+              </TableSortCell>
             </Hidden>
             <Hidden lgDown>
               <TableSortCell

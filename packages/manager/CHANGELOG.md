@@ -4,6 +4,237 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2023-09-07] - v1.101.1
+
+
+### Fixed:
+
+-  Restricted users unable to edit Firewall after creation ([#9637](https://github.com/linode/manager/pull/9637))
+
+## [2023-09-05] - v1.101.0
+
+
+### Added:
+
+- September marketplace release ([#9596](https://github.com/linode/manager/pull/9596))
+
+### Fixed:
+
+- Longview crashing the app with a negative number of CPU cores ([#9563](https://github.com/linode/manager/pull/9563))
+- CopyTooltip hover state in Linode Summary ([#9587](https://github.com/linode/manager/pull/9587))
+- Metadata Image select dropdown ([#9592](https://github.com/linode/manager/pull/9592))
+- Hide User Data accordion in Linode Rebuild dialog for unsupported regions ([#9602](https://github.com/linode/manager/pull/9602))
+
+### Tech Stories:
+
+- Add Product Information Banners for all product landing pages ([#9523](https://github.com/linode/manager/pull/9523))
+- MUI v5 migration - `SRC > Features > ToastNotifications` ([#9555](https://github.com/linode/manager/pull/9555))
+- MUI v5 Migration - `SRC > Features > GlobalNotifications` ([#9561](https://github.com/linode/manager/pull/9561))
+- MUI v5 Migration - `SRC > Features > Events` ([#9565](https://github.com/linode/manager/pull/9565))
+- Make feature flag dev tools show reality ([#9567](https://github.com/linode/manager/pull/9567))
+- Update Material UI and Emotion ([#9603](https://github.com/linode/manager/pull/9603))
+
+### Upcoming Features:
+
+- Add AGLB Create Page - Stepper component ([#9520](https://github.com/linode/manager/pull/9520))
+- VPC Create page ([#9537](https://github.com/linode/manager/pull/9537))
+- VPC detail summary ([#9549](https://github.com/linode/manager/pull/9549))
+- Add AGLB landing page ([#9556](https://github.com/linode/manager/pull/9556))
+- Introduce dynamic pricing utils and constants ([#9564](https://github.com/linode/manager/pull/9564))
+- Add DC Specific Pricing to NodeBalancer Create ([#9566](https://github.com/linode/manager/pull/9566))
+- Add DC-specific pricing to Kubernetes HA ([#9568](https://github.com/linode/manager/pull/9568))
+- Add DC dynamic pricing information for Linode migration flow ([#9570](https://github.com/linode/manager/pull/9570))
+- Add DC Specific Pricing Notices and Docs Links ([#9572](https://github.com/linode/manager/pull/9572))
+- Add AGLB Details - Certificate Tab ([#9576](https://github.com/linode/manager/pull/9576))
+- Add AGLB Details - Service Targets Tab ([#9577](https://github.com/linode/manager/pull/9577))
+- Fix volume e2e test and dc specific price unit test ([#9578](https://github.com/linode/manager/pull/9578))
+- Add AGLB Details - Settings Tab ([#9583](https://github.com/linode/manager/pull/9583))
+- Add Collapsible Table Component ([#9584](https://github.com/linode/manager/pull/9584))
+- Update mocks for DC-specific pricing API responses ([#9586](https://github.com/linode/manager/pull/9586))
+- Add DC-specific pricing to Linode backups ([#9588](https://github.com/linode/manager/pull/9588))
+- Details for betas and ability to enroll in betas ([#9544](https://github.com/linode/manager/pull/9544))
+- Support for VPC and subnet events ([#9530](https://github.com/linode/manager/pull/9530))
+- Added DC specific pricing to Volumes create flows ([#9569](https://github.com/linode/manager/pull/9569))
+- Update header from “Subnet” to “Subnets” in VPC Create flow ([#9604](https://github.com/linode/manager/pull/9604))
+
+
+## [2023-08-30] - v1.100.2
+
+### Fixed:
+
+- Extra API calls for Linode Configs ([#9609](https://github.com/linode/manager/pull/9609))
+
+
+## [2023-08-22] - v1.100.1
+
+### Fixed:
+
+- Incorrect timezone form styles on profile page ([#9573](https://github.com/linode/manager/pull/9573))
+- Create Linode from Stackscript field state bug ([#9573](https://github.com/linode/manager/pull/9573))
+
+
+## [2023-08-21] - v1.100.0
+
+
+### Added:
+
+- Firewalls table to Linode Details > “Network” tab ([#9470](https://github.com/linode/manager/pull/9470))
+
+### Changed:
+
+- Strip whitespace on blur for username and email text fields ([#9463](https://github.com/linode/manager/pull/9463))
+- Move Kubernetes HA Control Plane selection from checkout bar to create form ([#9489](https://github.com/linode/manager/pull/9489))
+
+### Fixed:
+
+- Alignment issue on Service Transfers page ([#9491](https://github.com/linode/manager/pull/9491))
+- Broken K8 node pools display with infinite scrolling ([#9509](https://github.com/linode/manager/pull/9509))
+- Collision caused by IPv6 address in the FW Rules Table ([#9510](https://github.com/linode/manager/pull/9510))
+- Inconsistent Node Pool Summary price font family ([#9512](https://github.com/linode/manager/pull/9512))
+- Persistent OAuth client inputs after canceling or submitting ([#9515](https://github.com/linode/manager/pull/9515))
+- Disabled Select tooltip hover ([#9518](https://github.com/linode/manager/pull/9518))
+- Styling syntax error with EnhancedSelectFields ([#9521](https://github.com/linode/manager/pull/9521))
+- Circular dependency and blur behaviors on main search field ([#9534](https://github.com/linode/manager/pull/9534))
+- Incorrect redirect to DBaaS instance details page upon create ([#9547](https://github.com/linode/manager/pull/9547))
+- Hively icons showing external link icons ([#9548](https://github.com/linode/manager/pull/9548))
+- Crash when resizing a Linode under a user’s reputation score ([#9550](https://github.com/linode/manager/pull/9550))
+- Firewalls breadcrumb containing the firewall id ([#9554](https://github.com/linode/manager/pull/9554))
+
+### Tech Stories:
+
+- Clean up Profile Settings ([#9482](https://github.com/linode/manager/pull/9482))
+- Finish deprecating the `core` folder and clean up components ([#9488](https://github.com/linode/manager/pull/9488))
+- Add event messages story and playground ([#9516](https://github.com/linode/manager/pull/9516))
+- Refactor Backups Drawer ([#9517](https://github.com/linode/manager/pull/9517))
+- Clean up withRouter usage ([#9522](https://github.com/linode/manager/pull/9522))
+- Clean up how dev tools are initialized ([#9525](https://github.com/linode/manager/pull/9525))
+- Replaced deprecated keycodes  ([#9527](https://github.com/linode/manager/pull/9527))
+- MUI v5 Migration - `SRC > Features > TopMenu` ([#9498](https://github.com/linode/manager/pull/9498))
+- MUI v5 Migration - `SRC > Features > Linodes pt2` ([#9501](https://github.com/linode/manager/pull/9501))
+- MUI v5 Migration - `SRC > Features > Search` ([#9532](https://github.com/linode/manager/pull/9532))
+- Make UserMenu use MUI instead of Reach UI ([#9533](https://github.com/linode/manager/pull/9533))
+- Make ActionMenu use MUI instead of Reach UI ([#9540](https://github.com/linode/manager/pull/9540))
+- Duplicate key error on Linode and NodeBalancer Landing ([#9543](https://github.com/linode/manager/pull/9543))
+
+### Upcoming Features:
+
+- Add AGLB empty state ([#9462](https://github.com/linode/manager/pull/9462))
+- Update AGLB API endpoints ([#9496](https://github.com/linode/manager/pull/9496))
+- Add AGLB Details - Summary Page ([#9551](https://github.com/linode/manager/pull/9551))
+- Add Betas Landing page ([#9465](https://github.com/linode/manager/pull/9465))
+- Add VPC column to linodes landing page table ([#9485](https://github.com/linode/manager/pull/9485))
+- Add VPC delete dialog ([#9490](https://github.com/linode/manager/pull/9490))
+- Add VPC Edit drawer ([#9528](https://github.com/linode/manager/pull/9528))
+- Swap VLAN and User Data order in Linode Create ([#9492](https://github.com/linode/manager/pull/9492))
+- Remove customer tag check for Metadata ([#9546](https://github.com/linode/manager/pull/9546))
+
+## [2023-08-11] - v1.99.1
+### Fixed:
+
+Unescape encoding for user data ([#9536](https://github.com/linode/manager/pull/9536))
+
+## [2023-08-07] - v1.99.0
+
+
+### Added:
+
+- Ability to sort Databases by Region and Engine ([#9433](https://github.com/linode/manager/pull/9433))
+
+### Changed:
+
+- NodeBalancers can be created without a configuration ([#9472](https://github.com/linode/manager/pull/9472))
+- Renamed `Premium` to `Premium CPU` in plans tables ([#9484](https://github.com/linode/manager/pull/9484))
+
+### Fixed:
+
+- Make drawers full width on mobile viewports ([#9427](https://github.com/linode/manager/pull/9427))
+- Inconsistent styling and clipped copy tooltip on OBJ bucket details page ([#9430](https://github.com/linode/manager/pull/9430))
+- Remove markup from Help & Support landing search results  ([#9456](https://github.com/linode/manager/pull/9456))
+- Create Firewall drawer input persisting after firewall creation or cancellation ([#9459](https://github.com/linode/manager/pull/9459))
+- Redirect the user back to `/linodes` when Linode is deleted from Linode Details ([#9469](https://github.com/linode/manager/pull/9469))
+- Add Gopaddle & re-add Wazuh Marketplace apps ([#9473](https://github.com/linode/manager/pull/9473))
+- Enhanced Select fields text cut off at bottom ([#9479](https://github.com/linode/manager/pull/9479))
+
+### Removed:
+
+- Linodes Redux store ([#9421](https://github.com/linode/manager/pull/9421))
+
+### Tech Stories:
+
+- Improve reusability for ActionPanel component ([#9341](https://github.com/linode/manager/pull/9341))
+- Migrate LinodeSelect to LinodeSelect ([#9396](https://github.com/linode/manager/pull/9396))
+- Refactor Link and deprecate ExternalLink ([#9411](https://github.com/linode/manager/pull/9411))
+- Optimize Linode event handlers and query invalidation ([#9451](https://github.com/linode/manager/pull/9451))
+- LinodeSelect - Allow fully custom noOptionsText ([#9452](https://github.com/linode/manager/pull/9452))
+- React Query queries for Linode Configs ([#9418](https://github.com/linode/manager/pull/9418))
+- Resolve open dependabot alerts and clean up packages ([#9425](https://github.com/linode/manager/pull/9425))
+- Remove Bluebird.js as a dependency ([#9455](https://github.com/linode/manager/pull/9455))
+- Clean up exports of src/hooks/ ([#9457](https://github.com/linode/manager/pull/9457))
+- Update Storybook Categories ([#9458](https://github.com/linode/manager/pull/9458))
+- Fix <LinodeSelect /> bugs ([#9464](https://github.com/linode/manager/pull/9464))
+- Decrease Sentry capture rate ([#9487](https://github.com/linode/manager/pull/9487))
+- MUI v5 Migration - `SRC > Components > TableFooter` ([#9412](https://github.com/linode/manager/pull/9412))
+- MUI v5 Migration - `SRC > Components > Dialog` ([#9419](https://github.com/linode/manager/pull/9419))
+- MUI v5 Migration - `SRC > Features > Firewalls` ([#9434](https://github.com/linode/manager/pull/9434))
+- MUI v5 Migration > `SRC > Features > Linodes Pt 1` ([#9445](https://github.com/linode/manager/pull/9445))
+- MUI v5 Migration - `SRC > Components > InputAdornment` ([#9454](https://github.com/linode/manager/pull/9454))
+- MUI v5 Migration - `SRC > Components > FormControlLabel` ([#9476](https://github.com/linode/manager/pull/9476))
+- MUI v5 Migration - `SRC > Components > Form` ([#9480](https://github.com/linode/manager/pull/9480))
+- MUI v5 migration `SRC > Features > Help` ([#9408](https://github.com/linode/manager/pull/9408))
+
+### Upcoming Features:
+
+- VPC landing page ([#9467](https://github.com/linode/manager/pull/9467))
+- Add basic routing and files for VPC ([#9474](https://github.com/linode/manager/pull/9474))
+- Fix User data input crash ([#9494](https://github.com/linode/manager/pull/9494))
+
+## [2023-07-28] - v1.98.1
+
+### Fixed:
+
+- Region Select order ([#9466](https://github.com/linode/manager/pull/9466))
+- Backups Drawer missing plans and prices ([#9466](https://github.com/linode/manager/pull/9466))
+
+## [2023-07-24] - v1.98.0
+
+### Added:
+
+- Hover state on table rows ([#9367](https://github.com/linode/manager/pull/9367))
+
+### Fixed:
+
+- Misleading MNTP percentage for accounts with no active services ([#9362](https://github.com/linode/manager/pull/9362))
+- LinodeSelect styling ([#9417](https://github.com/linode/manager/pull/9417))
+- Behavior of logo and menu items in SideMenu ([#9431](https://github.com/linode/manager/pull/9431))
+- TopMenu bug that prevented tooltips from showing via tab key navigation ([#9371](https://github.com/linode/manager/pull/9371))
+- Make "edit" button for images landing page consistent ([#9424](https://github.com/linode/manager/pull/9424))
+- Temporarily hide Wazuh Marketplace app ([#9442](https://github.com/linode/manager/pull/9442))
+
+### Tech Stories:
+
+- Improve Sentry's environment identification ([#9428](https://github.com/linode/manager/pull/9428))
+- Update Sentry and enable performance monitoring ([#9337](https://github.com/linode/manager/pull/9337))
+- RQ-ify Events ([#9416](https://github.com/linode/manager/pull/9416))
+- MUI v5 Migration - `SRC > Components > DocumentTitle` ([#9406](https://github.com/linode/manager/pull/9406))
+- MUI v5 Migration - `SRC > Components > Paper` ([#9410](https://github.com/linode/manager/pull/9410))
+- MUI v5 Migration `SRC > Features > Footer` ([#9415](https://github.com/linode/manager/pull/9415))
+- MUI v5 Migration - `SRC > Component > GaugePercent` ([#9420](https://github.com/linode/manager/pull/9420))
+- MUI v5 Migration - `SRC > Components > Drawer` ([#9423](https://github.com/linode/manager/pull/9423))
+- MUI v5 Migration - `SRC > Components > SectionErrorBoundary` ([#9329](https://github.com/linode/manager/pull/9329))
+- Use RQ for isLargeAccount ([#9402](https://github.com/linode/manager/pull/9402))
+- MUI v5 Migration - 'SRC > Features > Domains' ([#9403](https://github.com/linode/manager/pull/9403))
+
+### Upcoming Features:
+
+- Set up initial AGLB RQ work with useLoadBalancers ([#9392](https://github.com/linode/manager/pull/9392))
+- Add primary navigation AGLB entry (feature flagged & Beta) ([#9404](https://github.com/linode/manager/pull/9404))
+- Add LoadBalancer create menu entry  (feature flagged & Beta)  ([#9405](https://github.com/linode/manager/pull/9405))
+- Add skeleton AGLB Service Target landing page and unit tests ([#9397](https://github.com/linode/manager/pull/9397))
+- Add initial AGLB routes, folders, pages, and tabs ([#9376](https://github.com/linode/manager/pull/9376))
+- React Query queries for VPC Subnets ([#9390](https://github.com/linode/manager/pull/9390))
+- Make VLAN section in Linode Create an Accordion ([#9414](https://github.com/linode/manager/pull/9414))
+- Queries, server handlers, and factories for self-serve betas ([#9386](https://github.com/linode/manager/pull/9386))
+
 ## [2023-07-11] - v1.97.0
 
 

@@ -1,29 +1,35 @@
 import * as React from 'react';
 
+import { Link } from 'src/components/Link';
 import { Typography } from 'src/components/Typography';
+import { useFlags } from 'src/hooks/useFlags';
 
-interface RegionHelperTextProps {
+import { Box, BoxProps } from '../Box';
+import { DynamicPriceNotice } from '../DynamicPriceNotice';
+
+interface RegionHelperTextProps extends BoxProps {
+  hidePricingNotice?: boolean;
   onClick?: () => void;
 }
 
 export const RegionHelperText = (props: RegionHelperTextProps) => {
-  const { onClick } = props;
+  const { hidePricingNotice, onClick, ...rest } = props;
+  const flags = useFlags();
 
   return (
-    <Typography variant="body1">
-      You can use
-      {` `}
-      <a
-        aria-describedby="external-site"
-        href="https://www.linode.com/speed-test/"
-        onClick={onClick}
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        our speedtest page
-      </a>
-      {` `}
-      to find the best region for your current location.
-    </Typography>
+    <Box {...rest}>
+      <Typography variant="body1">
+        You can use
+        {` `}
+        <Link onClick={onClick} to="https://www.linode.com/speed-test/">
+          our speedtest page
+        </Link>
+        {` `}
+        to find the best region for your current location.
+      </Typography>
+      {flags.dcSpecificPricing && !hidePricingNotice && (
+        <DynamicPriceNotice spacingBottom={0} spacingTop={8} />
+      )}
+    </Box>
   );
 };

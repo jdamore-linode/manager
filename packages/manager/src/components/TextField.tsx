@@ -1,5 +1,5 @@
 import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
-import Box from '@mui/material/Box';
+import { Box } from 'src/components/Box';
 import {
   default as _TextField,
   StandardTextFieldProps,
@@ -10,11 +10,11 @@ import * as React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 import { CircleProgress } from 'src/components/CircleProgress';
-import { TooltipProps as _TooltipProps } from 'src/components/Tooltip';
+import { FormHelperText } from 'src/components/FormHelperText';
+import { InputAdornment } from 'src/components/InputAdornment';
+import { InputLabel } from 'src/components/InputLabel';
+import { TooltipProps } from 'src/components/Tooltip';
 import { TooltipIcon } from 'src/components/TooltipIcon';
-import FormHelperText from 'src/components/core/FormHelperText';
-import InputAdornment from 'src/components/core/InputAdornment';
-import InputLabel from 'src/components/core/InputLabel';
 import { convertToKebabCase } from 'src/utilities/convertToKebobCase';
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -139,6 +139,10 @@ interface BaseProps {
    * Adds `(required)` to the Label
    */
   required?: boolean;
+  /**
+   * The leading and trailing spacing should be trimmed from the textfield on blur; intended to be used for username, emails, and SSH key input only
+   */
+  trimmed?: boolean;
   value?: Value;
 }
 
@@ -152,7 +156,7 @@ interface InputToolTipProps {
   tooltipClasses?: string;
   tooltipInteractive?: boolean;
   tooltipOnMouseEnter?: React.MouseEventHandler<HTMLDivElement>;
-  tooltipPosition?: _TooltipProps['placement'];
+  tooltipPosition?: TooltipProps['placement'];
   tooltipText?: JSX.Element | string;
 }
 
@@ -193,6 +197,7 @@ export const TextField = (props: TextFieldProps) => {
     max,
     min,
     noMarginTop,
+    onBlur,
     onChange,
     optional,
     required,
@@ -201,6 +206,7 @@ export const TextField = (props: TextFieldProps) => {
     tooltipOnMouseEnter,
     tooltipPosition,
     tooltipText,
+    trimmed,
     type,
     value,
     ...textFieldProps
@@ -211,6 +217,19 @@ export const TextField = (props: TextFieldProps) => {
   React.useEffect(() => {
     setValue(value);
   }, [value]);
+
+  const handleBlur = (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    if (trimmed) {
+      const trimmedValue = e.target.value.trim();
+      e.target.value = trimmedValue;
+      setValue(trimmedValue);
+    }
+    if (onBlur) {
+      onBlur(e);
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const numberTypes = ['tel', 'number'];
@@ -379,6 +398,7 @@ export const TextField = (props: TextFieldProps) => {
            * have the ability to put the helper text under the label at the top.
            */
           label={''}
+          onBlur={handleBlur}
           onChange={handleChange}
           type={type}
           /*

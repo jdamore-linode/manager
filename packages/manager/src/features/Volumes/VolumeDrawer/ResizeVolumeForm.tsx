@@ -1,9 +1,8 @@
 import { ResizeVolumeSchema } from '@linode/validation/lib/volumes.schema';
-import { Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import * as React from 'react';
 
 import { Notice } from 'src/components/Notice/Notice';
-import Form from 'src/components/core/Form';
 import { resetEventsPolling } from 'src/eventsPolling';
 import { useResizeVolumeMutation } from 'src/queries/volumes';
 import {
@@ -16,22 +15,28 @@ import { PricePanel } from './PricePanel';
 import SizeField from './SizeField';
 import VolumesActionsPanel from './VolumesActionsPanel';
 
+import type { FlagSet } from 'src/featureFlags';
+
 interface Props {
+  flags: FlagSet;
   onClose: () => void;
   onSuccess: (volumeLabel: string, message?: string) => void;
   readOnly?: boolean;
   volumeId: number;
   volumeLabel: string;
+  volumeRegion: string;
   volumeSize: number;
 }
 
 export const ResizeVolumeForm = (props: Props) => {
   const {
+    flags,
     onClose,
     onSuccess,
     readOnly,
     volumeId,
     volumeLabel,
+    volumeRegion,
     volumeSize,
   } = props;
 
@@ -92,21 +97,30 @@ export const ResizeVolumeForm = (props: Props) => {
             )}
             {readOnly && (
               <Notice
-                error={true}
                 important
                 text={`You don't have permissions to edit ${volumeLabel}. Please contact an account administrator for details.`}
+                variant="error"
               />
             )}
+
             <SizeField
               disabled={readOnly}
               error={errors.size}
+              flags={flags}
               name="size"
               onBlur={handleBlur}
               onChange={handleChange}
+              regionId={volumeRegion}
               resize={volumeSize}
               value={values.size}
             />
-            <PricePanel currentSize={volumeSize} value={values.size} />
+
+            <PricePanel
+              currentSize={volumeSize}
+              flags={flags}
+              regionId={volumeRegion}
+              value={values.size}
+            />
             <VolumesActionsPanel
               onCancel={() => {
                 resetForm();

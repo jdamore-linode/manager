@@ -3,9 +3,8 @@ import {
   InterfacePurpose,
 } from '@linode/api-v4/lib/linodes/types';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Theme, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { makeStyles } from '@mui/styles';
 import * as React from 'react';
 
 import { Divider } from 'src/components/Divider';
@@ -13,13 +12,6 @@ import Select, { Item } from 'src/components/EnhancedSelect/Select';
 import { TextField } from 'src/components/TextField';
 import { useVlansQuery } from 'src/queries/vlans';
 import { sendLinodeCreateDocsEvent } from 'src/utilities/analytics';
-
-const useStyles = makeStyles((theme: Theme) => ({
-  divider: {
-    margin: `${theme.spacing(4.5)} ${theme.spacing()} ${theme.spacing(1.5)} `,
-    width: `calc(100% - ${theme.spacing(2)})`,
-  },
-}));
 
 export interface Props {
   fromAddonsPanel?: boolean;
@@ -40,8 +32,7 @@ export interface ExtendedInterface extends Omit<InterfacePayload, 'purpose'> {
   purpose: ExtendedPurpose;
 }
 
-export const InterfaceSelect: React.FC<Props> = (props) => {
-  const classes = useStyles();
+export const InterfaceSelect = (props: Props) => {
   const theme = useTheme();
   const isSmallBp = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -143,7 +134,7 @@ export const InterfaceSelect: React.FC<Props> = (props) => {
         </Grid>
       )}
       {purpose === 'vlan' ? (
-        <Grid md={7} sm={9} xs={12}>
+        <Grid container>
           <Grid
             sx={{
               flexDirection: 'row',
@@ -200,9 +191,16 @@ export const InterfaceSelect: React.FC<Props> = (props) => {
         </Grid>
       ) : null}
 
-      {!fromAddonsPanel && <Divider className={classes.divider} />}
+      {!fromAddonsPanel && (
+        <Divider
+          sx={{
+            margin: `${theme.spacing(4.5)} ${theme.spacing()} ${theme.spacing(
+              1.5
+            )} `,
+            width: `calc(100% - ${theme.spacing(2)})`,
+          }}
+        />
+      )}
     </Grid>
   );
 };
-
-export default InterfaceSelect;

@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 
 import { CircleProgress } from 'src/components/CircleProgress';
 import { DocumentTitleSegment } from 'src/components/DocumentTitle';
-import LandingHeader from 'src/components/LandingHeader';
+import { LandingHeader } from 'src/components/LandingHeader';
 import { Notice } from 'src/components/Notice/Notice';
 import { listToItemsByID } from 'src/queries/base';
 import { useAllImagesQuery } from 'src/queries/images';
@@ -32,7 +32,10 @@ export const StackScriptsLanding = () => {
     <React.Fragment>
       <DocumentTitleSegment segment="StackScripts" />
       {!!history.location.state && !!history.location.state.successMessage ? (
-        <Notice success text={history.location.state.successMessage} />
+        <Notice
+          text={history.location.state.successMessage}
+          variant="success"
+        />
       ) : null}
       <LandingHeader
         docsLink="https://www.linode.com/docs/platform/stackscripts"

@@ -1,5 +1,4 @@
-import { Theme } from '@mui/material/styles';
-import { makeStyles } from '@mui/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import * as React from 'react';
 
 import { Dialog } from 'src/components/Dialog/Dialog';
@@ -11,35 +10,8 @@ import { useGrants, useProfile } from 'src/queries/profile';
 
 import { HostMaintenanceError } from '../HostMaintenanceError';
 import { LinodePermissionsError } from '../LinodePermissionsError';
-import RebuildFromImage from './RebuildFromImage';
-import RebuildFromStackScript from './RebuildFromStackScript';
-
-const useStyles = makeStyles((theme: Theme) => ({
-  helperText: {
-    paddingBottom: theme.spacing(2),
-  },
-  root: {
-    '& + div': {
-      '& .MuiPaper-root': {
-        '& .MuiTableCell-head': {
-          top: theme.spacing(11),
-        },
-        '& > div': {
-          padding: 0,
-        },
-        padding: 0,
-      },
-      '& .notice': {
-        padding: theme.spacing(2),
-      },
-      padding: 0,
-    },
-    paddingBottom: theme.spacing(2),
-  },
-  title: {
-    marginBottom: theme.spacing(2),
-  },
-}));
+import { RebuildFromImage } from './RebuildFromImage';
+import { RebuildFromStackScript } from './RebuildFromStackScript';
 
 interface Props {
   linodeId: number | undefined;
@@ -79,7 +51,7 @@ export const LinodeRebuildDialog = (props: Props) => {
   const unauthorized = isReadOnly;
   const disabled = hostMaintenance || unauthorized;
 
-  const classes = useStyles();
+  const theme = useTheme();
 
   const [mode, setMode] = React.useState<MODES>('fromImage');
   const [rebuildError, setRebuildError] = React.useState<string>('');
@@ -103,11 +75,14 @@ export const LinodeRebuildDialog = (props: Props) => {
       open={open}
       title={`Rebuild Linode ${linode?.label ?? ''}`}
     >
-      <div className={classes.root}>
+      <StyledDiv>
         {unauthorized && <LinodePermissionsError />}
         {hostMaintenance && <HostMaintenanceError />}
-        {rebuildError && <Notice error>{rebuildError}</Notice>}
-        <Typography className={classes.helperText} data-qa-rebuild-desc>
+        {rebuildError && <Notice variant="error">{rebuildError}</Notice>}
+        <Typography
+          sx={{ paddingBottom: theme.spacing(2) }}
+          data-qa-rebuild-desc
+        >
           If you can&rsquo;t rescue an existing disk, it&rsquo;s time to rebuild
           your Linode. There are a couple of different ways you can do this:
           either restore from a backup or start over with a fresh Linux
@@ -129,13 +104,14 @@ export const LinodeRebuildDialog = (props: Props) => {
           label="From Image"
           options={options}
         />
-      </div>
+      </StyledDiv>
       {mode === 'fromImage' && (
         <RebuildFromImage
           disabled={disabled}
           handleRebuildError={handleRebuildError}
           linodeId={linodeId ?? -1}
           linodeLabel={linode?.label}
+          linodeRegion={linode?.region}
           onClose={onClose}
           passwordHelperText={passwordHelperText}
         />
@@ -165,3 +141,22 @@ export const LinodeRebuildDialog = (props: Props) => {
     </Dialog>
   );
 };
+
+const StyledDiv = styled('div', { label: 'StyledDiv' })(({ theme }) => ({
+  '& + div': {
+    '& .MuiPaper-root': {
+      '& .MuiTableCell-head': {
+        top: theme.spacing(11),
+      },
+      '& > div': {
+        padding: 0,
+      },
+      padding: 0,
+    },
+    '& .notice': {
+      padding: theme.spacing(2),
+    },
+    padding: 0,
+  },
+  paddingBottom: theme.spacing(2),
+}));

@@ -11,12 +11,13 @@ import { makeStyles } from 'tss-react/mui';
 import { CircleProgress } from 'src/components/CircleProgress';
 import { DocumentTitleSegment } from 'src/components/DocumentTitle';
 import { ErrorState } from 'src/components/ErrorState/ErrorState';
+import { Link } from 'src/components/Link';
 import { Notice } from 'src/components/Notice/Notice';
 import OrderBy from 'src/components/OrderBy';
 import { TransferDisplay } from 'src/components/TransferDisplay/TransferDisplay';
 import { TypeToConfirmDialog } from 'src/components/TypeToConfirmDialog/TypeToConfirmDialog';
 import { Typography } from 'src/components/Typography';
-import useOpenClose from 'src/hooks/useOpenClose';
+import { useOpenClose } from 'src/hooks/useOpenClose';
 import {
   BucketError,
   useDeleteBucketMutation,
@@ -219,7 +220,7 @@ export const BucketLanding = () => {
         title={`Delete Bucket ${bucketLabel}`}
         typographyStyle={{ marginTop: '20px' }}
       >
-        <Notice warning>
+        <Notice variant="warning">
           <Typography style={{ fontSize: '0.875rem' }}>
             <strong>Warning:</strong> Deleting a bucket is permanent and
             can&rsquo;t be undone.
@@ -227,23 +228,13 @@ export const BucketLanding = () => {
         </Notice>
         <Typography className={classes.copy}>
           A bucket must be empty before deleting it. Please{' '}
-          <a
-            aria-describedby="external-site"
-            href="https://www.linode.com/docs/platform/object-storage/lifecycle-policies/"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
+          <Link to="https://www.linode.com/docs/platform/object-storage/lifecycle-policies/">
             delete all objects
-          </a>
+          </Link>
           , or use{' '}
-          <a
-            aria-describedby="external-site"
-            href="https://www.linode.com/docs/platform/object-storage/how-to-use-object-storage/#object-storage-tools"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
+          <Link to="https://www.linode.com/docs/platform/object-storage/how-to-use-object-storage/#object-storage-tools">
             another tool
-          </a>{' '}
+          </Link>{' '}
           to force deletion.
         </Typography>
         {/* If the user is attempting to delete their last Bucket, remind them
@@ -297,7 +288,7 @@ const Banner = React.memo(({ regionsAffected }: BannerProps) => {
   const moreThanOneRegionAffected = regionsAffected.length > 1;
 
   return (
-    <Notice important warning>
+    <Notice important variant="warning">
       <Typography component="div" style={{ fontSize: '1rem' }}>
         There was an error loading buckets in{' '}
         {moreThanOneRegionAffected

@@ -4,22 +4,24 @@ import {
   LinodeBackupsResponse,
 } from '@linode/api-v4/lib/linodes';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Theme } from '@mui/material/styles';
-import { WithStyles, createStyles, withStyles } from '@mui/styles';
+import { styled } from '@mui/material/styles';
 import * as React from 'react';
 import { compose } from 'recompose';
 
 import { CircleProgress } from 'src/components/CircleProgress';
 import { Notice } from 'src/components/Notice/Notice';
-import RenderGuard, { RenderGuardProps } from 'src/components/RenderGuard';
+import { Paper } from 'src/components/Paper';
+import { RenderGuard, RenderGuardProps } from 'src/components/RenderGuard';
 import { SelectionCard } from 'src/components/SelectionCard/SelectionCard';
 import { Typography } from 'src/components/Typography';
-import Paper from 'src/components/core/Paper';
 import {
   WithProfileProps,
   withProfile,
 } from 'src/containers/profile.container';
 import { formatDate } from 'src/utilities/formatDate';
+import { isPropValid } from 'src/utilities/isPropValid';
+
+import type { StyledTypographyProps } from './SelectLinodePanel';
 
 export const aggregateBackups = (
   backups: LinodeBackupsResponse
@@ -38,26 +40,6 @@ export interface LinodeWithBackups extends Linode {
   currentBackups: LinodeBackupsResponse;
 }
 
-type ClassNames = 'panelBody' | 'root' | 'wrapper';
-
-const styles = (theme: Theme) =>
-  createStyles({
-    panelBody: {
-      padding: `${theme.spacing(2)} 0 0`,
-      width: '100%',
-    },
-    root: {
-      backgroundColor: theme.color.white,
-      flexGrow: 1,
-      marginTop: theme.spacing(3),
-      width: '100%',
-    },
-    wrapper: {
-      minHeight: 120,
-      padding: theme.spacing(1),
-    },
-  });
-
 interface BackupInfo {
   details: string;
   title: string;
@@ -73,23 +55,32 @@ interface Props {
   selectedLinodeWithBackups?: LinodeWithBackups;
 }
 
-interface State {
-  backups?: LinodeBackup[];
-}
+type CombinedProps = Props & WithProfileProps;
 
-type StyledProps = Props & WithStyles<ClassNames>;
+const SelectBackupPanel = (props: CombinedProps) => {
+  const {
+    error,
+    loading,
+    selectedLinodeID,
+    selectedLinodeWithBackups,
+    selectedBackupID,
+    profile,
+    handleChangeBackup,
+    handleChangeBackupInfo,
+  } = props;
 
-type CombinedProps = StyledProps & WithProfileProps;
+  const aggregatedBackups = selectedLinodeWithBackups
+    ? aggregateBackups(selectedLinodeWithBackups.currentBackups)
+    : [];
 
-class SelectBackupPanel extends React.Component<CombinedProps, State> {
-  getBackupInfo(backup: LinodeBackup) {
+  const getBackupInfo = (backup: LinodeBackup) => {
     const heading = backup.label
       ? backup.label
       : backup.type === 'auto'
       ? 'Automatic'
       : 'Snapshot';
     const subheading = formatDate(backup.created, {
-      timezone: this.props.profile.data?.timezone,
+      timezone: profile.data?.timezone,
     });
     const infoName =
       heading === 'Automatic'
@@ -100,68 +91,20 @@ class SelectBackupPanel extends React.Component<CombinedProps, State> {
       infoName,
       subheading,
     };
-  }
+  };
 
-  render() {
-    const {
-      classes,
-      error,
-      loading,
-      selectedLinodeID,
-      selectedLinodeWithBackups,
-    } = this.props;
+  const renderCard = (backup: LinodeBackup) => {
+    const backupInfo_ = getBackupInfo(backup);
 
-    const aggregatedBackups = selectedLinodeWithBackups
-      ? aggregateBackups(selectedLinodeWithBackups.currentBackups)
-      : [];
-
-    return (
-      <Paper className={classes.root}>
-        {error && <Notice error text={error} />}
-        <Typography variant="h2">Select Backup</Typography>
-        <Grid
-          alignItems="center"
-          className={classes.wrapper}
-          container
-          spacing={2}
-        >
-          {loading ? (
-            <CircleProgress />
-          ) : selectedLinodeID ? (
-            // eslint-disable-next-line react/jsx-no-useless-fragment
-            <React.Fragment>
-              {aggregatedBackups.length !== 0 ? (
-                <Typography className={classes.panelBody} component="div">
-                  <Grid container>
-                    {aggregatedBackups.map((backup) => {
-                      return this.renderCard(backup);
-                    })}
-                  </Grid>
-                </Typography>
-              ) : (
-                <Typography variant="body1">No backup available</Typography>
-              )}
-            </React.Fragment>
-          ) : (
-            <Typography variant="body1">First, select a Linode</Typography>
-          )}
-        </Grid>
-      </Paper>
-    );
-  }
-
-  renderCard(backup: LinodeBackup) {
-    const { selectedBackupID } = this.props;
-    const backupInfo_ = this.getBackupInfo(backup);
     return (
       <SelectionCard
-        onClick={(e) => {
+        onClick={() => {
           const backupInfo = {
             details: backupInfo_.subheading,
             title: backupInfo_.infoName,
           };
-          this.props.handleChangeBackup(backup.id);
-          this.props.handleChangeBackupInfo(backupInfo);
+          handleChangeBackup(backup.id);
+          handleChangeBackupInfo(backupInfo);
         }}
         checked={backup.id === Number(selectedBackupID)}
         heading={backupInfo_.heading}
@@ -169,17 +112,63 @@ class SelectBackupPanel extends React.Component<CombinedProps, State> {
         subheadings={[backupInfo_.subheading]}
       />
     );
-  }
-
-  state: State = {
-    backups: [],
   };
-}
 
-const styled = withStyles(styles);
+  return (
+    <StyledRootPaper>
+      {error && <Notice text={error} variant="error" />}
+      <Typography variant="h2">Select Backup</Typography>
+      <StyledWrapperGrid alignItems="center" container spacing={2}>
+        {loading ? (
+          <CircleProgress />
+        ) : selectedLinodeID ? (
+          // eslint-disable-next-line react/jsx-no-useless-fragment
+          <React.Fragment>
+            {aggregatedBackups.length !== 0 ? (
+              <StyledTypography component="div">
+                <Grid container>
+                  {aggregatedBackups.map((backup) => {
+                    return renderCard(backup);
+                  })}
+                </Grid>
+              </StyledTypography>
+            ) : (
+              <Typography variant="body1">No backup available</Typography>
+            )}
+          </React.Fragment>
+        ) : (
+          <Typography variant="body1">First, select a Linode</Typography>
+        )}
+      </StyledWrapperGrid>
+    </StyledRootPaper>
+  );
+};
+
+const StyledTypography = styled(Typography, {
+  label: 'StyledTypography',
+  shouldForwardProp: (prop) => isPropValid(['component'], prop),
+})<StyledTypographyProps>(({ theme }) => ({
+  padding: `${theme.spacing(2)} 0 0`,
+  width: '100%',
+}));
+
+const StyledRootPaper = styled(Paper, { label: 'StyledRootPaper' })(
+  ({ theme }) => ({
+    backgroundColor: theme.color.white,
+    flexGrow: 1,
+    width: '100%',
+    marginTop: theme.spacing(3),
+  })
+);
+
+const StyledWrapperGrid = styled(Grid, { label: 'StyledWrapperGrid' })(
+  ({ theme }) => ({
+    minHeight: 120,
+    padding: theme.spacing(1),
+  })
+);
 
 export default compose<CombinedProps, Props & RenderGuardProps>(
   RenderGuard,
-  styled,
   withProfile
 )(SelectBackupPanel);

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
-import SuspenseLoader from 'src/components/SuspenseLoader';
+import { ProductInformationBanner } from 'src/components/ProductInformationBanner/ProductInformationBanner';
+import { SuspenseLoader } from 'src/components/SuspenseLoader';
 
 const KubernetesLanding = React.lazy(
   () => import('./KubernetesLanding/KubernetesLanding')
@@ -12,6 +13,7 @@ const ClusterDetail = React.lazy(() => import('./KubernetesClusterDetail'));
 const Kubernetes: React.FC = () => {
   return (
     <React.Suspense fallback={<SuspenseLoader />}>
+      <ProductInformationBanner bannerLocation="Kubernetes" />
       <Switch>
         <Route component={ClusterCreate} path={`/kubernetes/create`} />
         <Route

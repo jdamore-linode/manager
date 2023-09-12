@@ -1,35 +1,31 @@
-import { Theme } from '@mui/material/styles';
-import { makeStyles } from '@mui/styles';
+import { SxProps, useTheme } from '@mui/material/styles';
 import * as React from 'react';
 
 import { Notice } from 'src/components/Notice/Notice';
+import { Paper } from 'src/components/Paper';
 import { Typography } from 'src/components/Typography';
-import Paper from 'src/components/core/Paper';
-
-const useStyles = makeStyles((theme: Theme) => ({
-  emptyImagePanelText: {
-    marginTop: theme.spacing(1),
-    padding: `${theme.spacing(1)} 0`,
-  },
-}));
 
 interface Props {
   className?: string;
   errorText: string | undefined;
+  sx?: SxProps;
 }
 
-export const ImageEmptyState: React.FC<Props> = (props) => {
-  const { className, errorText } = props;
-  const classes = useStyles();
+export const ImageEmptyState = (props: Props) => {
+  const { className, errorText, sx } = props;
+  const theme = useTheme();
 
   return (
-    <Paper className={className}>
-      {errorText ? <Notice error text={errorText} /> : null}
+    <Paper className={className} sx={sx}>
+      {errorText ? <Notice text={errorText} variant="error" /> : null}
       <Typography data-qa-tp="Select Image" variant="h2">
         Select Image
       </Typography>
       <Typography
-        className={classes.emptyImagePanelText}
+        sx={{
+          marginTop: theme.spacing(1),
+          padding: `${theme.spacing(1)} 0`,
+        }}
         data-qa-no-compatible-images
         variant="body1"
       >
@@ -38,5 +34,3 @@ export const ImageEmptyState: React.FC<Props> = (props) => {
     </Paper>
   );
 };
-
-export default ImageEmptyState;

@@ -6,7 +6,7 @@ import { Accordion } from 'src/components/Accordion';
 import { Notice } from 'src/components/Notice/Notice';
 import { Toggle } from 'src/components/Toggle';
 import { Typography } from 'src/components/Typography';
-import FormControlLabel from 'src/components/core/FormControlLabel';
+import { FormControlLabel } from 'src/components/FormControlLabel';
 import {
   useLinodeQuery,
   useLinodeUpdateMutation,
@@ -17,7 +17,8 @@ interface Props {
   linodeId: number;
 }
 
-export const LinodeWatchdogPanel = ({ isReadOnly, linodeId }: Props) => {
+export const LinodeWatchdogPanel = (props: Props) => {
+  const { isReadOnly, linodeId } = props;
   const { data: linode } = useLinodeQuery(linodeId);
 
   const {
@@ -35,7 +36,7 @@ export const LinodeWatchdogPanel = ({ isReadOnly, linodeId }: Props) => {
       <Grid alignItems="center" container spacing={2}>
         {Boolean(error) && (
           <Grid xs={12}>
-            <Notice error text={error?.[0].reason} />
+            <Notice text={error?.[0].reason} variant="error" />
           </Grid>
         )}
         <Grid md={2} xs={12}>

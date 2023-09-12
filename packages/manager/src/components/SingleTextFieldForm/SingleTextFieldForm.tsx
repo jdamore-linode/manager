@@ -1,9 +1,9 @@
 import { APIError } from '@linode/api-v4/lib/types';
+import { Theme } from '@mui/material/styles';
 import * as React from 'react';
 
-import ActionsPanel from 'src/components/ActionsPanel';
+import { ActionsPanel } from 'src/components/ActionsPanel/ActionsPanel';
 import { Box } from 'src/components/Box';
-import { Button } from 'src/components/Button/Button';
 import { Notice } from 'src/components/Notice/Notice';
 import { TextField, TextFieldProps } from 'src/components/TextField';
 import { getAPIErrorOrDefault, getErrorMap } from 'src/utilities/errorUtils';
@@ -28,6 +28,7 @@ export const SingleTextFieldForm = React.memo((props: Props) => {
     successCallback,
     successMessage,
     tooltipText,
+    trimmed,
     ...textFieldProps
   } = props;
 
@@ -85,37 +86,42 @@ export const SingleTextFieldForm = React.memo((props: Props) => {
           disabled={disabled}
           errorText={fieldError}
           label={label}
+          onBlur={(e) => setValue(e.target.value)}
           onChange={(e) => setValue(e.target.value)}
           tooltipText={tooltipText ? tooltipText : undefined}
+          trimmed={trimmed}
           value={value}
         />
-        <ActionsPanel>
-          <Button
-            sx={(theme) => ({
+        <ActionsPanel
+          primaryButtonProps={{
+            disabled: disabled || value === initialValue,
+            label: `Update ${label}`,
+            loading: submitting,
+            onClick: handleSubmit,
+            sx: (theme: Theme) => ({
               minWidth: 180,
               [theme.breakpoints.up('md')]: {
                 marginTop: 2,
               },
-            })}
-            buttonType="primary"
-            disabled={disabled || value === initialValue}
-            loading={submitting}
-            onClick={handleSubmit}
-          >
-            Update {label}
-          </Button>
-        </ActionsPanel>
+            }),
+          }}
+        />
       </Box>
       {success ? (
         <Notice
           spacingBottom={8}
           spacingTop={8}
-          success
           text={_successMessage}
+          variant="success"
         />
       ) : null}
       {generalError ? (
-        <Notice error spacingBottom={8} spacingTop={8} text={generalError} />
+        <Notice
+          spacingBottom={8}
+          spacingTop={8}
+          text={generalError}
+          variant="error"
+        />
       ) : null}
     </>
   );

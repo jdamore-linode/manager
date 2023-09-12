@@ -264,11 +264,18 @@ export const lightTheme: ThemeOptions = {
               opacity: 0.5,
             },
           },
-          paddingRight: 8,
+          paddingRight: 4,
           svg: {
             color: '#aaa',
           },
           top: 'unset',
+        },
+        hasPopupIcon: {
+          '&.MuiAutocomplete-root': {
+            '& .MuiAutocomplete-inputRoot': {
+              paddingRight: '34px',
+            },
+          },
         },
         inputRoot: {
           paddingLeft: 8,
@@ -276,7 +283,6 @@ export const lightTheme: ThemeOptions = {
         listbox: {
           backgroundColor: bg.white,
           border: `1px solid ${primaryColors.main}`,
-          marginTop: '-1px',
           padding: '4px',
         },
         loading: {
@@ -291,13 +297,29 @@ export const lightTheme: ThemeOptions = {
             color: primaryColors.white,
             transition: 'background-color 0.2s',
           },
-          '&[aria-selected="true"]': {
-            color: primaryColors.main,
-          },
           fontSize: '0.9rem',
           padding: '10px !important',
         },
+        popper: {
+          // To remove the double border of listbox and input
+          '&.MuiAutocomplete-popper': {
+            '&[data-popper-placement="bottom"]': {
+              '.MuiAutocomplete-listbox': {
+                borderTop: 0,
+              },
+            },
+            '&[data-popper-placement="top"]': {
+              '.MuiAutocomplete-listbox': {
+                borderBottom: 0,
+              },
+            },
+          },
+        },
         tag: {
+          '&:not(.MuiChip-root)': {
+            borderRadius: '4px',
+            padding: '4px',
+          },
           '.MuiChip-deleteIcon': {
             ':hover': {
               backgroundColor: primaryColors.main,
@@ -308,6 +330,7 @@ export const lightTheme: ThemeOptions = {
             fontSize: '16px',
             margin: '0 4px',
           },
+
           backgroundColor: bg.lightBlue1,
           padding: '12px 2px',
         },
@@ -644,11 +667,13 @@ export const lightTheme: ThemeOptions = {
             backgroundColor: 'transparent',
             color: primaryColors.main,
           },
-          padding: 12,
         },
       },
     },
     MuiInput: {
+      defaultProps: {
+        disableUnderline: true,
+      },
       styleOverrides: {
         disabled: {},
         error: {},
@@ -707,7 +732,7 @@ export const lightTheme: ThemeOptions = {
           },
           color: primaryColors.text,
           lineHeight: 1,
-          maxWidth: 415,
+          maxWidth: 416,
           minHeight: 34,
           transition: 'border-color 225ms ease-in-out',
         },
@@ -817,13 +842,6 @@ export const lightTheme: ThemeOptions = {
       },
     },
     MuiMenu: {
-      defaultProps: {
-        slotProps: {
-          backdrop: {
-            invisible: true,
-          },
-        },
-      },
       styleOverrides: {
         paper: {
           '& .selectMenuList': {
@@ -835,6 +853,7 @@ export const lightTheme: ThemeOptions = {
             [breakpoints.down('xs')]: {
               minWidth: 200,
             },
+            maxWidth: 200,
             maxHeight: 250,
             overflowX: 'hidden',
             overflowY: 'auto',
@@ -872,12 +891,11 @@ export const lightTheme: ThemeOptions = {
           fontFamily: latoWeb.normal,
           fontSize: '.9rem',
           height: 'auto',
-          minHeight: 'auto',
-          paddingBottom: 16,
-          paddingTop: 16,
+          minHeight: '38px',
+          paddingBottom: 8,
+          paddingTop: 8,
           textOverflow: 'initial',
-          transition: `${'background-color 150ms cubic-bezier(0.4, 0, 0.2, 1), '}
-        ${'color .2s cubic-bezier(0.4, 0, 0.2, 1)'}`,
+          transition: `${'background-color 150ms cubic-bezier(0.4, 0, 0.2, 1)'}`,
           whiteSpace: 'initial',
         },
         selected: {},
@@ -1390,6 +1408,9 @@ export const lightTheme: ThemeOptions = {
   },
   name: 'light', // @todo remove this because we leverage pallete.mode now
   palette: {
+    background: {
+      default: bg.app,
+    },
     divider: primaryColors.divider,
     error: {
       dark: '#cd2227',

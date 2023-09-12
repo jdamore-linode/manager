@@ -1,14 +1,13 @@
 import { Interface } from '@linode/api-v4/lib/linodes';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Theme } from '@mui/material/styles';
-import { makeStyles } from '@mui/styles';
+import { useTheme } from '@mui/material/styles';
 import * as React from 'react';
 import { useQueryClient } from 'react-query';
 
-import ExternalLink from 'src/components/ExternalLink';
+import { Link } from 'src/components/Link';
+import { Paper } from 'src/components/Paper';
 import { TooltipIcon } from 'src/components/TooltipIcon';
 import { Typography } from 'src/components/Typography';
-import Paper from 'src/components/core/Paper';
 import { useRegionsQuery } from 'src/queries/regions';
 import { queryKey as vlansQueryKey } from 'src/queries/vlans';
 import arrayToList from 'src/utilities/arrayToDelimiterSeparatedList';
@@ -17,25 +16,9 @@ import {
   regionsWithFeature,
 } from 'src/utilities/doesRegionSupportFeature';
 
-import InterfaceSelect from '../LinodesDetail/LinodeSettings/InterfaceSelect';
+import { InterfaceSelect } from '../LinodesDetail/LinodeSettings/InterfaceSelect';
 
 // @TODO Delete this file when VPC is released
-const useStyles = makeStyles((theme: Theme) => ({
-  paragraphBreak: {
-    marginTop: theme.spacing(2),
-  },
-  title: {
-    '& button': {
-      paddingLeft: theme.spacing(),
-    },
-    alignItems: 'center',
-    display: 'flex',
-    marginBottom: theme.spacing(2),
-  },
-  vlan: {
-    marginTop: theme.spacing(3),
-  },
-}));
 
 interface Props {
   handleVLANChange: (updatedInterface: Interface) => void;
@@ -48,9 +31,7 @@ interface Props {
   vlanLabel: string;
 }
 
-type CombinedProps = Props;
-
-const AttachVLAN: React.FC<CombinedProps> = (props) => {
+export const AttachVLAN = React.memo((props: Props) => {
   const {
     handleVLANChange,
     helperText,
@@ -62,7 +43,7 @@ const AttachVLAN: React.FC<CombinedProps> = (props) => {
     vlanLabel,
   } = props;
 
-  const classes = useStyles();
+  const theme = useTheme();
 
   const queryClient = useQueryClient();
 
@@ -90,25 +71,33 @@ const AttachVLAN: React.FC<CombinedProps> = (props) => {
   )}.`;
 
   return (
-    <Paper className={classes.vlan} data-qa-add-ons>
-      <Typography className={classes.title} variant="h2">
+    <Paper sx={{ marginTop: theme.spacing(3) }} data-qa-add-ons>
+      <Typography
+        sx={{
+          '& button': {
+            paddingLeft: theme.spacing(),
+          },
+          alignItems: 'center',
+          display: 'flex',
+          marginBottom: theme.spacing(2),
+        }}
+        variant="h2"
+      >
         Attach a VLAN{' '}
         {helperText ? <TooltipIcon status="help" text={helperText} /> : null}
       </Typography>
       <Grid container>
         <Grid xs={12}>
           <Typography>{regionalAvailabilityMessage}</Typography>
-          <Typography className={classes.paragraphBreak} variant="body1">
+          <Typography sx={{ marginTop: theme.spacing(2) }} variant="body1">
             VLANs are used to create a private L2 Virtual Local Area Network
             between Linodes. A VLAN created or attached in this section will be
             assigned to the eth1 interface, with eth0 being used for connections
             to the public internet. VLAN configurations can be further edited in
             the Linode&rsquo;s{' '}
-            <ExternalLink
-              hideIcon
-              link="https://www.linode.com/docs/guides/linode-configuration-profiles/"
-              text="Configuration Profile"
-            />
+            <Link to="https://www.linode.com/docs/guides/linode-configuration-profiles/">
+              Configuration Profile
+            </Link>
             .
           </Typography>
           <InterfaceSelect
@@ -129,6 +118,4 @@ const AttachVLAN: React.FC<CombinedProps> = (props) => {
       </Grid>
     </Paper>
   );
-};
-
-export default React.memo(AttachVLAN);
+});

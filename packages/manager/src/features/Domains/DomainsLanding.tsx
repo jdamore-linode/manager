@@ -1,6 +1,5 @@
 import { Domain } from '@linode/api-v4/lib/domains';
-import { Theme } from '@mui/material/styles';
-import { makeStyles } from '@mui/styles';
+import { styled } from '@mui/material/styles';
 import { useSnackbar } from 'notistack';
 import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -11,7 +10,7 @@ import { DeletionDialog } from 'src/components/DeletionDialog/DeletionDialog';
 import { DocumentTitleSegment } from 'src/components/DocumentTitle';
 import { ErrorState } from 'src/components/ErrorState/ErrorState';
 import { Hidden } from 'src/components/Hidden';
-import LandingHeader from 'src/components/LandingHeader';
+import { LandingHeader } from 'src/components/LandingHeader';
 import { Notice } from 'src/components/Notice/Notice';
 import { PaginationFooter } from 'src/components/PaginationFooter/PaginationFooter';
 import { Table } from 'src/components/Table';
@@ -32,55 +31,39 @@ import { useProfile } from 'src/queries/profile';
 import { getAPIErrorOrDefault } from 'src/utilities/errorUtils';
 
 import { CloneDomainDrawer } from './CloneDomainDrawer';
-import DisableDomainDialog from './DisableDomainDialog';
+import { DisableDomainDialog } from './DisableDomainDialog';
 import { Handlers as DomainHandlers } from './DomainActionMenu';
-import DomainBanner from './DomainBanner';
-import DomainRow from './DomainTableRow';
-import DomainZoneImportDrawer from './DomainZoneImportDrawer';
+import { DomainBanner } from './DomainBanner';
+import { DomainTableRow } from './DomainTableRow';
+import { DomainZoneImportDrawer } from './DomainZoneImportDrawer';
 import { DomainsEmptyLandingState } from './DomainsEmptyLandingPage';
 import { EditDomainDrawer } from './EditDomainDrawer';
 
 const DOMAIN_CREATE_ROUTE = '/domains/create';
 
-const useStyles = makeStyles((theme: Theme) => ({
-  importButton: {
-    marginLeft: `-${theme.spacing()}`,
-    whiteSpace: 'nowrap',
-  },
-  root: {
-    // Adds spacing when the docs button wraps to make it look a little less awkward
-    [theme.breakpoints.down(380)]: {
-      '& .docsButton': {
-        paddingBottom: theme.spacing(2),
-      },
-    },
-  },
-}));
-
-interface Props {
+interface DomainsLandingProps {
   // Since secondary Domains do not have a Detail page, we allow the consumer to
   // render this component with the "Edit Domain" drawer already opened.
   domainForEditing?: Domain;
 }
 
-const preferenceKey = 'domains';
+const PREFERENCE_KEY = 'domains';
 
-export const DomainsLanding: React.FC<Props> = (props) => {
-  const classes = useStyles();
+export const DomainsLanding = (props: DomainsLandingProps) => {
   const history = useHistory();
   const location = useLocation<{ recordError?: string }>();
 
   const { enqueueSnackbar } = useSnackbar();
   const { data: profile } = useProfile();
 
-  const pagination = usePagination(1, preferenceKey);
+  const pagination = usePagination(1, PREFERENCE_KEY);
 
   const { handleOrderChange, order, orderBy } = useOrder(
     {
       order: 'asc',
       orderBy: 'domain',
     },
-    `${preferenceKey}-order`
+    `${PREFERENCE_KEY}-order`
   );
 
   const filter = {
@@ -240,17 +223,13 @@ export const DomainsLanding: React.FC<Props> = (props) => {
       <DocumentTitleSegment segment="Domains" />
       <DomainBanner hidden={!shouldShowBanner} />
       {location.state?.recordError && (
-        <Notice error text={location.state.recordError} />
+        <Notice text={location.state.recordError} variant="error" />
       )}
       <LandingHeader
         extraActions={
-          <Button
-            buttonType="secondary"
-            className={classes.importButton}
-            onClick={openImportZoneDrawer}
-          >
+          <StyledButon buttonType="secondary" onClick={openImportZoneDrawer}>
             Import a Zone
-          </Button>
+          </StyledButon>
         }
         docsLink="https://www.linode.com/docs/platform/manager/dns-manager/"
         entity="Domain"
@@ -299,7 +278,7 @@ export const DomainsLanding: React.FC<Props> = (props) => {
         </TableHead>
         <TableBody>
           {domains?.data.map((domain: Domain) => (
-            <DomainRow domain={domain} key={domain.id} {...handlers} />
+            <DomainTableRow domain={domain} key={domain.id} {...handlers} />
           ))}
         </TableBody>
       </Table>
@@ -349,4 +328,7 @@ export const DomainsLanding: React.FC<Props> = (props) => {
   );
 };
 
-export default DomainsLanding;
+const StyledButon = styled(Button, { label: 'StyledButton' })(({ theme }) => ({
+  marginLeft: `-${theme.spacing()}`,
+  whiteSpace: 'nowrap',
+}));

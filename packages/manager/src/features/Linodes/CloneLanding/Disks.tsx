@@ -1,6 +1,5 @@
 import { Disk } from '@linode/api-v4/lib/linodes';
 import Grid from '@mui/material/Unstable_Grid2';
-import { makeStyles } from '@mui/styles';
 import { intersection, pathOr } from 'ramda';
 import * as React from 'react';
 
@@ -16,26 +15,15 @@ import { TableRowEmpty } from 'src/components/TableRowEmpty/TableRowEmpty';
 
 import { DiskSelection } from './utilities';
 
-const useStyles = makeStyles(() => ({
-  labelCol: {
-    width: '65%',
-  },
-  sizeCol: {
-    width: '35%',
-  },
-}));
-
-export interface Props {
+export interface DisksProps {
   diskSelection: DiskSelection;
   disks: Disk[];
   handleSelect: (id: number) => void;
   selectedConfigIds: number[];
 }
 
-export const Disks: React.FC<Props> = (props) => {
+export const Disks = (props: DisksProps) => {
   const { diskSelection, disks, handleSelect, selectedConfigIds } = props;
-
-  const classes = useStyles();
 
   return (
     <Paginate data={disks}>
@@ -54,8 +42,8 @@ export const Disks: React.FC<Props> = (props) => {
                 <Table aria-label="List of Disks">
                   <TableHead>
                     <TableRow>
-                      <TableCell className={classes.labelCol}>Label</TableCell>
-                      <TableCell className={classes.sizeCol}>Size</TableCell>
+                      <TableCell sx={{ width: '65%' }}>Label</TableCell>
+                      <TableCell sx={{ width: '35%' }}>Size</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>

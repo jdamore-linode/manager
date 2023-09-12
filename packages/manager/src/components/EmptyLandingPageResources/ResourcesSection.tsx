@@ -1,10 +1,8 @@
 import * as React from 'react';
 
 import DocsIcon from 'src/assets/icons/docs.svg';
-import ExternalLinkIcon from 'src/assets/icons/external-link.svg';
 import PointerIcon from 'src/assets/icons/pointer.svg';
 import YoutubeIcon from 'src/assets/icons/youtube.svg';
-import { ResourcesLinkIcon } from 'src/components/EmptyLandingPageResources/ResourcesLinkIcon';
 import { ResourceLinks } from 'src/components/EmptyLandingPageResources/ResourcesLinks';
 import { ResourcesLinksSection } from 'src/components/EmptyLandingPageResources/ResourcesLinksSection';
 import { ResourcesLinksSubSection } from 'src/components/EmptyLandingPageResources/ResourcesLinksSubSection';
@@ -35,6 +33,10 @@ interface ResourcesSectionProps {
    * @example <AppsSection /> on linodes empty state landing
    */
   CustomResource?: () => JSX.Element;
+  /**
+   * The additional copy to be rendered between primary button and resource links.
+   */
+  additionalCopy?: JSX.Element | string;
   /**
    * The button's handlers and text
    */
@@ -73,7 +75,7 @@ interface ResourcesSectionProps {
   /**
    * The data for the youtube links section
    */
-  youtubeLinkData: ResourcesLinkSection;
+  youtubeLinkData?: ResourcesLinkSection;
 }
 
 const GuideLinks = (
@@ -96,6 +98,7 @@ const YoutubeLinks = (
 export const ResourcesSection = (props: ResourcesSectionProps) => {
   const {
     CustomResource = () => null,
+    additionalCopy,
     buttonProps,
     descriptionMaxWidth,
     gettingStartedGuidesData,
@@ -123,7 +126,9 @@ export const ResourcesSection = (props: ResourcesSectionProps) => {
                 {...props}
               >
                 {gettingStartedGuidesData.moreInfo.text}
-                <ResourcesLinkIcon icon={<PointerIcon />} iconType="pointer" />
+                <span style={{ left: 2, position: 'relative', top: 4 }}>
+                  <PointerIcon />
+                </span>
               </ResourcesMoreLink>
             )}
             icon={<DocsIcon />}
@@ -144,19 +149,17 @@ export const ResourcesSection = (props: ResourcesSectionProps) => {
                 {...props}
               >
                 {youtubeMoreLinkText}
-                <ResourcesLinkIcon
-                  icon={<ExternalLinkIcon />}
-                  iconType="external"
-                />
               </ResourcesMoreLink>
             )}
             icon={<YoutubeIcon />}
-            title={youtubeLinkData.title}
+            title={youtubeLinkData?.title || ''}
           >
-            {YoutubeLinks(youtubeLinkData, linkAnalyticsEvent)}
+            {youtubeLinkData &&
+              YoutubeLinks(youtubeLinkData, linkAnalyticsEvent)}
           </ResourcesLinksSubSection>
         </ResourcesLinksSection>
       }
+      additionalCopy={additionalCopy}
       buttonProps={buttonProps}
       dataQAPlaceholder="resources-section"
       descriptionMaxWidth={descriptionMaxWidth}

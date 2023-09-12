@@ -1,10 +1,9 @@
-import Box from '@mui/material/Box';
-import { Theme } from '@mui/material/styles';
-import { makeStyles } from '@mui/styles';
+import { useTheme } from '@mui/material/styles';
 import { DateTime } from 'luxon';
 import * as React from 'react';
 
-import DismissibleBanner from 'src/components/DismissibleBanner';
+import { Box } from 'src/components/Box';
+import { DismissibleBanner } from 'src/components/DismissibleBanner';
 import { Link } from 'src/components/Link';
 import { Typography } from 'src/components/Typography';
 import {
@@ -16,25 +15,7 @@ import { capitalize } from 'src/utilities/capitalize';
 import { sanitizeHTML } from 'src/utilities/sanitize-html';
 import { truncateEnd } from 'src/utilities/truncate';
 
-const useStyles = makeStyles((theme: Theme) => ({
-  button: {
-    ...theme.applyLinkStyles,
-    display: 'flex',
-  },
-  header: {
-    fontSize: '1rem',
-    marginBottom: theme.spacing(),
-  },
-  root: {
-    marginBottom: theme.spacing(),
-  },
-  text: {
-    fontSize: '0.875rem',
-    lineHeight: '1.25rem',
-  },
-}));
-
-export const StatusBanners: React.FC<{}> = (_) => {
+export const StatusBanners = () => {
   const { data: incidentsData } = useIncidentQuery();
   const incidents = incidentsData?.incidents ?? [];
 
@@ -73,32 +54,41 @@ export interface IncidentProps {
   title: string;
 }
 
-export const IncidentBanner: React.FC<IncidentProps> = React.memo((props) => {
+export const IncidentBanner = React.memo((props: IncidentProps) => {
   const { href, impact, message, status: _status, title } = props;
   const status = _status ?? '';
-  const classes = useStyles();
+  const theme = useTheme();
 
   const preferenceKey = `${href}-${status}`;
+  const variantMap = {
+    error:
+      impact === 'critical' && !['monitoring', 'resolved'].includes(status),
+    warning:
+      ['major', 'minor', 'none'].includes(impact) ||
+      ['monitoring', 'resolved'].includes(status),
+  };
 
   return (
     <DismissibleBanner
-      error={
-        impact === 'critical' && !['monitoring', 'resolved'].includes(status)
-      }
       options={{
         expiry: DateTime.utc().plus({ days: 1 }).toISO(),
         label: preferenceKey,
       }}
-      warning={
-        ['major', 'minor', 'none'].includes(impact) ||
-        ['monitoring', 'resolved'].includes(status)
+      variant={
+        variantMap.error ? 'error' : variantMap.warning ? 'warning' : undefined
       }
-      className={classes.root}
       important
       preferenceKey={preferenceKey}
+      sx={{ marginBottom: theme.spacing() }}
     >
       <Box display="flex" flexDirection="column">
-        <Typography className={classes.header} data-testid="status-banner">
+        <Typography
+          sx={{
+            fontSize: '1rem',
+            marginBottom: theme.spacing(),
+          }}
+          data-testid="status-banner"
+        >
           <Link to={href}>
             <strong data-testid="incident-status">
               {title}
@@ -110,11 +100,12 @@ export const IncidentBanner: React.FC<IncidentProps> = React.memo((props) => {
           dangerouslySetInnerHTML={{
             __html: sanitizeHTML(truncateEnd(message, 500)),
           }}
-          className={classes.text}
+          sx={{
+            fontSize: '0.875rem',
+            lineHeight: '1.25rem',
+          }}
         />
       </Box>
     </DismissibleBanner>
   );
 });
-
-export default React.memo(StatusBanners);

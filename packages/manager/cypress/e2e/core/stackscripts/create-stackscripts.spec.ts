@@ -1,5 +1,9 @@
 import { authenticate } from 'support/api/authentication';
-import { pollLinodeStatus, pollImageStatus } from 'support/util/polling';
+import {
+  pollLinodeStatus,
+  pollImageStatus,
+  pollLinodeDiskSize,
+} from 'support/util/polling';
 import { randomLabel, randomString, randomPhrase } from 'support/util/random';
 import {
   interceptCreateStackScript,
@@ -11,6 +15,9 @@ import { createLinodeRequestFactory } from 'src/factories';
 import { createLinode, getLinodeDisks } from '@linode/api-v4/lib/linodes';
 import { createImage } from '@linode/api-v4/lib/images';
 import { chooseRegion } from 'support/util/regions';
+import { SimpleBackoffMethod } from 'support/util/backoff';
+import { cleanUp } from 'support/util/cleanup';
+import { resizeLinodeDisk } from '@linode/api-v4/lib';
 
 // StackScript fixture paths.
 const stackscriptBasicPath = 'stackscripts/stackscript-basic.sh';
@@ -104,31 +111,48 @@ const fillOutLinodeForm = (label: string, regionName: string) => {
  * @returns Promise that resolves to the new Image.
  */
 const createLinodeAndImage = async () => {
+  // 1.5GB
+  // Shout out to Debian for fitting on a 1.5GB disk.
+  const resizedDiskSize = 1536;
   const linode = await createLinode(
     createLinodeRequestFactory.build({
       label: randomLabel(),
       region: chooseRegion().id,
       root_pass: randomString(32),
+      type: 'g6-nanode-1',
+      booted: false,
     })
   );
 
-  await pollLinodeStatus(linode.id, 'running', {
+  await pollLinodeStatus(linode.id, 'offline', {
     initialDelay: 15000,
   });
 
+  // Resize the disk to speed up Image processing later.
   const diskId = (await getLinodeDisks(linode.id)).data[0].id;
+  await resizeLinodeDisk(linode.id, diskId, resizedDiskSize);
+  await pollLinodeDiskSize(linode.id, diskId, resizedDiskSize);
+
   const image = await createImage(diskId, randomLabel(), randomPhrase());
 
-  await pollImageStatus(image.id, 'available', {
-    initialDelay: 60000,
-    maxAttempts: 15,
-  });
+  await pollImageStatus(
+    image.id,
+    'available',
+    new SimpleBackoffMethod(10000, {
+      initialDelay: 45000,
+      maxAttempts: 30,
+    })
+  );
 
   return image;
 };
 
 authenticate();
 describe('Create stackscripts', () => {
+  before(() => {
+    cleanUp(['linodes', 'images', 'stackscripts']);
+  });
+
   /*
    * - Creates a StackScript with user-defined fields.
    * - Confirms that an error message appears upon submitting script without a shebang.
@@ -140,8 +164,8 @@ describe('Create stackscripts', () => {
   it('creates a StackScript and deploys a Linode with it', () => {
     const stackscriptLabel = randomLabel();
     const stackscriptDesc = randomPhrase();
-    const stackscriptImage = 'Alpine 3.17';
-    const stackscriptImageTag = 'alpine3.17';
+    const stackscriptImage = 'Alpine 3.18';
+    const stackscriptImageTag = 'alpine3.18';
 
     const linodeLabel = randomLabel();
     const linodeRegion = chooseRegion();
@@ -271,13 +295,13 @@ describe('Create stackscripts', () => {
      */
     const imageSamples = [
       { label: 'AlmaLinux 9', sel: 'linode/almalinux9' },
-      { label: 'Alpine 3.17', sel: 'linode/alpine3.17' },
+      { label: 'Alpine 3.18', sel: 'linode/alpine3.18' },
       { label: 'Arch Linux', sel: 'linode/arch' },
       { label: 'CentOS Stream 9', sel: 'linode/centos-stream9' },
-      { label: 'Debian 11', sel: 'linode/debian11' },
-      { label: 'Fedora 37', sel: 'linode/fedora37' },
+      { label: 'Debian 12', sel: 'linode/debian12' },
+      { label: 'Fedora 38', sel: 'linode/fedora38' },
       { label: 'Rocky Linux 9', sel: 'linode/rocky9' },
-      { label: 'Ubuntu 22.10', sel: 'linode/ubuntu22.10' },
+      { label: 'Ubuntu 23.04', sel: 'linode/ubuntu23.04' },
     ];
 
     interceptCreateStackScript().as('createStackScript');
@@ -287,7 +311,7 @@ describe('Create stackscripts', () => {
     cy.visitWithLogin('/stackscripts/create');
     cy.defer(createLinodeAndImage(), {
       label: 'creating Linode and Image',
-      timeout: 180000,
+      timeout: 360000,
     }).then((privateImage) => {
       cy.fixture(stackscriptBasicPath).then((stackscriptBasic) => {
         fillOutStackscriptForm(

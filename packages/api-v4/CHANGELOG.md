@@ -1,3 +1,41 @@
+## [2023-09-05] - v0.100.0
+
+### Changed:
+
+- Include 'firewall_id' field as optional in CreateLinodeRequest ([#9453](https://github.com/linode/manager/pull/9453))
+
+### Upcoming Features:
+
+- Add add_vpcs to GlobalGrantTypes ([#9537](https://github.com/linode/manager/pull/9537))
+- Update account and linode types for DC-specific pricing ([#9586](https://github.com/linode/manager/pull/9586))
+- VPC and Subnet related event types ([#9530](https://github.com/linode/manager/pull/9530))
+
+
+## [2023-08-21] - v0.99.0
+
+
+### Changed:
+
+- Include `vpc_id` and rename `subnet` to `subnet_id` in Linode config interface return object ([#9485](https://github.com/linode/manager/pull/9485))
+
+
+## [2023-08-07] - v0.98.0
+
+### Added:
+
+- New methods for Linode Configs and new/updated Linode Config and interface types ([#9418](https://github.com/linode/manager/pull/9418))
+
+## [2023-07-24] - v0.97.0
+
+### Added:
+
+- Support for self serve beta endpoints ([#9386](https://github.com/linode/manager/pull/9386))
+- Endpoints for VPC Subnets ([#9390](https://github.com/linode/manager/pull/9390))
+
+### Removed:
+
+- Unused `_initial` field in `Event` ([#9416](https://github.com/linode/manager/pull/9416))
+
 ## [2023-07-11] - v0.96.0
 
 

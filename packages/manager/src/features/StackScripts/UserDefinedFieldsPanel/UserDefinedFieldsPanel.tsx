@@ -10,12 +10,12 @@ import { Link } from 'react-router-dom';
 import { Box } from 'src/components/Box';
 import { Divider } from 'src/components/Divider';
 import { Notice } from 'src/components/Notice/Notice';
-import RenderGuard from 'src/components/RenderGuard';
-import ShowMoreExpansion from 'src/components/ShowMoreExpansion';
+import { Paper } from 'src/components/Paper';
+import { RenderGuard } from 'src/components/RenderGuard';
+import { ShowMoreExpansion } from 'src/components/ShowMoreExpansion';
 import { Typography } from 'src/components/Typography';
-import Paper from 'src/components/core/Paper';
 
-import AppInfo from '../../Linodes/LinodesCreate/AppInfo';
+import { AppInfo } from '../../Linodes/LinodesCreate/AppInfo';
 import UserDefinedMultiSelect from './FieldTypes/UserDefinedMultiSelect';
 import { UserDefinedSelect } from './FieldTypes/UserDefinedSelect';
 import UserDefinedText from './FieldTypes/UserDefinedText';
@@ -237,7 +237,7 @@ const UserDefinedFieldsPanel = (props: CombinedProps) => {
           className={classes.clusterNotice}
           data-testid="create-cluster-notice"
         >
-          <Notice success>
+          <Notice variant="success">
             <strong>
               You are creating a cluster with {numberOfNodes} nodes.
             </strong>

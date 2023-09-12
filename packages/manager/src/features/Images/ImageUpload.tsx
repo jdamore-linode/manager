@@ -5,8 +5,7 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
-import ActionsPanel from 'src/components/ActionsPanel';
-import { Button } from 'src/components/Button/Button';
+import { ActionsPanel } from 'src/components/ActionsPanel/ActionsPanel';
 import { Checkbox } from 'src/components/Checkbox';
 import { ConfirmationDialog } from 'src/components/ConfirmationDialog/ConfirmationDialog';
 import { RegionSelect } from 'src/components/EnhancedSelect/variants/RegionSelect';
@@ -14,14 +13,13 @@ import { FileUploader } from 'src/components/FileUploader/FileUploader';
 import { Link } from 'src/components/Link';
 import { LinodeCLIModal } from 'src/components/LinodeCLIModal/LinodeCLIModal';
 import { Notice } from 'src/components/Notice/Notice';
+import { Paper } from 'src/components/Paper';
 import { Prompt } from 'src/components/Prompt/Prompt';
 import { TextField } from 'src/components/TextField';
 import { Typography } from 'src/components/Typography';
-import Paper from 'src/components/core/Paper';
-import { useMetadataCustomerTag } from 'src/features/Images/utils';
 import { Dispatch } from 'src/hooks/types';
 import { useCurrentToken } from 'src/hooks/useAuthentication';
-import useFlags from 'src/hooks/useFlags';
+import { useFlags } from 'src/hooks/useFlags';
 import {
   reportAgreementSigningError,
   useAccountAgreements,
@@ -115,7 +113,6 @@ export const ImageUpload: React.FC<Props> = (props) => {
   const dispatch: Dispatch = useDispatch();
   const { push } = useHistory();
   const flags = useFlags();
-  const hasMetadataCustomerTag = useMetadataCustomerTag();
 
   const [hasSignedAgreement, setHasSignedAgreement] = React.useState<boolean>(
     false
@@ -203,15 +200,16 @@ export const ImageUpload: React.FC<Props> = (props) => {
           return (
             <ConfirmationDialog
               actions={() => (
-                <ActionsPanel>
-                  <Button buttonType="secondary" onClick={handleCancel}>
-                    Cancel
-                  </Button>
-
-                  <Button buttonType="primary" onClick={handleConfirm}>
-                    Leave Page
-                  </Button>
-                </ActionsPanel>
+                <ActionsPanel
+                  primaryButtonProps={{
+                    label: 'Leave Page',
+                    onClick: handleConfirm,
+                  }}
+                  secondaryButtonProps={{
+                    label: 'Cancel',
+                    onClick: handleCancel,
+                  }}
+                />
               )}
               onClose={handleCancel}
               open={isModalOpen}
@@ -227,11 +225,11 @@ export const ImageUpload: React.FC<Props> = (props) => {
       </Prompt>
 
       <Paper className={classes.container}>
-        {errorMap.none ? <Notice error text={errorMap.none} /> : null}
+        {errorMap.none ? <Notice text={errorMap.none} variant="error" /> : null}
         {!canCreateImage ? (
           <Notice
-            error
             text="You don't have permissions to create a new Image. Please contact an account administrator for details."
+            variant="error"
           />
         ) : null}
 
@@ -254,7 +252,7 @@ export const ImageUpload: React.FC<Props> = (props) => {
             rows={1}
             value={description}
           />
-          {flags.metadata && hasMetadataCustomerTag ? (
+          {flags.metadata && (
             <div className={classes.cloudInitCheckboxWrapper}>
               <Checkbox
                 checked={isCloudInit}
@@ -264,7 +262,7 @@ export const ImageUpload: React.FC<Props> = (props) => {
                 toolTipText={cloudInitTooltipMessage}
               />
             </div>
-          ) : null}
+          )}
           <RegionSelect
             helperText="For fastest initial upload, select the region that is geographically
             closest to you. Once uploaded you will be able to deploy the image
@@ -287,7 +285,11 @@ export const ImageUpload: React.FC<Props> = (props) => {
             />
           ) : null}
 
-          <Notice spacingTop={24} sx={{ fontSize: '0.875rem' }} warning>
+          <Notice
+            spacingTop={24}
+            sx={{ fontSize: '0.875rem' }}
+            variant="warning"
+          >
             {imageSizeLimitsMessage}
           </Notice>
 
@@ -307,22 +309,20 @@ export const ImageUpload: React.FC<Props> = (props) => {
             setCancelFn={setCancelFn}
             setErrors={setErrors}
           />
-          <ActionsPanel>
-            <Typography>
-              Or, upload an image using the{' '}
-              <button
-                className={classes.cliModalButton}
-                onClick={() => setLinodeCLIModalOpen(true)}
-              >
-                Linode CLI
-              </button>
-              . For more information, please see{' '}
-              <Link to="https://www.linode.com/docs/guides/linode-cli">
-                our guide on using the Linode CLI
-              </Link>
-              .
-            </Typography>
-          </ActionsPanel>
+          <Typography sx={{ paddingBottom: 8, paddingTop: 16 }}>
+            Or, upload an image using the{' '}
+            <button
+              className={classes.cliModalButton}
+              onClick={() => setLinodeCLIModalOpen(true)}
+            >
+              Linode CLI
+            </button>
+            . For more information, please see{' '}
+            <Link to="https://www.linode.com/docs/guides/linode-cli">
+              our guide on using the Linode CLI
+            </Link>
+            .
+          </Typography>
         </div>
       </Paper>
       <LinodeCLIModal

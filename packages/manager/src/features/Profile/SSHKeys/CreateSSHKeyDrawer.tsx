@@ -2,15 +2,15 @@ import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import * as React from 'react';
 
-import ActionsPanel from 'src/components/ActionsPanel';
-import { Button } from 'src/components/Button/Button';
+import { ActionsPanel } from 'src/components/ActionsPanel/ActionsPanel';
 import { Code } from 'src/components/Code/Code';
-import Drawer from 'src/components/Drawer';
+import { Drawer } from 'src/components/Drawer';
 import { Link } from 'src/components/Link';
 import { Notice } from 'src/components/Notice/Notice';
 import { TextField } from 'src/components/TextField';
 import { Typography } from 'src/components/Typography';
 import { useCreateSSHKeyMutation } from 'src/queries/profile';
+import { handleFormikBlur } from 'src/utilities/formikTrimUtil';
 import getAPIErrorFor from 'src/utilities/getAPIErrorFor';
 
 interface Props {
@@ -62,7 +62,7 @@ export const CreateSSHKeyDrawer = React.memo(({ onClose, open }: Props) => {
 
   return (
     <Drawer onClose={onClose} open={open} title="Add SSH Key">
-      {generalError && <Notice error text={generalError} />}
+      {generalError && <Notice text={generalError} variant="error" />}
       <form onSubmit={formik.handleSubmit}>
         <TextField
           errorText={hasErrorFor('label')}
@@ -72,33 +72,25 @@ export const CreateSSHKeyDrawer = React.memo(({ onClose, open }: Props) => {
           value={formik.values.label}
         />
         <TextField
-          onBlur={(e) => {
-            const trimmedValue = e.target.value.trim();
-            formik.setFieldValue('ssh_key', trimmedValue);
-            formik.handleBlur(e);
-          }}
           errorText={hasErrorFor('ssh_key')}
           helperText={<SSHTextAreaHelperText />}
           label="SSH Public Key"
           multiline
           name="ssh_key"
+          onBlur={(e) => handleFormikBlur(e, formik)}
           onChange={formik.handleChange}
           rows={1.75}
           value={formik.values.ssh_key}
         />
-        <ActionsPanel>
-          <Button buttonType="secondary" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button
-            buttonType="primary"
-            data-testid="submit"
-            loading={isLoading}
-            type="submit"
-          >
-            Add Key
-          </Button>
-        </ActionsPanel>
+        <ActionsPanel
+          primaryButtonProps={{
+            'data-testid': 'submit',
+            label: 'Add Key',
+            loading: isLoading,
+            type: 'submit',
+          }}
+          secondaryButtonProps={{ label: 'Cancel', onClick: onClose }}
+        />
       </form>
     </Drawer>
   );

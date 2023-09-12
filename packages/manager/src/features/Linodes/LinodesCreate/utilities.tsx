@@ -3,6 +3,7 @@ import { Linode } from '@linode/api-v4/lib/linodes';
 import { Region } from '@linode/api-v4/lib/regions';
 import * as React from 'react';
 
+import { Link } from 'src/components/Link';
 import { Typography } from 'src/components/Typography';
 import { displayType } from 'src/features/Linodes/presentation';
 import { ExtendedType } from 'src/utilities/extendType';
@@ -67,14 +68,9 @@ export const gpuPlanText = (useTypography?: boolean): JSX.Element => {
     return (
       <Typography>
         {gpuPlanTextSegments[0]}
-        <a
-          aria-describedby="external-site"
-          href="https://www.linode.com/docs/platform/linode-gpu/getting-started-with-gpu/"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
+        <Link to="https://www.linode.com/docs/platform/linode-gpu/getting-started-with-gpu/">
           Here is a guide
-        </a>{' '}
+        </Link>{' '}
         {gpuPlanTextSegments[1]}
       </Typography>
     );
@@ -83,14 +79,9 @@ export const gpuPlanText = (useTypography?: boolean): JSX.Element => {
   return (
     <>
       {gpuPlanTextSegments[0]}
-      <a
-        aria-describedby="external-site"
-        href="https://www.linode.com/docs/platform/linode-gpu/getting-started-with-gpu/"
-        rel="noopener noreferrer"
-        target="_blank"
-      >
+      <Link to="https://www.linode.com/docs/platform/linode-gpu/getting-started-with-gpu/">
         {` `}Here is a guide
-      </a>{' '}
+      </Link>{' '}
       {gpuPlanTextSegments[1]}
     </>
   );
@@ -109,3 +100,26 @@ export const getMonthlyAndHourlyNodePricing = (
 
 export const CROSS_DATA_CENTER_CLONE_WARNING =
   'Cloning a Powered Off instance across Data Centers may cause long periods of down time.';
+
+/**
+ * Unicode to ASCII (encode data to Base64)
+ * https://base64.guru/developers/javascript/examples/unicode-strings
+ */
+export const utoa = (data: string) => {
+  try {
+    return btoa(unescape(encodeURIComponent(data)));
+  } catch (error) {
+    return data;
+  }
+};
+
+export const regionSupportsMetadata = (
+  regionsData: Region[],
+  region: string
+) => {
+  return (
+    regionsData
+      .find((regionData) => regionData.id === region)
+      ?.capabilities.includes('Metadata') ?? false
+  );
+};

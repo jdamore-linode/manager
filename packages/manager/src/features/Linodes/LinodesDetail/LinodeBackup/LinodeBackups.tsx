@@ -1,13 +1,13 @@
-import { LinodeBackup } from '@linode/api-v4/lib/linodes';
+import { LinodeBackup, PriceObject } from '@linode/api-v4/lib/linodes';
 import { Box, Stack } from '@mui/material';
-import { Theme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import * as React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import { makeStyles } from 'tss-react/mui';
 
 import { Button } from 'src/components/Button/Button';
 import { CircleProgress } from 'src/components/CircleProgress';
 import { ErrorState } from 'src/components/ErrorState/ErrorState';
+import { Paper } from 'src/components/Paper';
 import { Table } from 'src/components/Table';
 import { TableBody } from 'src/components/TableBody';
 import { TableCell } from 'src/components/TableCell';
@@ -15,42 +15,27 @@ import { TableHead } from 'src/components/TableHead';
 import { TableRow } from 'src/components/TableRow';
 import { TableRowEmpty } from 'src/components/TableRowEmpty/TableRowEmpty';
 import { Typography } from 'src/components/Typography';
-import Paper from 'src/components/core/Paper';
+import { useFlags } from 'src/hooks/useFlags';
 import { useLinodeBackupsQuery } from 'src/queries/linodes/backups';
 import { useLinodeQuery } from 'src/queries/linodes/linodes';
 import { useGrants, useProfile } from 'src/queries/profile';
 import { useTypeQuery } from 'src/queries/types';
+import { getMonthlyBackupsPrice } from 'src/utilities/pricing/backups';
 
 import { LinodePermissionsError } from '../LinodePermissionsError';
-import BackupTableRow from './BackupTableRow';
-import BackupsPlaceholder from './BackupsPlaceholder';
+import { BackupTableRow } from './BackupTableRow';
+import { BackupsPlaceholder } from './BackupsPlaceholder';
 import { CancelBackupsDialog } from './CancelBackupsDialog';
 import { CaptureSnapshot } from './CaptureSnapshot';
 import { RestoreToLinodeDrawer } from './RestoreToLinodeDrawer';
 import { ScheduleSettings } from './ScheduleSettings';
-
-const useStyles = makeStyles()((theme: Theme) => ({
-  cancelButton: {
-    marginBottom: theme.spacing(1),
-    [theme.breakpoints.down('md')]: {
-      marginLeft: theme.spacing(),
-      marginRight: theme.spacing(),
-    },
-  },
-  cancelCopy: {
-    [theme.breakpoints.down('md')]: {
-      marginLeft: theme.spacing(),
-      marginRight: theme.spacing(),
-    },
-  },
-}));
 
 export const LinodeBackups = () => {
   const { linodeId } = useParams<{ linodeId: string }>();
   const id = Number(linodeId);
 
   const history = useHistory();
-  const { classes } = useStyles();
+  const flags = useFlags();
 
   const { data: profile } = useProfile();
   const { data: grants } = useGrants();
@@ -97,7 +82,11 @@ export const LinodeBackups = () => {
     );
   }
 
-  const backupsMonthlyPrice = type?.addons?.backups?.price?.monthly ?? 0;
+  const backupsMonthlyPrice: PriceObject['monthly'] = getMonthlyBackupsPrice({
+    flags,
+    region: linode?.region,
+    type,
+  });
 
   if (isLoading) {
     return <CircleProgress />;
@@ -106,7 +95,7 @@ export const LinodeBackups = () => {
   if (!linode?.backups.enabled) {
     return (
       <BackupsPlaceholder
-        backupsMonthlyPrice={backupsMonthlyPrice}
+        backupsMonthlyPrice={backupsMonthlyPrice ?? 0}
         disabled={doesNotHavePermission}
         linodeId={id}
       />
@@ -184,23 +173,18 @@ export const LinodeBackups = () => {
       <CaptureSnapshot isReadOnly={doesNotHavePermission} linodeId={id} />
       <ScheduleSettings isReadOnly={doesNotHavePermission} linodeId={id} />
       <Box>
-        <Button
+        <StyledCancelButton
           buttonType="outlined"
-          className={classes.cancelButton}
           data-qa-cancel
           disabled={doesNotHavePermission}
           onClick={() => setIsCancelBackupsDialogOpen(true)}
         >
           Cancel Backups
-        </Button>
-        <Typography
-          className={classes.cancelCopy}
-          data-qa-cancel-desc
-          variant="body1"
-        >
+        </StyledCancelButton>
+        <StyledCancelTypography data-qa-cancel-desc variant="body1">
           Please note that when you cancel backups associated with this Linode,
           this will remove all existing backups.
-        </Typography>
+        </StyledCancelTypography>
       </Box>
       <RestoreToLinodeDrawer
         backup={selectedBackup}
@@ -216,5 +200,24 @@ export const LinodeBackups = () => {
     </Stack>
   );
 };
+
+const StyledCancelButton = styled(Button, { label: 'StyledCancelButton' })(
+  ({ theme }) => ({
+    marginBottom: theme.spacing(1),
+    [theme.breakpoints.down('md')]: {
+      marginLeft: theme.spacing(),
+      marginRight: theme.spacing(),
+    },
+  })
+);
+
+const StyledCancelTypography = styled(Typography, {
+  label: 'StyledCancelTypography',
+})(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    marginLeft: theme.spacing(),
+    marginRight: theme.spacing(),
+  },
+}));
 
 export default LinodeBackups;

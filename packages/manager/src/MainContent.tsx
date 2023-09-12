@@ -10,26 +10,25 @@ import Logo from 'src/assets/logo/akamai-logo.svg';
 import { Box } from 'src/components/Box';
 import MainContentBanner from 'src/components/MainContentBanner';
 import { MaintenanceScreen } from 'src/components/MaintenanceScreen';
-import NotFound from 'src/components/NotFound';
+import { NotFound } from 'src/components/NotFound';
 import { PreferenceToggle } from 'src/components/PreferenceToggle/PreferenceToggle';
-import SideMenu from 'src/components/SideMenu';
-import SuspenseLoader from 'src/components/SuspenseLoader';
+import { SideMenu } from 'src/components/SideMenu';
+import { SuspenseLoader } from 'src/components/SuspenseLoader';
 import withGlobalErrors, {
   Props as GlobalErrorProps,
 } from 'src/containers/globalErrors.container';
 import { useDialogContext } from 'src/context';
-import BackupDrawer from 'src/features/Backups';
-import Footer from 'src/features/Footer';
-import GlobalNotifications from 'src/features/GlobalNotifications';
+import { Footer } from 'src/features/Footer/Footer';
+import { GlobalNotifications } from 'src/features/GlobalNotifications/GlobalNotifications';
 import {
   notificationContext,
   useNotificationContext,
 } from 'src/features/NotificationCenter/NotificationContext';
-import ToastNotifications from 'src/features/ToastNotifications';
-import TopMenu from 'src/features/TopMenu';
+import { ToastNotifications } from 'src/features/ToastNotifications/ToastNotifications';
+import { TopMenu } from 'src/features/TopMenu/TopMenu';
 import VolumeDrawer from 'src/features/Volumes/VolumeDrawer';
-import useAccountManagement from 'src/hooks/useAccountManagement';
-import useFlags from 'src/hooks/useFlags';
+import { useAccountManagement } from 'src/hooks/useAccountManagement';
+import { useFlags } from 'src/hooks/useFlags';
 import { usePreferences } from 'src/queries/preferences';
 import { ManagerPreferences } from 'src/types/ManagerPreferences';
 import { isFeatureEnabled } from 'src/utilities/accountCapabilities';
@@ -139,11 +138,15 @@ type CombinedProps = Props & GlobalErrorProps;
 const Account = React.lazy(() => import('src/features/Account'));
 const LinodesRoutes = React.lazy(() => import('src/features/Linodes'));
 const Volumes = React.lazy(() => import('src/features/Volumes'));
-const Domains = React.lazy(() => import('src/features/Domains'));
+const Domains = React.lazy(() =>
+  import('src/features/Domains').then((module) => ({
+    default: module.DomainsRoutes,
+  }))
+);
 const Images = React.lazy(() => import('src/features/Images'));
 const Kubernetes = React.lazy(() => import('src/features/Kubernetes'));
 const ObjectStorage = React.lazy(() => import('src/features/ObjectStorage'));
-const Profile = React.lazy(() => import('src/features/Profile'));
+const Profile = React.lazy(() => import('src/features/Profile/Profile'));
 const LoadBalancers = React.lazy(() => import('src/features/LoadBalancers'));
 const NodeBalancers = React.lazy(
   () => import('src/features/NodeBalancers/NodeBalancers')
@@ -156,10 +159,15 @@ const SupportTicketDetail = React.lazy(
   () => import('src/features/Support/SupportTicketDetail')
 );
 const Longview = React.lazy(() => import('src/features/Longview'));
-const Managed = React.lazy(() => import('src/features/Managed'));
-const Help = React.lazy(() => import('src/features/Help'));
-
-const SearchLanding = React.lazy(() => import('src/features/Search'));
+const Managed = React.lazy(() => import('src/features/Managed/ManagedLanding'));
+const Help = React.lazy(() =>
+  import('./features/Help/index').then((module) => ({
+    default: module.HelpAndSupport,
+  }))
+);
+const SearchLanding = React.lazy(
+  () => import('src/features/Search/SearchLanding')
+);
 const EventsLanding = React.lazy(
   () => import('src/features/Events/EventsLanding')
 );
@@ -168,6 +176,8 @@ const AccountActivationLanding = React.lazy(
 );
 const Firewalls = React.lazy(() => import('src/features/Firewalls'));
 const Databases = React.lazy(() => import('src/features/Databases'));
+const BetaRoutes = React.lazy(() => import('src/features/Betas'));
+const VPC = React.lazy(() => import('src/features/VPCs'));
 
 const MainContent = (props: CombinedProps) => {
   const { classes, cx } = useStyles();
@@ -190,6 +200,12 @@ const MainContent = (props: CombinedProps) => {
   const showDatabases = isFeatureEnabled(
     'Managed Databases',
     Boolean(flags.databases),
+    account?.capabilities ?? []
+  );
+
+  const showVPCs = isFeatureEnabled(
+    'VPCs',
+    Boolean(flags.vpc),
     account?.capabilities ?? []
   );
 
@@ -337,19 +353,19 @@ const MainContent = (props: CombinedProps) => {
                             />
                             <Route component={Kubernetes} path="/kubernetes" />
                             <Route component={Account} path="/account" />
-
-                            <Route
-                              render={(routeProps) => (
-                                <Profile {...routeProps} />
-                              )}
-                              path="/profile"
-                            />
+                            <Route component={Profile} path="/profile" />
                             <Route component={Help} path="/support" />
                             <Route component={SearchLanding} path="/search" />
                             <Route component={EventsLanding} path="/events" />
                             <Route component={Firewalls} path="/firewalls" />
                             {showDatabases ? (
                               <Route component={Databases} path="/databases" />
+                            ) : null}
+                            {flags.selfServeBetas ? (
+                              <Route component={BetaRoutes} path="/betas" />
+                            ) : null}
+                            {showVPCs ? (
+                              <Route component={VPC} path="/vpcs" />
                             ) : null}
                             <Redirect exact from="/" to={defaultRoot} />
                             {/** We don't want to break any bookmarks. This can probably be removed eventually. */}
@@ -366,7 +382,6 @@ const MainContent = (props: CombinedProps) => {
             <Footer desktopMenuIsOpen={desktopMenuIsOpen} />
             <ToastNotifications />
             <VolumeDrawer />
-            <BackupDrawer />
           </ComplianceUpdateProvider>
         )}
       </PreferenceToggle>

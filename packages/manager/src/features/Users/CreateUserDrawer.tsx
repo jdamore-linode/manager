@@ -3,13 +3,12 @@ import { APIError } from '@linode/api-v4/lib/types';
 import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 
-import ActionsPanel from 'src/components/ActionsPanel';
-import { Button } from 'src/components/Button/Button';
-import Drawer from 'src/components/Drawer';
+import { ActionsPanel } from 'src/components/ActionsPanel/ActionsPanel';
+import { Drawer } from 'src/components/Drawer';
 import { Notice } from 'src/components/Notice/Notice';
 import { TextField } from 'src/components/TextField';
 import { Toggle } from 'src/components/Toggle';
-import FormControlLabel from 'src/components/core/FormControlLabel';
+import { FormControlLabel } from 'src/components/FormControlLabel';
 import { getAPIErrorOrDefault } from 'src/utilities/errorUtils';
 import getAPIErrorsFor from 'src/utilities/getAPIErrorFor';
 
@@ -54,21 +53,24 @@ class CreateUserDrawer extends React.Component<CombinedProps, State> {
 
     return (
       <Drawer onClose={onClose} open={open} title="Add a User">
-        {generalError && <Notice error text={generalError} />}
+        {generalError && <Notice text={generalError} variant="error" />}
         <TextField
           data-qa-create-username
           errorText={hasErrorFor('username')}
           label="Username"
-          onChange={this.onChangeUsername}
+          onBlur={this.handleChangeUsername}
+          onChange={this.handleChangeUsername}
           required
+          trimmed
           value={username}
         />
         <TextField
           data-qa-create-email
           errorText={hasErrorFor('email')}
           label="Email"
-          onChange={this.onChangeEmail}
+          onChange={this.handleChangeEmail}
           required
+          trimmed
           type="email"
           value={email}
         />
@@ -77,7 +79,7 @@ class CreateUserDrawer extends React.Component<CombinedProps, State> {
             <Toggle
               checked={!restricted}
               data-qa-create-restricted
-              onChange={this.onChangeRestricted}
+              onChange={this.handleChangeRestricted}
             />
           }
           label={
@@ -92,39 +94,43 @@ class CreateUserDrawer extends React.Component<CombinedProps, State> {
         <div style={{ marginTop: 8 }}>
           <Notice
             text="The user will be sent an email to set their password"
-            warning
+            variant="warning"
           />
         </div>
-        <ActionsPanel>
-          <Button buttonType="secondary" data-qa-cancel onClick={onClose}>
-            Cancel
-          </Button>
-          <Button
-            buttonType="primary"
-            data-qa-submit
-            loading={submitting}
-            onClick={this.onSubmit}
-          >
-            Add User
-          </Button>
-        </ActionsPanel>
+        <ActionsPanel
+          primaryButtonProps={{
+            'data-testid': 'submit',
+            label: 'Add User',
+            loading: submitting,
+            onClick: this.onSubmit,
+          }}
+          secondaryButtonProps={{
+            'data-testid': 'cancel',
+            label: 'Cancel',
+            onClick: onClose,
+          }}
+        />
       </Drawer>
     );
   }
 
-  onChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+  handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({
       email: e.target.value,
     });
   };
 
-  onChangeRestricted = (e: React.ChangeEvent<HTMLInputElement>) => {
+  handleChangeRestricted = () => {
     this.setState({
       restricted: !this.state.restricted,
     });
   };
 
-  onChangeUsername = (e: React.ChangeEvent<HTMLInputElement>) => {
+  handleChangeUsername = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     this.setState({
       username: e.target.value,
     });

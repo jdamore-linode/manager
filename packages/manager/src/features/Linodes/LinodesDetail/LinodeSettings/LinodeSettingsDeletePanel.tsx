@@ -8,7 +8,7 @@ import { TypeToConfirmDialog } from 'src/components/TypeToConfirmDialog/TypeToCo
 import { Typography } from 'src/components/Typography';
 import { resetEventsPolling } from 'src/eventsPolling';
 import {
-  useLinodeDeleteMutation,
+  useDeleteLinodeMutation,
   useLinodeQuery,
 } from 'src/queries/linodes/linodes';
 
@@ -17,13 +17,14 @@ interface Props {
   linodeId: number;
 }
 
-export const LinodeSettingsDeletePanel = ({ isReadOnly, linodeId }: Props) => {
+export const LinodeSettingsDeletePanel = (props: Props) => {
+  const { isReadOnly, linodeId } = props;
   const { data: linode } = useLinodeQuery(linodeId);
   const {
     error,
     isLoading,
     mutateAsync: deleteLinode,
-  } = useLinodeDeleteMutation(linodeId);
+  } = useDeleteLinodeMutation(linodeId);
 
   const history = useHistory();
 
@@ -66,7 +67,7 @@ export const LinodeSettingsDeletePanel = ({ isReadOnly, linodeId }: Props) => {
         open={open}
         title={`Delete ${linode?.label}?`}
       >
-        <Notice warning>
+        <Notice variant="warning">
           <Typography style={{ fontSize: '0.875rem' }}>
             <strong>Warning:</strong> Deleting your Linode will result in
             permanent data loss.

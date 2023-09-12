@@ -4,8 +4,8 @@ import { Link, useParams } from 'react-router-dom';
 
 import { TagsPanel } from 'src/components/TagsPanel/TagsPanel';
 import { Typography } from 'src/components/Typography';
-import Paper from 'src/components/core/Paper';
-import IPAddress from 'src/features/Linodes/LinodesLanding/IPAddress';
+import { Paper } from 'src/components/Paper';
+import { IPAddress } from 'src/features/Linodes/LinodesLanding/IPAddress';
 import {
   useAllNodeBalancerConfigsQuery,
   useNodeBalancerQuery,
@@ -97,9 +97,11 @@ export const SummaryPanel = () => {
         <StyledSection>
           <StyledIPGrouping data-qa-ip>
             {nodebalancer?.ipv4 && (
-              <IPAddress ips={[nodebalancer?.ipv4]} showMore />
+              <IPAddress ips={[nodebalancer?.ipv4]} isHovered={true} showMore />
             )}
-            {nodebalancer?.ipv6 && <IPAddress ips={[nodebalancer?.ipv6]} />}
+            {nodebalancer?.ipv6 && (
+              <IPAddress ips={[nodebalancer?.ipv6]} isHovered={true} />
+            )}
           </StyledIPGrouping>
         </StyledSection>
       </StyledSummarySection>

@@ -1,8 +1,28 @@
 import React from 'react';
 
-import { renderWithTheme } from 'src/utilities/testHelpers';
+import { linodeTypeFactory } from 'src/factories/linodes';
+import { getMonthlyBackupsPrice } from 'src/utilities/pricing/backups';
+import { renderWithTheme, wrapWithTheme } from 'src/utilities/testHelpers';
 
 import { AddonsPanel, AddonsPanelProps } from './AddonsPanel';
+
+const type = linodeTypeFactory.build({
+  addons: {
+    backups: {
+      price: {
+        hourly: 0.004,
+        monthly: 2.5,
+      },
+      region_prices: [
+        {
+          hourly: 0.0048,
+          id: 'id-cgk',
+          monthly: 3.57,
+        },
+      ],
+    },
+  },
+});
 
 const props: AddonsPanelProps = {
   accountBackups: true,
@@ -137,6 +157,12 @@ const props: AddonsPanelProps = {
   selectedRegionID: '1234',
   selectedTypeID: '12345',
   togglePrivateIP: jest.fn(),
+  userData: {
+    createType: 'fromLinode',
+    onChange: jest.fn(),
+    showUserData: false,
+    userData: '1234',
+  },
   vlanLabel: 'abc',
 };
 
@@ -145,11 +171,25 @@ describe('AddonsPanel', () => {
     renderWithTheme(<AddonsPanel {...props} />);
   });
 
+  it('should render UserDataAccordion if showUserData is true and hide it if false', () => {
+    const userDataProps = {
+      userData: { ...props.userData, showUserData: true },
+    };
+    const { getByText, queryByText, rerender } = renderWithTheme(
+      <AddonsPanel {...props} {...userDataProps} />
+    );
+    getByText('Add User Data');
+    userDataProps.userData.showUserData = false;
+    rerender(wrapWithTheme(<AddonsPanel {...props} {...userDataProps} />));
+    expect(queryByText('Add User Data')).not.toBeInTheDocument();
+  });
+
   it('Should trigger changePrivateIP if source linode has been allocated a private IP', () => {
     renderWithTheme(<AddonsPanel {...props} />);
 
     expect(props.togglePrivateIP).toBeCalled();
   });
+
   it('Should select Private IP checkbox if source linode has been allocated a private IP', () => {
     const addOnProps = { ...props, isPrivateIPChecked: true };
     const { getByTestId } = renderWithTheme(<AddonsPanel {...addOnProps} />);
@@ -157,5 +197,52 @@ describe('AddonsPanel', () => {
     expect(
       (PrivateIpAddress?.firstElementChild as HTMLInputElement)?.checked
     ).toBe(true);
+  });
+
+  it('Should display backups price when Backups checkbox is checked', () => {
+    const backupsMonthlyPrice = getMonthlyBackupsPrice({
+      flags: { dcSpecificPricing: false },
+      region: 'us-east',
+      type,
+    });
+    const addOnProps = {
+      ...props,
+      backups: true,
+      backupsMonthlyPrice,
+    };
+
+    const { getByTestId, getByText } = renderWithTheme(
+      <AddonsPanel {...addOnProps} />
+    );
+
+    const backupsCheckbox = getByTestId('backups');
+    backupsCheckbox.click();
+
+    expect(getByText(/\$2.50/)).toBeInTheDocument();
+  });
+
+  it('Should display DC-specific backups price when Backups checkbox is checked with the dcSpecificPricing feature flag on', () => {
+    const backupsMonthlyPrice = getMonthlyBackupsPrice({
+      flags: { dcSpecificPricing: true },
+      region: 'id-cgk',
+      type,
+    });
+    const addOnProps = {
+      ...props,
+      backups: true,
+      backupsMonthlyPrice,
+    };
+
+    const { getByTestId, getByText } = renderWithTheme(
+      <AddonsPanel {...addOnProps} />,
+      {
+        flags: { dcSpecificPricing: true },
+      }
+    );
+
+    const backupsCheckbox = getByTestId('backups');
+    backupsCheckbox.click();
+
+    expect(getByText(/\$3.57/)).toBeInTheDocument();
   });
 });

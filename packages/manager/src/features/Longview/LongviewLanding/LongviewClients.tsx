@@ -14,7 +14,7 @@ import { compose } from 'recompose';
 import { DebouncedSearchTextField } from 'src/components/DebouncedSearchTextField';
 import { DocumentTitleSegment } from 'src/components/DocumentTitle';
 import Select, { Item } from 'src/components/EnhancedSelect/Select';
-import Grid from 'src/components/Grid';
+import { Grid } from 'src/components/Grid';
 import { Typography } from 'src/components/Typography';
 import withLongviewClients, {
   Props as LongviewProps,
@@ -233,7 +233,12 @@ export const LongviewClients: React.FC<CombinedProps> = (props) => {
   return (
     <React.Fragment>
       <DocumentTitleSegment segment="Clients" />
-      <Grid alignItems="center" className={classes.headingWrapper} container>
+      <Grid
+        alignItems="center"
+        className={classes.headingWrapper}
+        container
+        spacing={2}
+      >
         <Grid className={classes.searchbar} item>
           <DebouncedSearchTextField
             debounceTime={250}
@@ -277,6 +282,7 @@ export const LongviewClients: React.FC<CombinedProps> = (props) => {
           container
           direction="column"
           justifyContent="center"
+          spacing={2}
         >
           <Typography data-testid="longview-upgrade">
             <Link to={'/longview/plan-details'}>Upgrade to Longview Pro</Link>

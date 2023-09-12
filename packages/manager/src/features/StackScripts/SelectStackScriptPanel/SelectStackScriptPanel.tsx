@@ -15,10 +15,10 @@ import { compose } from 'recompose';
 import { Button } from 'src/components/Button/Button';
 import { CircleProgress } from 'src/components/CircleProgress';
 import { Notice } from 'src/components/Notice/Notice';
-import RenderGuard, { RenderGuardProps } from 'src/components/RenderGuard';
+import { Paper } from 'src/components/Paper';
+import { RenderGuard, RenderGuardProps } from 'src/components/RenderGuard';
 import { Table } from 'src/components/Table';
 import { Typography } from 'src/components/Typography';
-import Paper from 'src/components/core/Paper';
 import {
   WithProfileProps,
   withProfile,
@@ -195,7 +195,12 @@ class SelectStackScriptPanel extends React.Component<CombinedProps, State> {
       <Paper className={classes.panel}>
         <div className={classes.inner}>
           {error && (
-            <Notice error spacingBottom={0} spacingTop={8} text={error} />
+            <Notice
+              spacingBottom={0}
+              spacingTop={8}
+              text={error}
+              variant="error"
+            />
           )}
           {stackScriptError && (
             <Typography variant="body1">

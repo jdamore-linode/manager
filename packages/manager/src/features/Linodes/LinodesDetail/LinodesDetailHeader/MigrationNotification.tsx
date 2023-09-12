@@ -1,13 +1,10 @@
 import { NotificationType } from '@linode/api-v4/lib/account';
 import { scheduleOrQueueMigration } from '@linode/api-v4/lib/linodes';
-import { Theme } from '@mui/material/styles';
-import { makeStyles } from '@mui/styles';
 import { DateTime } from 'luxon';
 import { useSnackbar } from 'notistack';
 import * as React from 'react';
 
-import ActionsPanel from 'src/components/ActionsPanel';
-import { Button } from 'src/components/Button/Button';
+import { ActionsPanel } from 'src/components/ActionsPanel/ActionsPanel';
 import { ConfirmationDialog } from 'src/components/ConfirmationDialog/ConfirmationDialog';
 import { Notice } from 'src/components/Notice/Notice';
 import { Typography } from 'src/components/Typography';
@@ -17,12 +14,7 @@ import { capitalize } from 'src/utilities/capitalize';
 import { parseAPIDate } from 'src/utilities/date';
 import { formatDate } from 'src/utilities/formatDate';
 import { pluralize } from 'src/utilities/pluralize';
-
-const useStyles = makeStyles((theme: Theme) => ({
-  migrationLink: {
-    ...theme.applyLinkStyles,
-  },
-}));
+import { StyledLinkButton } from 'src/components/Button/StyledLinkButton';
 
 interface Props {
   linodeID: number;
@@ -32,8 +24,7 @@ interface Props {
   requestNotifications: () => void;
 }
 
-const MigrationNotification: React.FC<Props> = (props) => {
-  const classes = useStyles();
+export const MigrationNotification = React.memo((props: Props) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const {
@@ -78,18 +69,18 @@ const MigrationNotification: React.FC<Props> = (props) => {
   };
 
   const actions = () => (
-    <ActionsPanel>
-      <Button buttonType="secondary" data-qa-cancel onClick={closeDialog}>
-        Cancel
-      </Button>
-      <Button
-        buttonType="primary"
-        loading={dialog.isLoading}
-        onClick={onSubmit}
-      >
-        Enter Migration Queue
-      </Button>
-    </ActionsPanel>
+    <ActionsPanel
+      primaryButtonProps={{
+        label: 'Enter Migration Queue',
+        loading: dialog.isLoading,
+        onClick: onSubmit,
+      }}
+      secondaryButtonProps={{
+        'data-testid': 'cancel',
+        label: 'Cancel',
+        onClick: closeDialog,
+      }}
+    />
   );
 
   const migrationActionDescription =
@@ -119,18 +110,15 @@ const MigrationNotification: React.FC<Props> = (props) => {
 
   return (
     <>
-      <Notice important warning>
+      <Notice important variant="warning">
         <Typography>
           {notificationType === 'migration_scheduled'
             ? migrationScheduledText()
             : notificationMessage}
           {` `}
-          <button
-            className={classes.migrationLink}
-            onClick={() => openDialog(linodeID)}
-          >
+          <StyledLinkButton onClick={() => openDialog(linodeID)}>
             {capitalize(migrationActionDescription)}
-          </button>
+          </StyledLinkButton>
           .
         </Typography>
       </Notice>
@@ -147,6 +135,4 @@ const MigrationNotification: React.FC<Props> = (props) => {
       </ConfirmationDialog>
     </>
   );
-};
-
-export default React.memo(MigrationNotification);
+});

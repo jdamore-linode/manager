@@ -10,7 +10,7 @@ import { useCallback } from 'react';
 import React from 'react';
 
 import { API_MAX_PAGE_SIZE } from 'src/constants';
-import useAccountManagement from 'src/hooks/useAccountManagement';
+import { useAccountManagement } from 'src/hooks/useAccountManagement';
 import { useAllImagesQuery } from 'src/queries/images';
 import { useRegionsQuery } from 'src/queries/regions';
 import { useSpecificTypes } from 'src/queries/types';
@@ -151,5 +151,3 @@ const requestEntities = (
     // API filtering on Object Storage buckets does not work.
   ]).then((results) => (flatten(results) as unknown) as SearchableItem[]);
 };
-
-export default useAPISearch;

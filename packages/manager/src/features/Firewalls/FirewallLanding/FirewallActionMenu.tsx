@@ -4,9 +4,11 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/styles';
 import * as React from 'react';
 
-import ActionMenu, { Action } from 'src/components/ActionMenu';
+import { Action, ActionMenu } from 'src/components/ActionMenu';
 import { InlineMenuAction } from 'src/components/InlineMenuAction/InlineMenuAction';
 import { useGrants, useProfile } from 'src/queries/profile';
+
+import { checkIfUserCanModifyFirewall } from '../shared';
 
 export interface ActionHandlers {
   [index: string]: any;
@@ -21,9 +23,10 @@ interface Props extends ActionHandlers {
   firewallStatus: FirewallStatus;
 }
 
-type CombinedProps = Props;
+export const noPermissionTooltipText =
+  "You don't have permissions to modify this Firewall.";
 
-const FirewallActionMenu: React.FC<CombinedProps> = (props) => {
+export const FirewallActionMenu = React.memo((props: Props) => {
   const theme = useTheme<Theme>();
   const matchesSmDown = useMediaQuery(theme.breakpoints.down('md'));
   const { data: profile } = useProfile();
@@ -38,13 +41,11 @@ const FirewallActionMenu: React.FC<CombinedProps> = (props) => {
     triggerEnableFirewall,
   } = props;
 
-  const userCanModifyFirewall =
-    !profile?.restricted ||
-    grants?.firewall?.find((firewall) => firewall.id === firewallID)
-      ?.permissions === 'read_write';
-
-  const noPermissionTooltipText =
-    "You don't have permissions to modify this Firewall.";
+  const userCanModifyFirewall = checkIfUserCanModifyFirewall(
+    firewallID,
+    profile,
+    grants
+  );
 
   const disabledProps = !userCanModifyFirewall
     ? {
@@ -58,8 +59,7 @@ const FirewallActionMenu: React.FC<CombinedProps> = (props) => {
       onClick: () => {
         handleEnableDisable();
       },
-      title:
-        firewallStatus === ('enabled' as FirewallStatus) ? 'Disable' : 'Enable',
+      title: firewallStatus === 'enabled' ? 'Disable' : 'Enable',
       ...disabledProps,
     },
     {
@@ -101,6 +101,4 @@ const FirewallActionMenu: React.FC<CombinedProps> = (props) => {
       )}
     </>
   );
-};
-
-export default React.memo(FirewallActionMenu);
+});

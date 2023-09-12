@@ -1,19 +1,15 @@
 import Grid from '@mui/material/Unstable_Grid2';
-import { Theme } from '@mui/material/styles';
-import { makeStyles } from '@mui/styles';
 import { equals } from 'ramda';
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
 import { debounce } from 'throttle-debounce';
 
-import Error from 'src/assets/icons/error.svg';
 import { CircleProgress } from 'src/components/CircleProgress';
-import { H1Header } from 'src/components/H1Header/H1Header';
 import { Notice } from 'src/components/Notice/Notice';
 import { Typography } from 'src/components/Typography';
-import useAPISearch from 'src/features/Search/useAPISearch';
-import useAccountManagement from 'src/hooks/useAccountManagement';
+import { useAPISearch } from 'src/features/Search/useAPISearch';
+import { useIsLargeAccount } from 'src/hooks/useIsLargeAccount';
 import { useAllDomainsQuery } from 'src/queries/domains';
 import { useAllImagesQuery } from 'src/queries/images';
 import { useAllKubernetesClustersQuery } from 'src/queries/kubernetes';
@@ -26,7 +22,6 @@ import {
 import { useRegionsQuery } from 'src/queries/regions';
 import { useSpecificTypes } from 'src/queries/types';
 import { useAllVolumesQuery } from 'src/queries/volumes';
-import { ErrorObject } from 'src/store/selectors/entitiesErrors';
 import { formatLinode } from 'src/store/selectors/getSearchEntities';
 import { getAPIErrorOrDefault } from 'src/utilities/errorUtils';
 import { extendTypesQueryResult } from 'src/utilities/extendType';
@@ -35,48 +30,17 @@ import { isNotNullOrUndefined } from 'src/utilities/nullOrUndefined';
 import { getQueryParamFromQueryString } from 'src/utilities/queryParams';
 
 import { getImageLabelForLinode } from '../Images/utils';
-import ResultGroup from './ResultGroup';
+import { ResultGroup } from './ResultGroup';
+import {
+  StyledError,
+  StyledGrid,
+  StyledH1Header,
+  StyledRootGrid,
+  StyledStack,
+} from './SearchLanding.styles';
 import './searchLanding.css';
 import { emptyResults } from './utils';
 import withStoreSearch, { SearchProps } from './withStoreSearch';
-
-const useStyles = makeStyles((theme: Theme) => ({
-  emptyResult: {
-    alignItems: 'center',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    padding: `${theme.spacing(10)} ${theme.spacing(4)}`,
-    [theme.breakpoints.down('md')]: {
-      padding: theme.spacing(4),
-    },
-  },
-  emptyResultWrapper: {
-    alignItems: 'center',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    padding: `${theme.spacing(10)} ${theme.spacing(4)}`,
-  },
-  errorIcon: {
-    color: theme.palette.text.primary,
-    height: 60,
-    marginBottom: theme.spacing(4),
-    width: 60,
-  },
-  headline: {
-    marginBottom: theme.spacing(),
-    [theme.breakpoints.down('md')]: {
-      marginLeft: theme.spacing(),
-    },
-  },
-  root: {
-    '&.MuiGrid-container': {
-      width: 'calc(100% + 16px)',
-    },
-    padding: 0,
-  },
-}));
 
 const displayMap = {
   buckets: 'Buckets',
@@ -98,64 +62,64 @@ const splitWord = (word: any) => {
   return word;
 };
 
-export const SearchLanding: React.FC<CombinedProps> = (props) => {
-  const { entities, errors, search, searchResultsByEntity } = props;
+export const SearchLanding = (props: CombinedProps) => {
+  const { entities, search, searchResultsByEntity } = props;
 
-  const classes = useStyles();
-  const { _isLargeAccount } = useAccountManagement();
+  const isLargeAccount = useIsLargeAccount();
 
   const {
     data: objectStorageClusters,
     error: objectStorageClustersError,
     isLoading: areClustersLoading,
-  } = useObjectStorageClusters(!_isLargeAccount);
+  } = useObjectStorageClusters(!isLargeAccount);
 
   const {
     data: objectStorageBuckets,
+    error: bucketsError,
     isLoading: areBucketsLoading,
-  } = useObjectStorageBuckets(objectStorageClusters, !_isLargeAccount);
+  } = useObjectStorageBuckets(objectStorageClusters, !isLargeAccount);
 
   const {
     data: domains,
     error: domainsError,
     isLoading: areDomainsLoading,
-  } = useAllDomainsQuery(!_isLargeAccount);
+  } = useAllDomainsQuery(!isLargeAccount);
 
   const {
     data: kubernetesClusters,
     error: kubernetesClustersError,
     isLoading: areKubernetesClustersLoading,
-  } = useAllKubernetesClustersQuery(!_isLargeAccount);
+  } = useAllKubernetesClustersQuery(!isLargeAccount);
 
   const {
     data: nodebalancers,
     error: nodebalancersError,
     isLoading: areNodeBalancersLoading,
-  } = useAllNodeBalancersQuery(!_isLargeAccount);
+  } = useAllNodeBalancersQuery(!isLargeAccount);
 
   const {
     data: volumes,
     error: volumesError,
     isLoading: areVolumesLoading,
-  } = useAllVolumesQuery({}, {}, !_isLargeAccount);
+  } = useAllVolumesQuery({}, {}, !isLargeAccount);
 
   const {
     data: _privateImages,
     error: imagesError,
     isLoading: areImagesLoading,
-  } = useAllImagesQuery({}, { is_public: false }, !_isLargeAccount); // We want to display private images (i.e., not Debian, Ubuntu, etc. distros)
+  } = useAllImagesQuery({}, { is_public: false }, !isLargeAccount); // We want to display private images (i.e., not Debian, Ubuntu, etc. distros)
 
   const { data: publicImages } = useAllImagesQuery(
     {},
     { is_public: true },
-    !_isLargeAccount
+    !isLargeAccount
   );
 
   const {
     data: linodes,
     error: linodesError,
     isLoading: areLinodesLoading,
-  } = useAllLinodesQuery({}, {}, !_isLargeAccount);
+  } = useAllLinodesQuery({}, {}, !isLargeAccount);
 
   const { data: regions } = useRegionsQuery();
 
@@ -203,7 +167,7 @@ export const SearchLanding: React.FC<CombinedProps> = (props) => {
   ).current;
 
   React.useEffect(() => {
-    if (_isLargeAccount) {
+    if (isLargeAccount) {
       _searchAPI(query);
     } else {
       search(
@@ -222,7 +186,7 @@ export const SearchLanding: React.FC<CombinedProps> = (props) => {
     query,
     entities,
     search,
-    _isLargeAccount,
+    isLargeAccount,
     _searchAPI,
     objectStorageBuckets,
     domains,
@@ -231,44 +195,43 @@ export const SearchLanding: React.FC<CombinedProps> = (props) => {
     _privateImages,
     regions,
     nodebalancers,
-    searchableLinodes,
+    linodes,
   ]);
 
-  const getErrorMessage = (errors: ErrorObject): string => {
-    const errorString: string[] = [];
-    if (linodesError) {
-      errorString.push('Linodes');
-    }
-    if (domainsError) {
-      errorString.push('Domains');
-    }
-    if (volumesError) {
-      errorString.push('Volumes');
-    }
-    if (imagesError) {
-      errorString.push('Images');
-    }
-    if (nodebalancersError) {
-      errorString.push('NodeBalancers');
-    }
-    if (kubernetesClustersError) {
-      errorString.push('Kubernetes');
-    }
-    if (objectStorageClustersError) {
-      errorString.push('Object Storage');
-    }
-    if (objectStorageBuckets?.errors && !objectStorageClustersError) {
-      const regionsWithErrors = objectStorageBuckets.errors
-        .map((e) => e.cluster.region)
-        .join(', ');
-      errorString.push(`Object Storage in ${regionsWithErrors}`);
-    }
+  const getErrorMessage = () => {
+    const errorConditions: [unknown, string][] = [
+      [linodesError, 'Linodes'],
+      [bucketsError, 'Buckets'],
+      [domainsError, 'Domains'],
+      [volumesError, 'Volumes'],
+      [imagesError, 'Images'],
+      [nodebalancersError, 'NodeBalancers'],
+      [kubernetesClustersError, 'Kubernetes'],
+      [objectStorageClustersError, 'Object Storage'],
+      [
+        objectStorageBuckets &&
+          objectStorageBuckets.errors.length > 0 &&
+          !objectStorageClustersError,
+        `Object Storage in ${objectStorageBuckets?.errors
+          .map((e) => e.cluster.region)
+          .join(', ')}`,
+      ],
+    ];
 
-    const joined = errorString.join(', ');
-    return `Could not retrieve search results for: ${joined}`;
+    const matchingConditions = errorConditions.filter(
+      (condition) => condition[0]
+    );
+
+    if (matchingConditions.length > 0) {
+      return `Could not retrieve search results for: ${matchingConditions
+        .map((condition) => condition[1])
+        .join(', ')}`;
+    } else {
+      return false;
+    }
   };
 
-  const finalResults = _isLargeAccount ? apiResults : searchResultsByEntity;
+  const finalResults = isLargeAccount ? apiResults : searchResultsByEntity;
 
   const resultsEmpty = equals(finalResults, emptyResults);
 
@@ -282,29 +245,30 @@ export const SearchLanding: React.FC<CombinedProps> = (props) => {
     areImagesLoading ||
     areNodeBalancersLoading;
 
+  const errorMessage = getErrorMessage();
+
   return (
-    <Grid className={classes.root} container direction="column" spacing={2}>
+    <StyledRootGrid container direction="column" spacing={2}>
       <Grid>
         {!resultsEmpty && !loading && (
-          <H1Header
-            className={classes.headline}
+          <StyledH1Header
             title={`Search Results ${query && `for "${query}"`}`}
           />
         )}
       </Grid>
-      {errors.hasErrors && (
+      {errorMessage && (
         <Grid>
-          <Notice error text={getErrorMessage(errors)} />
+          <Notice text={errorMessage} variant="error" />
         </Grid>
       )}
       {apiError && (
         <Grid>
-          <Notice error text={apiError} />
+          <Notice text={apiError} variant="error" />
         </Grid>
       )}
       {queryError && (
         <Grid>
-          <Notice error text="Invalid query" />
+          <Notice text="Invalid query" variant="error" />
         </Grid>
       )}
       {(loading || apiSearchLoading) && (
@@ -313,9 +277,9 @@ export const SearchLanding: React.FC<CombinedProps> = (props) => {
         </Grid>
       )}
       {resultsEmpty && !loading && (
-        <Grid className={classes.emptyResultWrapper} data-qa-empty-state>
-          <div className={classes.emptyResult}>
-            <Error className={classes.errorIcon} />
+        <StyledGrid data-qa-empty-state>
+          <StyledStack>
+            <StyledError />
             <Typography style={{ marginBottom: 16 }}>
               You searched for ...
             </Typography>
@@ -325,8 +289,8 @@ export const SearchLanding: React.FC<CombinedProps> = (props) => {
             <Typography className="nothing" style={{ marginTop: 56 }}>
               Sorry, no results for this one
             </Typography>
-          </div>
-        </Grid>
+          </StyledStack>
+        </StyledGrid>
       )}
       {!loading && (
         <Grid sx={{ padding: 0 }}>
@@ -340,7 +304,7 @@ export const SearchLanding: React.FC<CombinedProps> = (props) => {
           ))}
         </Grid>
       )}
-    </Grid>
+    </StyledRootGrid>
   );
 };
 

@@ -1,84 +1,153 @@
-import { Theme } from '@mui/material/styles';
-import { makeStyles } from '@mui/styles';
 import * as React from 'react';
 
 import { RegionSelect } from 'src/components/EnhancedSelect/variants/RegionSelect';
 import { Country } from 'src/components/EnhancedSelect/variants/RegionSelect/utils';
 import { Flag } from 'src/components/Flag';
 import { Typography } from 'src/components/Typography';
-import Paper from 'src/components/core/Paper';
+import { useFlags } from 'src/hooks/useFlags';
 import { useRegionsQuery } from 'src/queries/regions';
+import { useTypeQuery } from 'src/queries/types';
 import { getRegionCountryGroup } from 'src/utilities/formatRegion';
+import { getLinodeBackupPrice } from 'src/utilities/pricing/backups';
+import {
+  getLinodeRegionPrice,
+  isLinodeTypeDifferentPriceInSelectedRegion,
+} from 'src/utilities/pricing/linodes';
 
-const useStyles = makeStyles((theme: Theme) => ({
-  currentRegion: {
-    alignItems: 'center',
-    display: 'flex',
-    flexDirection: 'row',
-    gap: theme.spacing(),
-    marginBottom: theme.spacing(4),
-  },
-  root: {
-    '& > p:first-of-type': {
-      color: theme.color.label,
-      fontFamily: theme.font.bold,
-      marginBottom: theme.spacing(),
-      marginTop: theme.spacing(2),
-    },
-    marginTop: theme.spacing(4),
-    padding: 0,
-  },
-}));
+import {
+  StyledDiv,
+  StyledMigrationBox,
+  StyledMigrationContainer,
+  StyledPaper,
+  StyledSpan,
+} from './ConfigureForm.styles';
+import { MigrationPricing } from './MigrationPricing';
+
+import type { MigrationPricingProps } from './MigrationPricing';
+import type { Linode, PriceObject } from '@linode/api-v4';
 
 interface Props {
+  backupEnabled: Linode['backups']['enabled'];
   currentRegion: string;
   errorText?: string;
   handleSelectRegion: (id: string) => void;
   helperText?: string;
+  linodeType: Linode['type'];
   selectedRegion: null | string;
 }
 
-const ConfigureForm = (props: Props) => {
-  const classes = useStyles();
-  const { currentRegion } = props;
+export type MigratePricePanelType = 'current' | 'new';
+
+export const ConfigureForm = React.memo((props: Props) => {
+  const {
+    backupEnabled,
+    currentRegion,
+    errorText,
+    handleSelectRegion,
+    helperText,
+    linodeType,
+    selectedRegion,
+  } = props;
 
   const { data: regions } = useRegionsQuery();
-
+  const { data: currentLinodeType } = useTypeQuery(
+    linodeType || '',
+    Boolean(linodeType)
+  );
+  const flags = useFlags();
   const currentActualRegion = regions?.find((r) => r.id === currentRegion);
-
   const country =
     regions?.find((thisRegion) => thisRegion.id == currentRegion)?.country ??
     'us';
+  const shouldDisplayPriceComparison = Boolean(
+    flags.dcSpecificPricing &&
+      selectedRegion &&
+      isLinodeTypeDifferentPriceInSelectedRegion({
+        regionA: currentRegion,
+        regionB: selectedRegion,
+        type: currentLinodeType,
+      })
+  );
+
+  const currentRegionPrice =
+    currentLinodeType && getLinodeRegionPrice(currentLinodeType, currentRegion);
+
+  // TODO: M3-7063 (defaults)
+  const selectedRegionPrice: PriceObject | undefined =
+    (currentLinodeType &&
+      selectedRegion &&
+      getLinodeRegionPrice(currentLinodeType, selectedRegion)) ||
+    currentRegionPrice;
+
+  const panelPrice = React.useCallback(
+    (
+      region: string,
+      regionPrice: PriceObject | undefined,
+      panelType: MigratePricePanelType
+    ): MigrationPricingProps => {
+      const backupPriceDisplay = (region: string) =>
+        currentLinodeType && backupEnabled
+          ? getLinodeBackupPrice(currentLinodeType, region)
+          : 'disabled';
+
+      return {
+        backups: backupPriceDisplay(region),
+        hourly: regionPrice?.hourly,
+        monthly: regionPrice?.monthly,
+        panelType,
+      };
+    },
+    [backupEnabled, currentLinodeType]
+  );
 
   return (
-    <Paper className={classes.root}>
+    <StyledPaper>
       <Typography variant="h3">Configure Migration</Typography>
-      <Typography>Current Region</Typography>
-      <div className={classes.currentRegion}>
-        <Flag country={country as Lowercase<Country>} />
-        <Typography>{`${getRegionCountryGroup(currentActualRegion)}: ${
-          currentActualRegion?.label ?? currentRegion
-        }`}</Typography>
-      </div>
-      <RegionSelect
-        regions={
-          regions?.filter(
-            (eachRegion) => eachRegion.id !== props.currentRegion
-          ) ?? []
-        }
-        styles={{
-          menuList: (base: any) => ({ ...base, maxHeight: `30vh !important` }),
-        }}
-        textFieldProps={{
-          helperText: props.helperText,
-        }}
-        errorText={props.errorText}
-        handleSelection={props.handleSelectRegion}
-        menuPlacement="top"
-        selectedID={props.selectedRegion}
-      />
-    </Paper>
-  );
-};
+      <StyledMigrationContainer>
+        <StyledMigrationBox>
+          <StyledSpan>Current Region</StyledSpan>
+          <StyledDiv>
+            <Flag country={country as Lowercase<Country>} />
+            <Typography>{`${getRegionCountryGroup(currentActualRegion)}: ${
+              currentActualRegion?.label ?? currentRegion
+            }`}</Typography>
+          </StyledDiv>
+          {shouldDisplayPriceComparison && (
+            <MigrationPricing
+              {...panelPrice(currentRegion, currentRegionPrice, 'current')}
+            />
+          )}
+        </StyledMigrationBox>
 
-export default React.memo(ConfigureForm);
+        <StyledMigrationBox>
+          <RegionSelect
+            regions={
+              regions?.filter(
+                (eachRegion) => eachRegion.id !== currentRegion
+              ) ?? []
+            }
+            styles={{
+              menuList: (base: any) => ({
+                ...base,
+                maxHeight: `30vh !important`,
+              }),
+            }}
+            textFieldProps={{
+              helperText,
+            }}
+            errorText={errorText}
+            handleSelection={handleSelectRegion}
+            label="New Region"
+            menuPlacement="top"
+            selectedID={selectedRegion}
+          />
+          {shouldDisplayPriceComparison && selectedRegion && (
+            <MigrationPricing
+              {...panelPrice(selectedRegion, selectedRegionPrice, 'new')}
+            />
+          )}
+        </StyledMigrationBox>
+      </StyledMigrationContainer>
+    </StyledPaper>
+  );
+});

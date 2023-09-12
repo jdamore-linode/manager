@@ -1,14 +1,9 @@
-import { Region } from '@linode/api-v4/lib/regions/types';
 import * as React from 'react';
 
-import ExternalLink from 'src/components/ExternalLink';
+import { Link } from 'src/components/Link';
 import { Notice } from 'src/components/Notice/Notice';
 import { Typography } from 'src/components/Typography';
 import { useRegionsQuery } from 'src/queries/regions';
-
-export interface Props {
-  regions: Region[];
-}
 
 const getFacilitiesList = (warnings: string[]) => (
   <ul>
@@ -50,18 +45,14 @@ const renderBanner = (statusWarnings: string[]): JSX.Element => {
         {moreThanOneRegionAffected ? 'these facilities' : 'this facility'},
         there is no need to open a support ticket at this time. Please monitor
         our{` `}
-        <ExternalLink
-          hideIcon
-          link="https://status.linode.com"
-          text="status blog"
-        />{' '}
-        for further information. Thank you for your patience and understanding.
+        <Link to="https://status.linode.com">status blog</Link> for further
+        information. Thank you for your patience and understanding.
       </Typography>
     </>
   );
 };
 
-export const RegionStatusBanner = () => {
+export const RegionStatusBanner = React.memo(() => {
   const { data: regions } = useRegionsQuery();
 
   const labelsOfRegionsWithOutages = regions
@@ -73,10 +64,8 @@ export const RegionStatusBanner = () => {
   }
 
   return (
-    <Notice data-testid="status-banner" important warning>
+    <Notice data-testid="status-banner" important variant="warning">
       {renderBanner(labelsOfRegionsWithOutages)}
     </Notice>
   );
-};
-
-export default React.memo(RegionStatusBanner);
+});

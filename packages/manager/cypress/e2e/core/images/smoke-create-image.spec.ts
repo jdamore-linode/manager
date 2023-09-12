@@ -1,11 +1,13 @@
-import type { Image, Linode, Disk } from '@linode/api-v4/types';
+import type { Linode, Disk } from '@linode/api-v4/types';
 import { imageFactory } from 'src/factories/images';
+import { authenticate } from 'support/api/authentication';
 import { createLinode, deleteLinodeById } from 'support/api/linodes';
 import {
-  interceptCreateImage,
+  mockCreateImage,
   mockGetCustomImages,
 } from 'support/intercepts/images';
 import { mockGetLinodeDisks } from 'support/intercepts/linodes';
+import { cleanUp } from 'support/util/cleanup';
 import { randomLabel, randomNumber, randomPhrase } from 'support/util/random';
 
 const diskLabel = 'Debian 10 Disk';
@@ -31,7 +33,12 @@ const mockDisks: Disk[] = [
   },
 ];
 
+authenticate();
 describe('create image', () => {
+  before(() => {
+    cleanUp('linodes');
+  });
+
   it('captures image from Linode and mocks create image', () => {
     const imageLabel = randomLabel();
     const imageDescription = randomPhrase();
@@ -51,7 +58,7 @@ describe('create image', () => {
     // stub incoming response
     const mockImages = imageFactory.buildList(2);
     mockGetCustomImages(mockImages).as('getImages');
-    interceptCreateImage(mockNewImage).as('createImage');
+    mockCreateImage(mockNewImage).as('createImage');
     createLinode().then((linode: Linode) => {
       // stub incoming disks response
       mockGetLinodeDisks(linode.id, mockDisks).as('getDisks');
@@ -70,7 +77,7 @@ describe('create image', () => {
 
       cy.wait('@getImages');
       cy.findByText('Create Image').click();
-      cy.findByLabelText('Linodes').click();
+      cy.findByLabelText('Linode').click();
       cy.findByText(linode.label).click();
       cy.wait('@getDisks');
       cy.contains('Select a Disk').click().type(`${diskLabel}{enter}`);

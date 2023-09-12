@@ -1,8 +1,6 @@
 import { Event, EventStatus } from '@linode/api-v4/lib/account/types';
-import { styled } from '@mui/material/styles';
-import { WithSnackbarProps, withSnackbar } from 'notistack';
+import { WithSnackbarProps, useSnackbar } from 'notistack';
 import * as React from 'react';
-import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/operator/bufferTime';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/map';
@@ -71,12 +69,12 @@ export const getLabel = (event: Event) => event.entity?.label ?? '';
 export const getSecondaryLabel = (event: Event) =>
   event.secondary_entity?.label ?? '';
 
-class ToastNotifications extends React.PureComponent<WithSnackbarProps, {}> {
-  componentDidMount() {
-    this.subscription = events$
+export const ToastNotifications = () => {
+  const { enqueueSnackbar } = useSnackbar();
+  React.useEffect(() => {
+    const subscription = events$
       .filter(({ event }) => !event._initial)
       .map(({ event }) => {
-        const { enqueueSnackbar } = this.props;
         const label = getLabel(event);
         const secondaryLabel = getSecondaryLabel(event);
         switch (event.action) {
@@ -283,30 +281,19 @@ class ToastNotifications extends React.PureComponent<WithSnackbarProps, {}> {
           return;
         }
       });
-  }
 
-  componentWillUnmount() {
-    this.subscription.unsubscribe();
-  }
-  render() {
-    return null;
-  }
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
-  subscription: Subscription;
-}
-
-export default withSnackbar(ToastNotifications);
+  return null;
+};
 
 const formatLink = (text: string, link: string, handleClick?: any) => {
   return (
-    <StyledToastNotificationLink onClick={handleClick} to={link}>
+    <Link onClick={handleClick} to={link}>
       {text}
-    </StyledToastNotificationLink>
+    </Link>
   );
 };
-
-export const StyledToastNotificationLink = styled(Link, {
-  label: 'StyledToastNotificationLink',
-})(({ theme }) => ({
-  color: theme.textColors.linkActiveLight,
-}));

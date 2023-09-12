@@ -11,8 +11,10 @@ import * as React from 'react';
 
 import { Button } from 'src/components/Button/Button';
 import { Chip } from 'src/components/Chip';
+import { CircularProgress } from 'src/components/CircularProgress';
 import { DocumentTitleSegment } from 'src/components/DocumentTitle';
 import { Notice } from 'src/components/Notice/Notice';
+import { Paper } from 'src/components/Paper';
 import { Radio } from 'src/components/Radio/Radio';
 import { SupportLink } from 'src/components/SupportLink';
 import { Table } from 'src/components/Table';
@@ -22,8 +24,6 @@ import { TableHead } from 'src/components/TableHead';
 import { TableRow } from 'src/components/TableRow';
 import { TableRowError } from 'src/components/TableRowError/TableRowError';
 import { TableRowLoading } from 'src/components/TableRowLoading/TableRowLoading';
-import CircularProgress from 'src/components/core/CircularProgress';
-import Paper from 'src/components/core/Paper';
 import { UseAPIRequest } from 'src/hooks/useAPIRequest';
 import { useAccountSettings } from 'src/queries/accountSettings';
 import { useGrants, useProfile } from 'src/queries/profile';
@@ -248,25 +248,29 @@ export const LongviewPlans: React.FC<CombinedProps> = (props) => {
       <DocumentTitleSegment segment="Plan Details" />
       {isManaged ? (
         <Paper className={`${classes.root} ${classes.collapsedTable}`}>
-          {updateErrorMsg && <Notice error text={updateErrorMsg} />}
-          {updateSuccessMsg && <Notice success text={updateSuccessMsg} />}
-          <Notice className={classes.link} success>
+          {updateErrorMsg && <Notice text={updateErrorMsg} variant="error" />}
+          {updateSuccessMsg && (
+            <Notice text={updateSuccessMsg} variant="success" />
+          )}
+          <Notice className={classes.link} variant="success">
             {managedText}
           </Notice>
         </Paper>
       ) : (
         <>
           {mayUserModifyLVSubscription && updateErrorMsg && (
-            <Notice error text={updateErrorMsg} />
+            <Notice text={updateErrorMsg} variant="error" />
           )}
           {!mayUserModifyLVSubscription && (
             <Notice
-              error
               important
               text="You don't have permissions to change the Longview plan. Please contact an account administrator for details."
+              variant="error"
             />
           )}
-          {updateSuccessMsg && <Notice success text={updateSuccessMsg} />}
+          {updateSuccessMsg && (
+            <Notice text={updateSuccessMsg} variant="success" />
+          )}
           {isTableDisplayed && (
             <>
               <Table className={classes.table}>

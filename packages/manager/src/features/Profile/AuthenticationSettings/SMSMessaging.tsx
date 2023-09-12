@@ -2,10 +2,11 @@ import { styled } from '@mui/material/styles';
 import { useSnackbar } from 'notistack';
 import * as React from 'react';
 
-import ActionsPanel from 'src/components/ActionsPanel';
+import { ActionsPanel } from 'src/components/ActionsPanel/ActionsPanel';
 import { Box } from 'src/components/Box';
 import { Button } from 'src/components/Button/Button';
 import { ConfirmationDialog } from 'src/components/ConfirmationDialog/ConfirmationDialog';
+import { Link } from 'src/components/Link';
 import { Notice } from 'src/components/Notice/Notice';
 import { Typography } from 'src/components/Typography';
 import { useSMSOptOutMutation } from 'src/queries/profile';
@@ -51,8 +52,7 @@ export const SMSMessaging = () => {
         spacingBottom={16}
         spacingLeft={1}
         spacingTop={12}
-        success={hasVerifiedPhoneNumber}
-        warning={!hasVerifiedPhoneNumber}
+        variant={hasVerifiedPhoneNumber ? 'success' : 'warning'}
       >
         <Typography sx={{ fontSize: '0.875rem !important' }}>
           <b>
@@ -77,14 +77,14 @@ export const SMSMessaging = () => {
       ) : null}
       <ConfirmationDialog
         actions={() => (
-          <ActionsPanel>
-            <Button buttonType="secondary" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button buttonType="primary" loading={isLoading} onClick={onOptOut}>
-              Opt Out
-            </Button>
-          </ActionsPanel>
+          <ActionsPanel
+            primaryButtonProps={{
+              label: 'Opt Out',
+              loading: isLoading,
+              onClick: onOptOut,
+            }}
+            secondaryButtonProps={{ label: 'Cancel', onClick: onClose }}
+          />
         )}
         error={error?.[0].reason}
         onClose={onClose}
@@ -94,15 +94,15 @@ export const SMSMessaging = () => {
         <Typography>
           Opting out of SMS messaging will reduce security and limit the ways
           you can securely access your account.{' '}
-          <a href="https://www.linode.com/docs/guides/linode-manager-security-controls/">
+          <Link to="https://www.linode.com/docs/guides/linode-manager-security-controls/">
             Learn more about security options.
-          </a>
+          </Link>
         </Typography>
         <Notice
-          error
           spacingBottom={0}
           spacingTop={16}
           sx={{ fontSize: '0.875rem !important' }}
+          variant="error"
         >
           <b>Warning:</b> As part of this action, your verified phone number{' '}
           {profile?.verified_phone_number

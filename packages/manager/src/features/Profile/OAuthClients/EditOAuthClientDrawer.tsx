@@ -2,14 +2,13 @@ import { OAuthClient, OAuthClientRequest } from '@linode/api-v4';
 import { useFormik } from 'formik';
 import * as React from 'react';
 
-import ActionsPanel from 'src/components/ActionsPanel';
-import { Button } from 'src/components/Button/Button';
+import { ActionsPanel } from 'src/components/ActionsPanel/ActionsPanel';
 import { Checkbox } from 'src/components/Checkbox';
-import Drawer from 'src/components/Drawer';
+import { Drawer } from 'src/components/Drawer';
 import { Notice } from 'src/components/Notice/Notice';
 import { TextField } from 'src/components/TextField';
-import FormControl from 'src/components/core/FormControl';
-import FormControlLabel from 'src/components/core/FormControlLabel';
+import { FormControl } from 'src/components/FormControl';
+import { FormControlLabel } from 'src/components/FormControlLabel';
 import { useUpdateOAuthClientMutation } from 'src/queries/accountOAuth';
 import getAPIErrorsFor from 'src/utilities/getAPIErrorFor';
 
@@ -52,7 +51,9 @@ export const EditOAuthClientDrawer = ({ client, onClose, open }: Props) => {
 
   return (
     <Drawer onClose={onClose} open={open} title="Create OAuth App">
-      {hasErrorFor('none') && <Notice error text={hasErrorFor('none')} />}
+      {hasErrorFor('none') && (
+        <Notice text={hasErrorFor('none')} variant="error" />
+      )}
       <form onSubmit={formik.handleSubmit}>
         <TextField
           errorText={hasErrorFor('label')}
@@ -76,19 +77,15 @@ export const EditOAuthClientDrawer = ({ client, onClose, open }: Props) => {
             label="Public"
           />
         </FormControl>
-        <ActionsPanel>
-          <Button buttonType="secondary" className="cancel" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button
-            buttonType="primary"
-            disabled={!formik.dirty}
-            loading={isLoading}
-            type="submit"
-          >
-            Save Changes
-          </Button>
-        </ActionsPanel>
+        <ActionsPanel
+          primaryButtonProps={{
+            disabled: !formik.dirty,
+            label: 'Save Changes',
+            loading: isLoading,
+            type: 'submit',
+          }}
+          secondaryButtonProps={{ label: 'Cancel', onClick: onClose }}
+        />
       </form>
     </Drawer>
   );

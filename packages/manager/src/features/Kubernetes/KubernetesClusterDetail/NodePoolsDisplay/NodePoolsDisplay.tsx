@@ -9,7 +9,7 @@ import { Button } from 'src/components/Button/Button';
 import { CircleProgress } from 'src/components/CircleProgress';
 import { ErrorState } from 'src/components/ErrorState/ErrorState';
 import { Typography } from 'src/components/Typography';
-import Paper from 'src/components/core/Paper';
+import { Paper } from 'src/components/Paper';
 import { useAllKubernetesNodePoolQuery } from 'src/queries/kubernetes';
 import { useSpecificTypes } from 'src/queries/types';
 import { extendTypesQueryResult } from 'src/utilities/extendType';
@@ -87,7 +87,7 @@ export const NodePoolsDisplay = (props: Props) => {
 
   const [isAutoscaleDialogOpen, setIsAutoscaleDialogOpen] = useState(false);
 
-  const [numPoolsToDisplay, setNumPoolsToDisplay] = React.useState(25);
+  const [numPoolsToDisplay, setNumPoolsToDisplay] = React.useState(5);
   const _pools = pools?.slice(0, numPoolsToDisplay);
 
   const typesQuery = useSpecificTypes(_pools?.map((pool) => pool.type) ?? []);
@@ -195,7 +195,7 @@ export const NodePoolsDisplay = (props: Props) => {
                 );
               })}
               {pools?.length > numPoolsToDisplay && (
-                <Waypoint onEnter={handleShowMore} scrollableAncestor="window">
+                <Waypoint onEnter={handleShowMore}>
                   <div style={{ minHeight: 50 }} />
                 </Waypoint>
               )}
@@ -211,6 +211,7 @@ export const NodePoolsDisplay = (props: Props) => {
             />
             <ResizeNodePoolDrawer
               kubernetesClusterId={clusterID}
+              kubernetesRegionId={clusterRegionId}
               nodePool={selectedPool}
               onClose={() => setIsResizeDrawerOpen(false)}
               open={isResizeDrawerOpen}

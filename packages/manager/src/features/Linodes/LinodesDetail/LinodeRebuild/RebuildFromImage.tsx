@@ -5,26 +5,24 @@ import {
 } from '@linode/api-v4/lib/linodes';
 import { RebuildLinodeSchema } from '@linode/validation/lib/linodes.schema';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Theme } from '@mui/material/styles';
-import { makeStyles } from '@mui/styles';
 import { Formik, FormikProps } from 'formik';
 import { useSnackbar } from 'notistack';
 import { isEmpty } from 'ramda';
 import * as React from 'react';
 
 import AccessPanel from 'src/components/AccessPanel/AccessPanel';
-import ActionsPanel from 'src/components/ActionsPanel';
 import { Box } from 'src/components/Box';
-import { Button } from 'src/components/Button/Button';
 import { Checkbox } from 'src/components/Checkbox';
 import { Divider } from 'src/components/Divider';
 import ImageSelect from 'src/components/ImageSelect';
 import { TypeToConfirm } from 'src/components/TypeToConfirm/TypeToConfirm';
 import { resetEventsPolling } from 'src/eventsPolling';
 import { UserDataAccordion } from 'src/features/Linodes/LinodesCreate/UserDataAccordion/UserDataAccordion';
-import useFlags from 'src/hooks/useFlags';
+import { regionSupportsMetadata } from 'src/features/Linodes/LinodesCreate/utilities';
+import { useFlags } from 'src/hooks/useFlags';
 import { useAllImagesQuery } from 'src/queries/images';
 import { usePreferences } from 'src/queries/preferences';
+import { useRegionsQuery } from 'src/queries/regions';
 import { getAPIErrorOrDefault } from 'src/utilities/errorUtils';
 import {
   handleFieldErrors,
@@ -33,28 +31,18 @@ import {
 import scrollErrorIntoView from 'src/utilities/scrollErrorIntoView';
 import { extendValidationSchema } from 'src/utilities/validatePassword';
 
-import { StyledNotice } from './RebuildFromImage.styles';
-
-const useStyles = makeStyles((theme: Theme) => ({
-  actionPanel: {
-    '& button': {
-      alignSelf: 'flex-end',
-    },
-    flexDirection: 'column',
-  },
-  error: {
-    marginTop: theme.spacing(2),
-  },
-  root: {
-    paddingTop: theme.spacing(3),
-  },
-}));
+import {
+  StyledActionsPanel,
+  StyledGrid,
+  StyledNotice,
+} from './RebuildFromImage.styles';
 
 interface Props {
   disabled: boolean;
   handleRebuildError: (status: string) => void;
   linodeId: number;
   linodeLabel?: string;
+  linodeRegion?: string;
   onClose: () => void;
   passwordHelperText: string;
 }
@@ -81,17 +69,18 @@ export const RebuildFromImage = (props: Props) => {
     handleRebuildError,
     linodeId,
     linodeLabel,
+    linodeRegion,
     onClose,
     passwordHelperText,
   } = props;
 
   const { data: preferences } = usePreferences();
 
-  const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const flags = useFlags();
 
   const { data: _imagesData, error: imagesError } = useAllImagesQuery();
+  const { data: regionsData } = useRegionsQuery();
 
   const RebuildSchema = () => extendValidationSchema(RebuildLinodeSchema);
 
@@ -216,6 +205,7 @@ export const RebuildFromImage = (props: Props) => {
 
         const shouldDisplayUserDataAccordion =
           flags.metadata &&
+          regionSupportsMetadata(regionsData ?? [], linodeRegion ?? '') &&
           Boolean(
             values.image &&
               _imagesData
@@ -224,7 +214,7 @@ export const RebuildFromImage = (props: Props) => {
           );
 
         return (
-          <Grid className={classes.root}>
+          <StyledGrid>
             <form>
               <ImageSelect
                 handleSelectImage={(selected) =>
@@ -266,8 +256,8 @@ export const RebuildFromImage = (props: Props) => {
                     }
                     renderNotice={
                       <StyledNotice
-                        success
                         text="Adding new user data is recommended as part of the rebuild process."
+                        variant="success"
                       />
                     }
                     disabled={shouldReuseUserData}
@@ -276,7 +266,7 @@ export const RebuildFromImage = (props: Props) => {
                   />
                 </>
               ) : null}
-              <ActionsPanel className={classes.actionPanel}>
+              <Grid sx={{ marginTop: '16px' }}>
                 <TypeToConfirm
                   confirmationText={
                     <span>
@@ -295,21 +285,19 @@ export const RebuildFromImage = (props: Props) => {
                   value={confirmationText}
                   visible={preferences?.type_to_confirm}
                 />
-                <Button
-                  buttonType="primary"
-                  data-testid="rebuild-button"
-                  disabled={submitButtonDisabled || disabled}
-                  onClick={handleRebuildButtonClick}
-                >
-                  Rebuild Linode
-                </Button>
-              </ActionsPanel>
+                <StyledActionsPanel
+                  primaryButtonProps={{
+                    'data-testid': 'rebuild-button',
+                    disabled: submitButtonDisabled || disabled,
+                    label: 'Rebuild Linode',
+                    onClick: handleRebuildButtonClick,
+                  }}
+                />
+              </Grid>
             </form>
-          </Grid>
+          </StyledGrid>
         );
       }}
     </Formik>
   );
 };
-
-export default RebuildFromImage;

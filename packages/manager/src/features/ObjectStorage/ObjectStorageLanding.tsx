@@ -4,21 +4,20 @@ import * as React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
 import { StyledLinkButton } from 'src/components/Button/StyledLinkButton';
-import DismissibleBanner from 'src/components/DismissibleBanner';
+import { DismissibleBanner } from 'src/components/DismissibleBanner';
 import { DocumentTitleSegment } from 'src/components/DocumentTitle';
-import LandingHeader from 'src/components/LandingHeader';
+import { LandingHeader } from 'src/components/LandingHeader';
 import { Link } from 'src/components/Link';
-import { ProductInformationBanner } from 'src/components/ProductInformationBanner/ProductInformationBanner';
 import { PromotionalOfferCard } from 'src/components/PromotionalOfferCard/PromotionalOfferCard';
+import { TabPanels } from 'src/components/ReachTabPanels';
+import { Tabs } from 'src/components/ReachTabs';
 import { SafeTabPanel } from 'src/components/SafeTabPanel/SafeTabPanel';
-import SuspenseLoader from 'src/components/SuspenseLoader';
+import { SuspenseLoader } from 'src/components/SuspenseLoader';
 import { TabLinkList } from 'src/components/TabLinkList/TabLinkList';
 import { Typography } from 'src/components/Typography';
-import TabPanels from 'src/components/core/ReachTabPanels';
-import Tabs from 'src/components/core/ReachTabs';
-import useAccountManagement from 'src/hooks/useAccountManagement';
-import useFlags from 'src/hooks/useFlags';
-import useOpenClose from 'src/hooks/useOpenClose';
+import { useAccountManagement } from 'src/hooks/useAccountManagement';
+import { useFlags } from 'src/hooks/useFlags';
+import { useOpenClose } from 'src/hooks/useOpenClose';
 import {
   useObjectStorageBuckets,
   useObjectStorageClusters,
@@ -116,7 +115,6 @@ export const ObjectStorageLanding = () => {
   return (
     <React.Fragment>
       <DocumentTitleSegment segment="Object Storage" />
-      <ProductInformationBanner bannerLocation="Object Storage" />
       <LandingHeader
         breadcrumbProps={{ pathname: '/object-storage' }}
         createButtonText={createButtonText}
@@ -183,7 +181,7 @@ export const BillingNotice = React.memo(() => {
       }}
       important
       preferenceKey={NOTIFICATION_KEY}
-      warning
+      variant="warning"
     >
       <Typography variant="body1">
         You are being billed for Object Storage but do not have any Buckets. You

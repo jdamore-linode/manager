@@ -1,7 +1,7 @@
 import Stack from '@mui/material/Stack';
 import * as React from 'react';
 
-import DismissibleBanner from 'src/components/DismissibleBanner';
+import { DismissibleBanner } from 'src/components/DismissibleBanner';
 import { Link } from 'src/components/Link';
 import { Typography } from 'src/components/Typography';
 import { SuppliedMaintenanceData } from 'src/featureFlags';
@@ -13,7 +13,7 @@ interface Props {
   suppliedMaintenances: SuppliedMaintenanceData[] | undefined;
 }
 
-export const APIMaintenanceBanner: React.FC<Props> = (props) => {
+export const APIMaintenanceBanner = React.memo((props: Props) => {
   const { suppliedMaintenances } = props;
 
   const { data: maintenancesData } = useMaintenanceQuery({
@@ -66,7 +66,7 @@ export const APIMaintenanceBanner: React.FC<Props> = (props) => {
         important
         key={scheduledAPIMaintenance.id}
         preferenceKey={scheduledAPIMaintenance.id}
-        warning
+        variant="warning"
       >
         <Stack>
           <Typography data-testid="scheduled-maintenance-banner">
@@ -92,6 +92,4 @@ export const APIMaintenanceBanner: React.FC<Props> = (props) => {
       )}
     </>
   );
-};
-
-export default React.memo(APIMaintenanceBanner);
+});

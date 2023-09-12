@@ -7,13 +7,12 @@ import { v4 } from 'uuid';
 
 import { Box } from 'src/components/Box';
 import { Divider } from 'src/components/Divider';
-import ExternalLink from 'src/components/ExternalLink';
 import { GravatarByEmail } from 'src/components/GravatarByEmail';
 import { Link } from 'src/components/Link';
+import { Paper } from 'src/components/Paper';
 import { SingleTextFieldForm } from 'src/components/SingleTextFieldForm/SingleTextFieldForm';
 import { TooltipIcon } from 'src/components/TooltipIcon';
 import { Typography } from 'src/components/Typography';
-import Paper from 'src/components/core/Paper';
 import { useNotificationsQuery } from 'src/queries/accountNotifications';
 import { useMutateProfile, useProfile } from 'src/queries/profile';
 import { ApplicationState } from 'src/store';
@@ -93,11 +92,9 @@ export const DisplaySettings = () => {
             Create, upload, and manage your globally recognized avatar from a
             single place with Gravatar.
           </StyledProfileCopy>
-          <StyledAddImageLink
-            fixedIcon
-            link="https://en.gravatar.com/"
-            text={'Manage photo'}
-          />
+          <StyledAddImageLink external to="https://en.gravatar.com/">
+            Manage photo
+          </StyledAddImageLink>
         </div>
       </Box>
       <Divider />
@@ -113,6 +110,7 @@ export const DisplaySettings = () => {
         label="Username"
         submitForm={updateUsername}
         successCallback={requestProfile}
+        trimmed
       />
       <Divider spacingTop={24} />
       <SingleTextFieldForm
@@ -132,6 +130,7 @@ export const DisplaySettings = () => {
         key={emailResetToken}
         label="Email"
         submitForm={updateEmail}
+        trimmed
         type="email"
       />
       <Divider spacingBottom={8} spacingTop={24} />
@@ -140,7 +139,7 @@ export const DisplaySettings = () => {
   );
 };
 
-const StyledAddImageLink = styled(ExternalLink, {
+const StyledAddImageLink = styled(Link, {
   label: 'StyledAddImageLink',
 })(({ theme }) => ({
   '& svg': {

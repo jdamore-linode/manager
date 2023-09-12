@@ -1,14 +1,14 @@
-import OpenInNew from '@mui/icons-material/OpenInNew';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Theme } from '@mui/material/styles';
 import * as React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 import { Accordion } from 'src/components/Accordion';
+import { FormControlLabel } from 'src/components/FormControlLabel';
+import { Link } from 'src/components/Link';
 import { Notice } from 'src/components/Notice/Notice';
 import { Toggle } from 'src/components/Toggle';
 import { Typography } from 'src/components/Typography';
-import FormControlLabel from 'src/components/core/FormControlLabel';
 
 const useStyles = makeStyles()((theme: Theme) => ({
   enableBackupsButton: {
@@ -50,7 +50,7 @@ const AutoBackups = (props: Props) => {
       <Grid container direction="column" spacing={2}>
         <Grid>
           {!!isManagedCustomer ? (
-            <Notice info spacingBottom={20}>
+            <Notice spacingBottom={20} variant="info">
               You&rsquo;re a Managed customer, which means your Linodes are
               already automatically backed up - no need to toggle this setting.
             </Notice>
@@ -60,16 +60,12 @@ const AutoBackups = (props: Props) => {
             all Linodes when they are initially created. For each Linode with
             Backups enabled, your account will be billed the additional hourly
             rate noted on the&nbsp;
-            <a
-              aria-describedby="external-site"
+            <Link
               data-qa-backups-price
-              href="https://www.linode.com/products/backups/"
-              rel="noopener noreferrer"
-              target="_blank"
+              to="https://www.linode.com/products/backups/"
             >
               Backups pricing page
-              <OpenInNew className={classes.icon} />
-            </a>
+            </Link>
             .
           </Typography>
         </Grid>

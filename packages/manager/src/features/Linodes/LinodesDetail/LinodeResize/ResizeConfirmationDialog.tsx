@@ -1,7 +1,6 @@
 import * as React from 'react';
 
-import ActionsPanel from 'src/components/ActionsPanel';
-import { Button } from 'src/components/Button/Button';
+import { ActionsPanel } from 'src/components/ActionsPanel/ActionsPanel';
 import { ConfirmationDialog } from 'src/components/ConfirmationDialog/ConfirmationDialog';
 import { Typography } from 'src/components/Typography';
 
@@ -21,29 +20,24 @@ const renderActions = (
   onResize: () => void
 ) => {
   return (
-    <ActionsPanel style={{ padding: 0 }}>
-      <Button
-        buttonType="secondary"
-        data-qa-cancel
-        data-testid={'resize-dialog-cancel'}
-        onClick={onClose}
-      >
-        Cancel
-      </Button>
-      <Button
-        buttonType="primary"
-        data-qa-confirm
-        data-testid={'resize-dialog-confirm'}
-        loading={loading}
-        onClick={onResize}
-      >
-        Resize
-      </Button>
-    </ActionsPanel>
+    <ActionsPanel
+      primaryButtonProps={{
+        'data-testid': 'confirm',
+        label: 'Resize',
+        loading,
+        onClick: onResize,
+      }}
+      secondaryButtonProps={{
+        'data-testid': 'cancel',
+        label: 'Cancel',
+        onClick: onClose,
+      }}
+      style={{ padding: 0 }}
+    />
   );
 };
 
-export const ResizeDialog: React.FC<Props> = (props) => {
+export const ResizeDialog = (props: Props) => {
   const {
     currentPlan,
     error,
@@ -70,5 +64,3 @@ export const ResizeDialog: React.FC<Props> = (props) => {
     </ConfirmationDialog>
   );
 };
-
-export default ResizeDialog;

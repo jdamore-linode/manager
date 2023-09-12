@@ -1,6 +1,5 @@
 import { Event } from '@linode/api-v4/lib/account';
-import { Theme } from '@mui/material/styles';
-import { makeStyles } from '@mui/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import { useSnackbar } from 'notistack';
 import * as React from 'react';
 
@@ -13,8 +12,9 @@ import { Typography } from 'src/components/Typography';
 import { MBpsInterDC } from 'src/constants';
 import { resetEventsPolling } from 'src/eventsPolling';
 import EUAgreementCheckbox from 'src/features/Account/Agreements/EUAgreementCheckbox';
+import { regionSupportsMetadata } from 'src/features/Linodes/LinodesCreate/utilities';
 import useEvents from 'src/hooks/useEvents';
-import useFlags from 'src/hooks/useFlags';
+import { useFlags } from 'src/hooks/useFlags';
 import {
   reportAgreementSigningError,
   useAccountAgreements,
@@ -38,41 +38,8 @@ import { getLinodeDescription } from 'src/utilities/getLinodeDescription';
 import scrollErrorIntoView from 'src/utilities/scrollErrorIntoView';
 
 import { addUsedDiskSpace } from '../LinodesDetail/LinodeStorage/LinodeDisks';
-import CautionNotice from './CautionNotice';
-import ConfigureForm from './ConfigureForm';
-
-const useStyles = makeStyles((theme: Theme) => ({
-  actionWrapper: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    marginBottom: theme.spacing(2),
-    marginTop: theme.spacing(2),
-  },
-  agreement: {
-    maxWidth: '70%',
-    [theme.breakpoints.down('md')]: {
-      maxWidth: 'unset',
-    },
-  },
-  button: {
-    [theme.breakpoints.down('md')]: {
-      marginTop: theme.spacing(2),
-    },
-  },
-  buttonGroup: {
-    marginTop: theme.spacing(3),
-    [theme.breakpoints.down('md')]: {
-      flexWrap: 'wrap',
-      justifyContent: 'flex-end',
-    },
-  },
-  details: {
-    marginTop: theme.spacing(2),
-  },
-  vlanHelperText: {
-    marginTop: theme.spacing(0.5),
-  },
-}));
+import { CautionNotice } from './CautionNotice';
+import { ConfigureForm } from './ConfigureForm';
 
 interface Props {
   linodeId: number | undefined;
@@ -82,7 +49,7 @@ interface Props {
 
 export const MigrateLinode = React.memo((props: Props) => {
   const { linodeId, onClose, open } = props;
-  const classes = useStyles();
+  const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
 
   const { data: linode } = useLinodeQuery(
@@ -158,13 +125,12 @@ export const MigrateLinode = React.memo((props: Props) => {
       return;
     }
 
-    const regionSupportsMetadata = (_region: string) =>
-      regionsData
-        ?.find((region) => region.id === _region)
-        ?.capabilities.includes('Metadata') ?? false;
-
-    const currentRegionSupportsMetadata = regionSupportsMetadata(linode.region);
+    const currentRegionSupportsMetadata = regionSupportsMetadata(
+      regionsData ?? [],
+      linode.region
+    );
     const selectedRegionSupportsMetadata = regionSupportsMetadata(
+      regionsData ?? [],
       selectedRegion
     );
 
@@ -240,8 +206,8 @@ export const MigrateLinode = React.memo((props: Props) => {
       open={open}
       title={`Migrate Linode ${linode.label ?? ''} to another region`}
     >
-      {error && <Notice error text={error?.[0].reason} />}
-      <Typography className={classes.details} variant="h2">
+      {error && <Notice text={error?.[0].reason} variant="error" />}
+      <Typography sx={{ marginTop: theme.spacing(2) }} variant="h2">
         {newLabel}
       </Typography>
       {/*
@@ -260,21 +226,28 @@ export const MigrateLinode = React.memo((props: Props) => {
         setConfirmed={setConfirmed}
       />
       <ConfigureForm
+        backupEnabled={linode.backups.enabled}
         currentRegion={region}
         handleSelectRegion={handleSelectRegion}
+        linodeType={linode.type}
         selectedRegion={selectedRegion}
       />
       <Box
+        sx={{
+          marginTop: theme.spacing(3),
+          [theme.breakpoints.down('md')]: {
+            flexWrap: 'wrap',
+            justifyContent: 'flex-end',
+          },
+        }}
         alignItems="center"
-        className={classes.buttonGroup}
         display="flex"
         justifyContent={showAgreement ? 'space-between' : 'flex-end'}
       >
         {showAgreement ? (
-          <EUAgreementCheckbox
+          <StyledAgreementCheckbox
             centerCheckbox
             checked={hasSignedAgreement}
-            className={classes.agreement}
             onChange={(e) => setHasSignedAgreement(e.target.checked)}
           />
         ) : null}
@@ -285,8 +258,12 @@ export const MigrateLinode = React.memo((props: Props) => {
             !selectedRegion ||
             (showAgreement && !hasSignedAgreement)
           }
+          sx={{
+            [theme.breakpoints.down('md')]: {
+              marginTop: theme.spacing(2),
+            },
+          }}
           buttonType="primary"
-          className={classes.button}
           loading={isLoading}
           onClick={handleMigrate}
         >
@@ -297,6 +274,15 @@ export const MigrateLinode = React.memo((props: Props) => {
     </Dialog>
   );
 });
+
+const StyledAgreementCheckbox = styled(EUAgreementCheckbox, {
+  label: 'StyledAgreementCheckbox',
+})(({ theme }) => ({
+  maxWidth: '70%',
+  [theme.breakpoints.down('md')]: {
+    maxWidth: 'unset',
+  },
+}));
 
 const getDisabledReason = (
   events: Event[],

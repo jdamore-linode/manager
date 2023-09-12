@@ -1,12 +1,13 @@
 import * as React from 'react';
 
-import ExternalLink from 'src/components/ExternalLink';
+import { Link } from 'src/components/Link';
 import { SupportLink } from 'src/components/SupportLink';
 import { Typography } from 'src/components/Typography';
 import { MAGIC_DATE_THAT_EMAIL_RESTRICTIONS_WERE_IMPLEMENTED } from 'src/constants';
 import { useAccount } from 'src/queries/account';
 import { sendLinodeCreateDocsEvent } from 'src/utilities/analytics';
-export interface Props {
+
+export interface SMTPRestrictionTextProps {
   children: (props: { text: React.ReactNode }) => React.ReactNode;
   supportLink?: {
     id: number;
@@ -14,7 +15,7 @@ export interface Props {
   };
 }
 
-const SMTPRestrictionText: React.FC<Props> = (props) => {
+export const SMTPRestrictionText = (props: SMTPRestrictionTextProps) => {
   const { supportLink } = props;
   const { data: account } = useAccount();
 
@@ -26,12 +27,12 @@ const SMTPRestrictionText: React.FC<Props> = (props) => {
     <Typography variant="body1">
       SMTP ports may be restricted on this Linode. Need to send email? Review
       our{' '}
-      <ExternalLink
-        hideIcon
-        link="https://www.linode.com/docs/email/best-practices/running-a-mail-server/"
+      <Link
         onClick={() => sendLinodeCreateDocsEvent('SMTP Notice Link')}
-        text="mail server guide"
-      />
+        to="https://www.linode.com/docs/email/best-practices/running-a-mail-server/"
+      >
+        mail server guide
+      </Link>
       , then{' '}
       {supportLink ? (
         <SupportLink
@@ -50,8 +51,6 @@ const SMTPRestrictionText: React.FC<Props> = (props) => {
   // eslint-disable-next-line
   return <>{props.children({ text })}</>;
 };
-
-export default SMTPRestrictionText;
 
 export const accountCreatedAfterRestrictions = (_accountCreated?: string) => {
   // Default to `true` for bad input.

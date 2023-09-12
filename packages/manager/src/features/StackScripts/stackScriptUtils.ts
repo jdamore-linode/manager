@@ -115,6 +115,9 @@ export const baseApps = {
   '1008125': 'Easypanel',
   '1017300': 'Kali Linux',
   '1037036': 'Budibase',
+  // uncomment clusters after marketplace release
+  // '1226544': 'HashiCorp Nomad Cluster',
+  // '1226545': 'HashiCorp Nomad Clients Cluster',
   '1037037': 'HashiCorp Nomad',
   '1037038': 'HashiCorp Vault',
   '1051714': 'Microweber',
@@ -124,10 +127,15 @@ export const baseApps = {
   '1096122': 'Mastodon',
   '1102900': 'Apache Airflow',
   '1102902': 'HaltDOS Community WAF',
+  '1102905': 'Gopaddle',
   '1102904': 'Superinsight',
   '1102906': 'Passky',
   '1102907': 'ONLYOFFICE Docs',
   '1132204': 'Redis Sentinel Cluster',
+  '1160816': 'ownCloud',
+  '1160820': 'Appwrite',
+  '1177225': 'Seatable',
+  '1177605': 'Illa Builder',
 };
 
 const oneClickFilter = [

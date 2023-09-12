@@ -3,14 +3,14 @@ import * as React from 'react';
 
 import { Box } from 'src/components/Box';
 import { Button } from 'src/components/Button/Button';
-import DismissibleBanner from 'src/components/DismissibleBanner';
+import { DismissibleBanner } from 'src/components/DismissibleBanner';
 import { Typography } from 'src/components/Typography';
 import { complianceUpdateContext } from 'src/context/complianceUpdateContext';
 import { useNotificationsQuery } from 'src/queries/accountNotifications';
 
 import { isEUModelContractNotification } from '../NotificationCenter/NotificationData/useFormattedNotifications';
 
-const ComplianceBanner = () => {
+export const ComplianceBanner = () => {
   const context = React.useContext(complianceUpdateContext);
   const { data: notifications } = useNotificationsQuery();
 
@@ -31,7 +31,7 @@ const ComplianceBanner = () => {
       }
       important
       preferenceKey="gdpr-compliance"
-      warning
+      variant="warning"
     >
       <Box
         alignItems="center"
@@ -54,5 +54,3 @@ const StyledActionButton = styled(Button)(({}) => ({
   marginLeft: 12,
   minWidth: 150,
 }));
-
-export default ComplianceBanner;

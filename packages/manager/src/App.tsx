@@ -1,5 +1,4 @@
 import { APIError } from '@linode/api-v4/lib/types';
-import '@reach/menu-button/styles.css';
 import '@reach/tabs/styles.css';
 import { ErrorBoundary } from '@sentry/react';
 import 'highlight.js/styles/a11y-dark.css';
@@ -9,6 +8,7 @@ import { pathOr } from 'ramda';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+
 import {
   DocumentTitleSegment,
   withDocumentTitleProvider,
@@ -24,7 +24,7 @@ import MainContent from './MainContent';
 import { ADOBE_ANALYTICS_URL, NUM_ADOBE_SCRIPTS } from './constants';
 import { reportException } from './exceptionReporting';
 import { useAuthentication } from './hooks/useAuthentication';
-import useFeatureFlagsLoad from './hooks/useFeatureFlagLoad';
+import { useFeatureFlagsLoad } from './hooks/useFeatureFlagLoad';
 import { loadScript } from './hooks/useScript';
 import { oauthClientsEventHandler } from './queries/accountOAuth';
 import { databaseEventsHandler } from './queries/databases';

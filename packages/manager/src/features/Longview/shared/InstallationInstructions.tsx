@@ -3,7 +3,8 @@ import { makeStyles } from '@mui/styles';
 import * as React from 'react';
 
 import { CopyTooltip } from 'src/components/CopyTooltip/CopyTooltip';
-import Grid from 'src/components/Grid';
+import { Grid } from 'src/components/Grid';
+import { Link } from 'src/components/Link';
 import { Typography } from 'src/components/Typography';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -51,7 +52,7 @@ const InstallationInstructions: React.FC<CombinedProps> = (props) => {
   const command = `curl -s https://lv.linode.com/${props.installationKey} | sudo bash`;
 
   return (
-    <Grid container>
+    <Grid container spacing={2}>
       <Grid item>
         <Typography>
           Before this client can gather data, you need to install the Longview
@@ -65,6 +66,7 @@ const InstallationInstructions: React.FC<CombinedProps> = (props) => {
           alignItems="center"
           className={classes.copyContainer}
           container
+          spacing={2}
           wrap="nowrap"
         >
           <Grid className="py0" item>
@@ -85,29 +87,19 @@ const InstallationInstructions: React.FC<CombinedProps> = (props) => {
         </Typography>
       </Grid>
       <Grid item xs={12}>
-        <Grid container>
+        <Grid container spacing={2}>
           <Grid className={classes.instruction} item>
             <Typography>
-              <a
-                aria-describedby="external-site"
-                href="https://www.linode.com/docs/platform/longview/troubleshooting-linode-longview/"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
+              <Link to="https://www.linode.com/docs/platform/longview/troubleshooting-linode-longview/">
                 Troubleshooting guide
-              </a>
+              </Link>
             </Typography>
           </Grid>
           <Grid className={classes.instruction} item>
             <Typography>
-              <a
-                aria-describedby="external-site"
-                href="https://www.linode.com/docs/platform/longview/what-is-longview/#install-the-longview-agent"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
+              <Link to="https://www.linode.com/docs/platform/longview/what-is-longview/#install-the-longview-agent">
                 Manual installation instructions
-              </a>
+              </Link>
             </Typography>
           </Grid>
           <Grid className={classes.instruction} item>

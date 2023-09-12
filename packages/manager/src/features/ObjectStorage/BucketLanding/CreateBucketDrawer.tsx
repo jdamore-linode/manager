@@ -2,9 +2,8 @@ import { styled } from '@mui/material/styles';
 import { useFormik } from 'formik';
 import * as React from 'react';
 
-import ActionsPanel from 'src/components/ActionsPanel';
-import { Button } from 'src/components/Button/Button';
-import Drawer from 'src/components/Drawer';
+import { ActionsPanel } from 'src/components/ActionsPanel/ActionsPanel';
+import { Drawer } from 'src/components/Drawer';
 import { Notice } from 'src/components/Notice/Notice';
 import { TextField } from 'src/components/TextField';
 import EUAgreementCheckbox from 'src/features/Account/Agreements/EUAgreementCheckbox';
@@ -105,12 +104,14 @@ export const CreateBucketDrawer = (props: Props) => {
         {isRestrictedUser && (
           <Notice
             data-qa-permissions-notice
-            error
             important
             text="You don't have permissions to create a Bucket. Please contact an account administrator for details."
+            variant="error"
           />
         )}
-        {Boolean(errorMap.none) && <Notice error text={errorMap.none} />}
+        {Boolean(errorMap.none) && (
+          <Notice text={errorMap.none} variant="error" />
+        )}
         <TextField
           data-qa-cluster-label
           data-testid="label"
@@ -138,19 +139,16 @@ export const CreateBucketDrawer = (props: Props) => {
             checked={Boolean(agreements?.eu_model)}
           />
         ) : null}
-        <ActionsPanel>
-          <Button buttonType="secondary" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button
-            buttonType="primary"
-            data-testid="create-bucket-button"
-            loading={isLoading}
-            type="submit"
-          >
-            Create Bucket
-          </Button>
-        </ActionsPanel>
+        <ActionsPanel
+          primaryButtonProps={{
+            'data-testid': 'create-bucket-button',
+            label: 'Create Bucket',
+            loading: isLoading,
+            type: 'submit',
+          }}
+          secondaryButtonProps={{ label: 'Cancel', onClick: onClose }}
+        />
+
         <EnableObjectStorageModal
           handleSubmit={formik.handleSubmit}
           onClose={() => setIsEnableObjDialogOpen(false)}

@@ -2,19 +2,19 @@ import { Domain, UpdateDomainPayload } from '@linode/api-v4/lib/domains';
 import { useFormik } from 'formik';
 import * as React from 'react';
 
-import ActionsPanel from 'src/components/ActionsPanel';
-import { Button } from 'src/components/Button/Button';
-import Drawer from 'src/components/Drawer';
+import { ActionsPanel } from 'src/components/ActionsPanel/ActionsPanel';
+import { Drawer } from 'src/components/Drawer';
+import { FormControlLabel } from 'src/components/FormControlLabel';
 import { MultipleIPInput } from 'src/components/MultipleIPInput/MultipleIPInput';
 import { Notice } from 'src/components/Notice/Notice';
 import { Radio } from 'src/components/Radio/Radio';
+import { RadioGroup } from 'src/components/RadioGroup';
 import { TagsInput } from 'src/components/TagsInput/TagsInput';
 import { TextField } from 'src/components/TextField';
-import FormControlLabel from 'src/components/core/FormControlLabel';
-import RadioGroup from 'src/components/core/RadioGroup';
 import { useUpdateDomainMutation } from 'src/queries/domains';
 import { useGrants, useProfile } from 'src/queries/profile';
 import { getErrorMap } from 'src/utilities/errorUtils';
+import { handleFormikBlur } from 'src/utilities/formikTrimUtil';
 import {
   ExtendedIP,
   extendedIPToString,
@@ -23,13 +23,13 @@ import {
 
 import { transferHelperText as helperText } from './domainUtils';
 
-interface Props {
+interface EditDomainDrawerProps {
   domain: Domain | undefined;
   onClose: () => void;
   open: boolean;
 }
 
-export const EditDomainDrawer = (props: Props) => {
+export const EditDomainDrawer = (props: EditDomainDrawerProps) => {
   const { domain, onClose, open } = props;
 
   const { data: profile } = useProfile();
@@ -123,9 +123,11 @@ export const EditDomainDrawer = (props: Props) => {
   return (
     <Drawer onClose={onClose} open={open} title="Edit Domain">
       {!canEdit && (
-        <Notice error>You do not have permission to modify this Domain.</Notice>
+        <Notice variant="error">
+          You do not have permission to modify this Domain.
+        </Notice>
       )}
-      {errorMap.none && <Notice error>{errorMap.none}</Notice>}
+      {errorMap.none && <Notice variant="error">{errorMap.none}</Notice>}
       <form onSubmit={formik.handleSubmit}>
         <RadioGroup aria-label="type" name="type" row value={domain?.type}>
           <FormControlLabel
@@ -163,7 +165,9 @@ export const EditDomainDrawer = (props: Props) => {
             id="soa_email"
             label="SOA Email Address"
             name="soa_email"
+            onBlur={(e) => handleFormikBlur(e, formik)}
             onChange={formik.handleChange}
+            type="email"
             value={formik.values.soa_email}
           />
         )}
@@ -201,21 +205,20 @@ export const EditDomainDrawer = (props: Props) => {
           disabled={disabled}
           tagError={errorMap.tags}
         />
-        <ActionsPanel>
-          <Button buttonType="secondary" data-qa-cancel onClick={onClose}>
-            Cancel
-          </Button>
-          <Button
-            buttonType="primary"
-            data-qa-submit
-            data-testid="create-domain-submit"
-            disabled={disabled || !formik.dirty}
-            loading={formik.isSubmitting}
-            type="submit"
-          >
-            Save Changes
-          </Button>
-        </ActionsPanel>
+        <ActionsPanel
+          primaryButtonProps={{
+            'data-testid': 'submit',
+            disabled: disabled || !formik.dirty,
+            label: 'Save Changes',
+            loading: formik.isSubmitting,
+            type: 'submit',
+          }}
+          secondaryButtonProps={{
+            'data-testid': 'cancel',
+            label: 'Cancel',
+            onClick: onClose,
+          }}
+        />
       </form>
     </Drawer>
   );

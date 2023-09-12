@@ -4,13 +4,13 @@ import { SxProps } from '@mui/system';
 import React, { useEffect, useState } from 'react';
 
 import { Notice } from 'src/components/Notice/Notice';
+import { Paper } from 'src/components/Paper';
+import { Tab } from 'src/components/ReachTab';
+import { TabList } from 'src/components/ReachTabList';
+import { TabPanel } from 'src/components/ReachTabPanel';
+import { TabPanels } from 'src/components/ReachTabPanels';
+import { Tabs } from 'src/components/ReachTabs';
 import { Typography } from 'src/components/Typography';
-import Paper from 'src/components/core/Paper';
-import { Tab } from 'src/components/core/ReachTab';
-import { TabList } from 'src/components/core/ReachTabList';
-import TabPanel from 'src/components/core/ReachTabPanel';
-import TabPanels from 'src/components/core/ReachTabPanels';
-import Tabs from 'src/components/core/ReachTabs';
 
 export interface Tab {
   render: (props: any) => JSX.Element | null;
@@ -71,7 +71,7 @@ const TabbedPanel = React.memo((props: TabbedPanelProps) => {
       sx={{ flexGrow: 1, ...sx }}
     >
       <div className={innerClass}>
-        {error && <Notice error>{error}</Notice>}
+        {error && <Notice variant="error">{error}</Notice>}
         <Grid container sx={{ display: 'flex' }}>
           {header !== '' && (
             <Grid xs={6}>

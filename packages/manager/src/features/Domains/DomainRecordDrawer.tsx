@@ -21,9 +21,8 @@ import {
 } from 'ramda';
 import * as React from 'react';
 
-import ActionsPanel from 'src/components/ActionsPanel';
-import { Button, ButtonProps } from 'src/components/Button/Button';
-import Drawer from 'src/components/Drawer';
+import { ActionsPanel } from 'src/components/ActionsPanel/ActionsPanel';
+import { Drawer } from 'src/components/Drawer';
 import Select, { Item } from 'src/components/EnhancedSelect/Select';
 import { MultipleIPInput } from 'src/components/MultipleIPInput/MultipleIPInput';
 import { Notice } from 'src/components/Notice/Notice';
@@ -45,7 +44,7 @@ import {
   isValidDomainRecord,
 } from './domainUtils';
 
-interface Props
+interface DomainRecordDrawerProps
   extends Partial<Omit<DomainRecord, 'type'>>,
     Partial<Omit<Domain, 'type'>> {
   domain: string;
@@ -103,14 +102,18 @@ interface AdjustedTextFieldProps {
   min?: number;
   multiline?: boolean;
   placeholder?: string;
+  trimmed?: boolean;
 }
 
 interface NumberFieldProps extends AdjustedTextFieldProps {
   defaultValue?: number;
 }
 
-class DomainRecordDrawer extends React.Component<Props, State> {
-  componentDidUpdate(prevProps: Props) {
+export class DomainRecordDrawer extends React.Component<
+  DomainRecordDrawerProps,
+  State
+> {
+  componentDidUpdate(prevProps: DomainRecordDrawerProps) {
     if (this.props.open && !prevProps.open) {
       // Drawer is opening, set the fields according to props
       this.setState({
@@ -133,18 +136,6 @@ class DomainRecordDrawer extends React.Component<Props, State> {
     const noARecordsNoticeText =
       'Please create an A/AAAA record for this domain to avoid a Zone File invalidation.';
 
-    const buttonProps: ButtonProps = {
-      buttonType: 'primary',
-      children: 'Save',
-      disabled: submitting,
-      loading: submitting,
-      onClick: isDomain
-        ? this.onDomainEdit
-        : isCreating
-        ? this.onRecordCreate
-        : this.onRecordEdit,
-    };
-
     const otherErrors = [
       getAPIErrorsFor({}, this.state.errors)('_unknown'),
       getAPIErrorsFor({}, this.state.errors)('none'),
@@ -158,23 +149,35 @@ class DomainRecordDrawer extends React.Component<Props, State> {
       >
         {otherErrors.length > 0 &&
           otherErrors.map((err, index) => {
-            return <Notice error key={index} text={err} />;
+            return <Notice key={index} variant="error" text={err} />;
           })}
         {!hasARecords && type === 'NS' && (
-          <Notice spacingTop={8} text={noARecordsNoticeText} warning />
+          <Notice
+            spacingTop={8}
+            text={noARecordsNoticeText}
+            variant="warning"
+          />
         )}
         {fields.map((field: any, idx: number) => field(idx))}
 
-        <ActionsPanel>
-          <Button
-            buttonType="secondary"
-            data-qa-record-cancel
-            onClick={this.onClose}
-          >
-            Cancel
-          </Button>
-          <Button {...buttonProps} data-qa-record-save />
-        </ActionsPanel>
+        <ActionsPanel
+          primaryButtonProps={{
+            'data-testid': 'save',
+            disabled: submitting,
+            label: 'Save',
+            loading: submitting,
+            onClick: isDomain
+              ? this.onDomainEdit
+              : isCreating
+              ? this.onRecordCreate
+              : this.onRecordEdit,
+          }}
+          secondaryButtonProps={{
+            'data-testid': 'cancel',
+            label: 'Cancel',
+            onClick: this.onClose,
+          }}
+        />
       </Drawer>
     );
   }
@@ -317,6 +320,9 @@ class DomainRecordDrawer extends React.Component<Props, State> {
           DomainRecordDrawer.errorFields,
           this.state.errors
         )(field)}
+        onBlur={(e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+          this.updateField(field)(e.target.value)
+        }
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           this.updateField(field)(e.target.value)
         }
@@ -425,12 +431,16 @@ class DomainRecordDrawer extends React.Component<Props, State> {
     label,
     multiline,
     placeholder,
+    trimmed,
   }: AdjustedTextFieldProps) => (
     <TextField
       errorText={getAPIErrorsFor(
         DomainRecordDrawer.errorFields,
         this.state.errors
       )(field)}
+      onBlur={(e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+        this.updateField(field)(e.target.value)
+      }
       onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
         this.updateField(field)(e.target.value)
       }
@@ -443,6 +453,7 @@ class DomainRecordDrawer extends React.Component<Props, State> {
       label={label}
       multiline={multiline}
       placeholder={placeholder}
+      trimmed={trimmed}
     />
   );
 
@@ -452,7 +463,7 @@ class DomainRecordDrawer extends React.Component<Props, State> {
    * the defaultFieldState is used to pre-populate the drawer with either
    * editable data or defaults.
    */
-  static defaultFieldsState = (props: Partial<Props>) => ({
+  static defaultFieldsState = (props: Partial<DomainRecordDrawerProps>) => ({
     axfr_ips: getInitialIPs(props.axfr_ips),
     domain: props.domain,
     expire_sec: props.expire_sec ?? 0,
@@ -813,7 +824,12 @@ class DomainRecordDrawer extends React.Component<Props, State> {
           <this.TextField field="domain" key={idx} label="Domain" />
         ),
         (idx: number) => (
-          <this.TextField field="soa_email" key={idx} label="SOA Email" />
+          <this.TextField
+            field="soa_email"
+            key={idx}
+            label="SOA Email"
+            trimmed
+          />
         ),
         (idx: number) => <this.DomainTransferField key={idx} />,
         (idx: number) => <this.DefaultTTLField key={idx} />,
@@ -886,5 +902,3 @@ export const castFormValuesToNumeric = (
     });
   });
 };
-
-export default DomainRecordDrawer;

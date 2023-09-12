@@ -11,7 +11,8 @@ interface Props {
   createType?: CreateTypes;
 }
 
-export const UserDataAccordionHeading = ({ createType }: Props) => {
+export const UserDataAccordionHeading = (props: Props) => {
+  const { createType } = props;
   const warningMessageMap: Record<CreateTypes, null | string> = {
     fromApp: null,
     fromBackup:
@@ -44,7 +45,7 @@ export const UserDataAccordionHeading = ({ createType }: Props) => {
         />
       </Box>
       {warningMessage ? (
-        <Notice spacingBottom={16} spacingTop={16} warning>
+        <Notice spacingBottom={16} spacingTop={16} variant="warning">
           {warningMessage}
         </Notice>
       ) : null}

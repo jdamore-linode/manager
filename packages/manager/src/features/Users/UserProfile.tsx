@@ -6,15 +6,15 @@ import { useSnackbar } from 'notistack';
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 
-import ActionsPanel from 'src/components/ActionsPanel';
+import { ActionsPanel } from 'src/components/ActionsPanel/ActionsPanel';
 import { Button } from 'src/components/Button/Button';
 import { CircleProgress } from 'src/components/CircleProgress';
 import { DocumentTitleSegment } from 'src/components/DocumentTitle';
 import { Notice } from 'src/components/Notice/Notice';
+import { Paper } from 'src/components/Paper';
 import { TextField } from 'src/components/TextField';
 import { TooltipIcon } from 'src/components/TooltipIcon';
 import { Typography } from 'src/components/Typography';
-import Paper from 'src/components/core/Paper';
 import { useProfile } from 'src/queries/profile';
 import getAPIErrorsFor from 'src/utilities/getAPIErrorFor';
 import scrollErrorIntoView from 'src/utilities/scrollErrorIntoView';
@@ -46,7 +46,11 @@ interface Props {
   accountSaving: boolean;
   accountSuccess: boolean;
   changeEmail: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  changeUsername: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  changeUsername: (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
   email?: string;
   originalEmail?: string;
   originalUsername?: string;
@@ -105,49 +109,53 @@ const UserProfile: React.FC<Props> = (props) => {
 
     return (
       <>
-        <Typography
-          className={classes.title}
-          data-qa-profile-header
-          variant="h2"
-        >
+        <Typography className={classes.title} variant="h2">
           User Profile
         </Typography>
         <Paper className={classes.wrapper}>
           {accountSuccess && (
-            <Notice spacingBottom={0} success>
+            <Notice spacingBottom={0} variant="success">
               Username updated successfully
             </Notice>
           )}
           {generalAccountError && (
-            <Notice error spacingBottom={0} text={generalAccountError} />
+            <Notice
+              spacingBottom={0}
+              text={generalAccountError}
+              variant="error"
+            />
           )}
           <TextField
             data-qa-username
             errorText={hasAccountErrorFor('username')}
             label="Username"
+            onBlur={changeUsername}
             onChange={changeUsername}
+            trimmed
             value={username}
           />
-          <ActionsPanel>
-            <Button
-              buttonType="primary"
-              data-qa-submit
-              disabled={username === originalUsername}
-              loading={accountSaving}
-              onClick={saveAccount}
-            >
-              Save
-            </Button>
-          </ActionsPanel>
+          <ActionsPanel
+            primaryButtonProps={{
+              'data-testid': 'submit',
+              disabled: username === originalUsername,
+              label: 'Save',
+              loading: accountSaving,
+              onClick: saveAccount,
+            }}
+          />
         </Paper>
         <Paper className={classes.wrapper}>
           {profileSuccess && (
-            <Notice spacingBottom={0} success>
+            <Notice spacingBottom={0} variant="success">
               Email updated successfully
             </Notice>
           )}
           {generalProfileError && (
-            <Notice error spacingBottom={0} text={generalProfileError} />
+            <Notice
+              spacingBottom={0}
+              text={generalProfileError}
+              variant="error"
+            />
           )}
           <TextField
             tooltipText={
@@ -161,23 +169,22 @@ const UserProfile: React.FC<Props> = (props) => {
             errorText={hasProfileErrorFor('email')}
             label="Email"
             onChange={changeEmail}
+            trimmed
+            type="email"
             value={email}
           />
-          <ActionsPanel>
-            <Button
-              // This should be disabled if this is NOT the current user.
-              disabled={
+          <ActionsPanel
+            // This should be disabled if this is NOT the current user.
+            primaryButtonProps={{
+              'data-testid': 'submit',
+              disabled:
                 profile?.username !== originalUsername ||
-                email === originalEmail
-              }
-              buttonType="primary"
-              data-qa-submit
-              loading={profileSaving}
-              onClick={saveProfile}
-            >
-              Save
-            </Button>
-          </ActionsPanel>
+                email === originalEmail,
+              label: 'Save',
+              loading: profileSaving,
+              onClick: saveProfile,
+            }}
+          />
         </Paper>
       </>
     );
@@ -216,8 +223,8 @@ const UserProfile: React.FC<Props> = (props) => {
         {userDeleteError && (
           <Notice
             className={classes.topMargin}
-            error
             text="Error when deleting user, please try again later"
+            variant="error"
           />
         )}
         <Button

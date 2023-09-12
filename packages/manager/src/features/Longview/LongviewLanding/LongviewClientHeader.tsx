@@ -7,7 +7,7 @@ import { compose } from 'recompose';
 
 import { Button } from 'src/components/Button/Button';
 import { EditableEntityLabel } from 'src/components/EditableEntityLabel/EditableEntityLabel';
-import Grid from 'src/components/Grid';
+import { Grid } from 'src/components/Grid';
 import { Link } from 'src/components/Link';
 import { Typography } from 'src/components/Typography';
 import { DispatchProps } from 'src/containers/longview.container';
@@ -139,7 +139,7 @@ export const LongviewClientHeader: React.FC<CombinedProps> = (props) => {
     longviewClientLastUpdated !== 0;
 
   return (
-    <Grid className={classes.root} container direction="column">
+    <Grid className={classes.root} container direction="column" spacing={2}>
       <Grid item>
         {userCanModifyClient ? (
           <EditableEntityLabel

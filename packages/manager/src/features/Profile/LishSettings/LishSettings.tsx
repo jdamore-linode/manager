@@ -4,16 +4,16 @@ import { useTheme } from '@mui/material/styles';
 import { equals, lensPath, remove, set } from 'ramda';
 import * as React from 'react';
 
-import ActionsPanel from 'src/components/ActionsPanel';
+import { ActionsPanel } from 'src/components/ActionsPanel/ActionsPanel';
 import { Box } from 'src/components/Box';
 import { Button } from 'src/components/Button/Button';
 import { DocumentTitleSegment } from 'src/components/DocumentTitle';
 import Select, { Item } from 'src/components/EnhancedSelect/Select';
 import { Notice } from 'src/components/Notice/Notice';
+import { Paper } from 'src/components/Paper';
 import { TextField } from 'src/components/TextField';
 import { Typography } from 'src/components/Typography';
-import FormControl from 'src/components/core/FormControl';
-import Paper from 'src/components/core/Paper';
+import { FormControl } from 'src/components/FormControl';
 import { useMutateProfile, useProfile } from 'src/queries/profile';
 import { getAPIErrorOrDefault } from 'src/utilities/errorUtils';
 import getAPIErrorFor from 'src/utilities/getAPIErrorFor';
@@ -121,9 +121,11 @@ export const LishSettings = () => {
     <>
       <DocumentTitleSegment segment="LISH Console Settings" />
       <Paper>
-        {success && <Notice success text={success} />}
-        {authorizedKeysError && <Notice error text={authorizedKeysError} />}
-        {generalError && <Notice error text={generalError} />}
+        {success && <Notice text={success} variant="success" />}
+        {authorizedKeysError && (
+          <Notice text={authorizedKeysError} variant="error" />
+        )}
+        {generalError && <Notice text={generalError} variant="error" />}
         <Typography sx={{ marginBottom: theme.spacing(2) }}>
           This controls what authentication methods are allowed to connect to
           the Lish console servers.
@@ -189,20 +191,17 @@ export const LishSettings = () => {
             </Button>
           </>
         )}
-        <ActionsPanel>
-          <Button
-            disabled={
+        <ActionsPanel
+          primaryButtonProps={{
+            'data-testid': 'save',
+            disabled:
               lishAuthMethod === profile?.lish_auth_method &&
-              equals(authorizedKeys, profile?.authorized_keys)
-            }
-            buttonType="primary"
-            data-qa-save
-            loading={submitting}
-            onClick={onSubmit}
-          >
-            Save
-          </Button>
-        </ActionsPanel>
+              equals(authorizedKeys, profile?.authorized_keys),
+            label: 'Save',
+            loading: submitting,
+            onClick: onSubmit,
+          }}
+        />
       </Paper>
     </>
   );

@@ -16,23 +16,22 @@ import * as React from 'react';
 import { compose as recompose } from 'recompose';
 import { withStyles } from 'tss-react/mui';
 
-import ActionsPanel from 'src/components/ActionsPanel';
-import { Button } from 'src/components/Button/Button';
+import { ActionsPanel } from 'src/components/ActionsPanel/ActionsPanel';
 import { CircleProgress } from 'src/components/CircleProgress';
 import { Divider } from 'src/components/Divider';
 import { DocumentTitleSegment } from 'src/components/DocumentTitle';
 import Select, { Item } from 'src/components/EnhancedSelect/Select';
 import { Notice } from 'src/components/Notice/Notice';
+import { Paper } from 'src/components/Paper';
 import { SafeTabPanel } from 'src/components/SafeTabPanel/SafeTabPanel';
 import { SelectionCard } from 'src/components/SelectionCard/SelectionCard';
 import { Toggle } from 'src/components/Toggle';
 import { Typography } from 'src/components/Typography';
-import FormControlLabel from 'src/components/core/FormControlLabel';
-import Paper from 'src/components/core/Paper';
-import { Tab } from 'src/components/core/ReachTab';
-import { TabList } from 'src/components/core/ReachTabList';
-import TabPanels from 'src/components/core/ReachTabPanels';
-import Tabs from 'src/components/core/ReachTabs';
+import { FormControlLabel } from 'src/components/FormControlLabel';
+import { Tab } from 'src/components/ReachTab';
+import { TabList } from 'src/components/ReachTabList';
+import { TabPanels } from 'src/components/ReachTabPanels';
+import { Tabs } from 'src/components/ReachTabs';
 import {
   WithQueryClientProps,
   withQueryClient,
@@ -179,7 +178,6 @@ class UserPermissions extends React.Component<CombinedProps, State> {
       if (updateFns.length) {
         this.setState((compose as any)(...updateFns));
       }
-      return;
     }
   };
 
@@ -203,6 +201,7 @@ class UserPermissions extends React.Component<CombinedProps, State> {
     'domain',
     'longview',
     'database',
+    'vpc',
   ];
 
   entitySetAllTo = (entity: GrantType, value: GrantLevel) => () => {
@@ -285,6 +284,7 @@ class UserPermissions extends React.Component<CombinedProps, State> {
     'add_volumes',
     'add_firewalls',
     'add_databases',
+    'add_vpcs',
     'cancel_account',
   ];
 
@@ -334,23 +334,22 @@ class UserPermissions extends React.Component<CombinedProps, State> {
     const classes = withStyles.getClasses(this.props);
     return (
       <ActionsPanel
+        primaryButtonProps={{
+          'data-testid': 'submit',
+          label: 'Save',
+          loading,
+          onClick: onConfirm,
+        }}
+        secondaryButtonProps={{
+          'data-testid': 'cancel',
+          label: 'Reset',
+          onClick: onCancel,
+        }}
         alignItems="center"
         className={classes.section}
         display="flex"
         justifyContent="flex-end"
-      >
-        <Button buttonType="secondary" data-qa-cancel onClick={onCancel}>
-          Reset
-        </Button>
-        <Button
-          buttonType="primary"
-          data-qa-submit
-          loading={loading}
-          onClick={onConfirm}
-        >
-          Save
-        </Button>
-      </ActionsPanel>
+      />
     );
   };
 
@@ -413,7 +412,9 @@ class UserPermissions extends React.Component<CombinedProps, State> {
 
     return (
       <React.Fragment>
-        {generalError && <Notice error spacingTop={8} text={generalError} />}
+        {generalError && (
+          <Notice spacingTop={8} text={generalError} variant="error" />
+        )}
         <Grid
           alignItems="center"
           container
@@ -463,6 +464,7 @@ class UserPermissions extends React.Component<CombinedProps, State> {
       add_nodebalancers: 'Can add NodeBalancers to this account ($)',
       add_stackscripts: 'Can create StackScripts under this account',
       add_volumes: 'Can add Block Storage Volumes to this account ($)',
+      add_vpcs: 'Can add VPCs to this account',
       cancel_account: 'Can cancel the entire account',
       longview_subscription:
         'Can modify this account\u{2019}s Longview subscription ($)',

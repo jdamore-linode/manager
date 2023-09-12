@@ -110,36 +110,6 @@ services:
       <<: *default-env
       MANAGER_OAUTH: ${MANAGER_OAUTH}
 
-  # Deprecated Cypress runners.
-  # Remove these once pipeline is updated to use new service.
-  e2e-1:
-    <<: *default-runner
-    container_name: cloud-e2e-1
-    environment:
-      <<: *default-env
-      MANAGER_OAUTH: ${MANAGER_OAUTH_1}
-
-  e2e-2:
-    <<: *default-runner
-    container_name: cloud-e2e-2
-    environment:
-      <<: *default-env
-      MANAGER_OAUTH: ${MANAGER_OAUTH_2}
-
-  e2e-3:
-    <<: *default-runner
-    container_name: cloud-e2e-3
-    environment:
-      <<: *default-env
-      MANAGER_OAUTH: ${MANAGER_OAUTH_3}
-
-  e2e-4:
-    <<: *default-runner
-    container_name: cloud-e2e-4
-    environment:
-      <<: *default-env
-      MANAGER_OAUTH: ${MANAGER_OAUTH_4}
-
   region-1:
     build:
       context: .

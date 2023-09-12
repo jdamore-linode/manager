@@ -3,8 +3,8 @@ import * as React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
 import { Notice } from 'src/components/Notice/Notice';
-import SuspenseLoader from 'src/components/SuspenseLoader';
-import Paper from 'src/components/core/Paper';
+import { SuspenseLoader } from 'src/components/SuspenseLoader';
+import { Paper } from 'src/components/Paper';
 
 import { Divider } from '../Divider';
 import UserSSHKeyPanel from './UserSSHKeyPanel';
@@ -81,7 +81,7 @@ const AccessPanel = (props: Props) => {
         className
       )}
     >
-      {error ? <Notice error text={error} /> : null}
+      {error ? <Notice text={error} variant="error" /> : null}
       <React.Suspense fallback={<SuspenseLoader />}>
         <PasswordInput
           autoComplete="off"

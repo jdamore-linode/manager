@@ -1,37 +1,13 @@
-import { Theme } from '@mui/material/styles';
-import { makeStyles } from '@mui/styles';
+import Stack from '@mui/material/Stack';
 import { DateTime } from 'luxon';
 import * as React from 'react';
 
 import { Divider } from 'src/components/Divider';
+import { Link } from 'src/components/Link';
 import { Typography } from 'src/components/Typography';
 import { parseAPIDate } from 'src/utilities/date';
 
 import { OFFICIAL_USERNAMES } from './ticketUtils';
-
-const useStyles = makeStyles((theme: Theme) => ({
-  hivelyContainer: {
-    alignItems: 'center',
-    borderTop: `1px solid ${theme.color.grey2}`,
-    display: 'flex',
-    flexFlow: 'row nowrap',
-    margin: `${theme.spacing(3)} ${theme.spacing(1)} 0`,
-    paddingTop: theme.spacing(1),
-  },
-  hivelyImage: {
-    margin: 3,
-    width: '25px',
-  },
-  hivelyLink: {
-    color: theme.color.black,
-    marginRight: theme.spacing(2),
-    textDecoration: 'none',
-  },
-  hivelyLinkIcon: {
-    display: 'inline-block',
-    marginRight: theme.spacing(1),
-  },
-}));
 
 interface Props {
   linodeUsername: string;
@@ -64,72 +40,59 @@ export const shouldRenderHively = (
   }
 };
 
-export const Hively: React.FC<Props> = (props) => {
-  const classes = useStyles();
+export const Hively = (props: Props) => {
   const { linodeUsername, replyId, ticketId } = props;
   const href = `https://secure.teamhively.com/ratings/add/account/587/source/hs/ext/${linodeUsername}/ticket/${ticketId}-${replyId}/rating/`;
 
   return (
-    <div className={classes.hivelyContainer}>
+    <>
       <Divider />
-      <Typography component="span">
-        <a
-          aria-describedby="external-site"
-          className={classes.hivelyLink}
-          href={href + '3'}
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          How did I do?
-        </a>
-      </Typography>
-      <span>
-        <a
-          aria-describedby="external-site"
-          className={classes.hivelyLinkIcon}
-          href={href + '3'}
-          rel="noopener noreferrer"
-          target="_blank"
+      <Stack alignItems="center" direction="row" pl={1} spacing={1.5}>
+        <Typography mr={3}>
+          <Link external to={href + '3'}>
+            How did I do?
+          </Link>
+        </Typography>
+        <Link
+          accessibleAriaLabel="Happy feedback"
+          external
+          hideIcon
+          to={href + '3'}
         >
           <img
             src={
               'https://secure.teamhively.com/system/smileys/icons/000/000/541/px_25/icon_positive.png'
             }
-            alt="Face symbol outlined in green with a happy expression."
-            className={classes.hivelyImage}
+            alt="Happy face emoji"
           />
-        </a>
-        <a
-          aria-describedby="external-site"
-          className={classes.hivelyLinkIcon}
-          href={href + '2'}
-          rel="noopener noreferrer"
-          target="_blank"
+        </Link>
+        <Link
+          accessibleAriaLabel="Mediocre feedback"
+          external
+          hideIcon
+          to={href + '2'}
         >
           <img
             src={
               'https://secure.teamhively.com/system/smileys/icons/000/000/542/px_25/icon_indifferent.png'
             }
-            alt="Face symbol outlined in yellow with an indifferent expression."
-            className={classes.hivelyImage}
+            alt="Indifferent face emoji"
           />
-        </a>
-        <a
-          aria-describedby="external-site"
-          className={classes.hivelyLinkIcon}
-          href={href + '1'}
-          rel="noopener noreferrer"
-          target="_blank"
+        </Link>
+        <Link
+          accessibleAriaLabel="Unhappy feedback"
+          external
+          hideIcon
+          to={href + '1'}
         >
           <img
             src={
               'https://secure.teamhively.com/system/smileys/icons/000/000/543/px_25/icon_negative.png'
             }
-            alt="Face symbol outlined in red with an unhappy expression."
-            className={classes.hivelyImage}
+            alt="Sad Face emoji"
           />
-        </a>
-      </span>
-    </div>
+        </Link>
+      </Stack>
+    </>
   );
 };

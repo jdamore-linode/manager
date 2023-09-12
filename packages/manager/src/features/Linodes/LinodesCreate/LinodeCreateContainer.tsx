@@ -1,12 +1,5 @@
 import { Agreements, signAgreement } from '@linode/api-v4/lib/account';
 import { Image } from '@linode/api-v4/lib/images';
-import {
-  CreateLinodeRequest,
-  Interface,
-  Linode,
-  LinodeTypeClass,
-  cloneLinode,
-} from '@linode/api-v4/lib/linodes';
 import { Region } from '@linode/api-v4/lib/regions';
 import { convertYupToLinodeErrors } from '@linode/api-v4/lib/request';
 import { StackScript, UserDefinedField } from '@linode/api-v4/lib/stackscripts';
@@ -20,7 +13,8 @@ import { RouteComponentProps } from 'react-router-dom';
 import { compose as recompose } from 'recompose';
 
 import { DocumentTitleSegment } from 'src/components/DocumentTitle';
-import LandingHeader from 'src/components/LandingHeader';
+import { LandingHeader } from 'src/components/LandingHeader';
+import { ProductInformationBanner } from 'src/components/ProductInformationBanner/ProductInformationBanner';
 import { Tag } from 'src/components/TagsInput/TagsInput';
 import {
   WithAccountSettingsProps,
@@ -50,9 +44,6 @@ import { resetEventsPolling } from 'src/eventsPolling';
 import withAgreements, {
   AgreementsProps,
 } from 'src/features/Account/Agreements/withAgreements';
-import withLabelGenerator, {
-  LabelProps,
-} from 'src/features/Linodes/LinodesCreate/withLabelGenerator';
 import { baseApps } from 'src/features/StackScripts/stackScriptUtils';
 import {
   queryKey as accountAgreementsQueryKey,
@@ -61,7 +52,6 @@ import {
 import { simpleMutationHandlers } from 'src/queries/base';
 import { getAllOCAsRequest } from 'src/queries/stackscripts';
 import { CreateTypes } from 'src/store/linodeCreate/linodeCreate.actions';
-import { upsertLinode } from 'src/store/linodes/linodes.actions';
 import { MapState } from 'src/store/types';
 import {
   sendCreateLinodeEvent,
@@ -70,13 +60,23 @@ import {
 import { getAPIErrorOrDefault } from 'src/utilities/errorUtils';
 import { ExtendedType, extendType } from 'src/utilities/extendType';
 import { isEURegion } from 'src/utilities/formatRegion';
+import { getLinodeRegionPrice } from 'src/utilities/pricing/linodes';
 import { getQueryParamsFromQueryString } from 'src/utilities/queryParams';
 import scrollErrorIntoView from 'src/utilities/scrollErrorIntoView';
 import { validatePassword } from 'src/utilities/validatePassword';
 
 import LinodeCreate from './LinodeCreate';
+import { deriveDefaultLabel } from './deriveDefaultLabel';
 import { HandleSubmit, Info, LinodeCreateValidation, TypeInfo } from './types';
 import { getRegionIDFromLinodeID } from './utilities';
+
+import type {
+  CreateLinodeRequest,
+  Interface,
+  Linode,
+  LinodeTypeClass,
+  PriceObject,
+} from '@linode/api-v4/lib/linodes';
 
 const DEFAULT_IMAGE = 'linode/debian11';
 
@@ -89,10 +89,11 @@ interface State {
   availableStackScriptImages?: Image[];
   availableUserDefinedFields?: UserDefinedField[];
   backupsEnabled: boolean;
+  customLabel?: string;
+  dcSpecificPricing?: boolean;
   disabledClasses?: LinodeTypeClass[];
   errors?: APIError[];
   formIsSubmitting: boolean;
-  label: string;
   password: string;
   privateIPEnabled: boolean;
   selectedBackupID?: number;
@@ -119,8 +120,6 @@ type CombinedProps = WithSnackbarProps &
   WithTypesProps &
   WithLinodesProps &
   RegionsProps &
-  DispatchProps &
-  LabelProps &
   FeatureFlagConsumerProps &
   RouteComponentProps<{}, any, any> &
   WithProfileProps &
@@ -133,10 +132,11 @@ const defaultState: State = {
   attachedVLANLabel: '',
   authorized_users: [],
   backupsEnabled: false,
+  customLabel: undefined,
+  dcSpecificPricing: false,
   disabledClasses: [],
   errors: undefined,
   formIsSubmitting: false,
-  label: '',
   password: '',
   privateIPEnabled: false,
   selectedBackupID: undefined,
@@ -230,6 +230,12 @@ class LinodeCreateContainer extends React.PureComponent<CombinedProps, State> {
 
   componentDidUpdate(prevProps: CombinedProps) {
     /**
+     * The flag state gets lost when navigating between create types,
+     * so we need to keep it up to date here.
+     */
+    this.setState({ dcSpecificPricing: this.props.flags.dcSpecificPricing });
+
+    /**
      * When switching to a creation flow where
      * having a pre-selected image is problematic,
      * deselect it.
@@ -254,7 +260,7 @@ class LinodeCreateContainer extends React.PureComponent<CombinedProps, State> {
       typesData,
       ...restOfProps
     } = this.props;
-    const { label, udfs: selectedUDFs, ...restOfState } = this.state;
+    const { udfs: selectedUDFs, ...restOfState } = this.state;
 
     const extendedTypeData = typesData?.map(extendType);
 
@@ -264,6 +270,7 @@ class LinodeCreateContainer extends React.PureComponent<CombinedProps, State> {
     return (
       <React.Fragment>
         <DocumentTitleSegment segment="Create a Linode" />
+        <ProductInformationBanner bannerLocation="LinodeCreate" />
         <Grid className="m0" container spacing={0}>
           <LandingHeader
             onDocsClick={() =>
@@ -277,7 +284,6 @@ class LinodeCreateContainer extends React.PureComponent<CombinedProps, State> {
             accountBackupsEnabled={
               this.props.accountSettings.data?.backups_enabled ?? false
             }
-            backupsMonthlyPrice={this.getBackupsMonthlyPrice()}
             checkValidation={this.checkValidation}
             handleAgreementChange={this.handleAgreementChange}
             handleSelectUDFs={this.setUDFs}
@@ -299,7 +305,7 @@ class LinodeCreateContainer extends React.PureComponent<CombinedProps, State> {
             typesData={extendedTypeData}
             updateDiskSize={this.setDiskSize}
             updateImageID={this.setImageID}
-            updateLabel={this.props.updateCustomLabel}
+            updateLabel={this.updateCustomLabel}
             updateLinodeID={this.setLinodeID}
             updatePassword={this.setPassword}
             updateRegionID={this.setRegionID}
@@ -339,13 +345,18 @@ class LinodeCreateContainer extends React.PureComponent<CombinedProps, State> {
   };
 
   generateLabel = () => {
-    const { createType, getLabel, imagesData, regionsData } = this.props;
+    const { createType, imagesData, regionsData } = this.props;
     const {
+      customLabel,
       selectedImageID,
       selectedLinodeID,
       selectedRegionID,
       selectedStackScriptLabel,
     } = this.state;
+
+    if (customLabel !== undefined) {
+      return customLabel;
+    }
 
     /* tslint:disable-next-line  */
     let arg1,
@@ -407,13 +418,10 @@ class LinodeCreateContainer extends React.PureComponent<CombinedProps, State> {
       arg3 = 'backup';
     }
 
-    return getLabel(arg1, arg2, arg3);
-  };
-
-  getBackupsMonthlyPrice = (): null | number | undefined => {
-    const type = this.getTypeInfo();
-
-    return !type ? undefined : type.backupsMonthly;
+    return deriveDefaultLabel(
+      [arg1, arg2, arg3],
+      this.props.linodesData?.map((linode) => linode.label) ?? []
+    );
   };
 
   getImageInfo = (): Info | undefined => {
@@ -487,12 +495,20 @@ class LinodeCreateContainer extends React.PureComponent<CombinedProps, State> {
   >;
 
   reshapeTypeInfo = (type?: ExtendedType): TypeInfo | undefined => {
+    const { dcSpecificPricing, selectedRegionID } = this.state;
+
+    const linodePrice: PriceObject =
+      dcSpecificPricing && type && selectedRegionID
+        ? getLinodeRegionPrice(type, selectedRegionID)
+        : type
+        ? type.price
+        : { hourly: 0, monthly: 0 }; // TODO: M3-7063 (defaults)
+
     return (
       type && {
-        backupsMonthly: type.addons.backups.price.monthly,
-        details: `$${type.price.monthly}/month`,
-        hourly: type.price.hourly ?? 0,
-        monthly: type.price.monthly ?? 0,
+        details: `$${linodePrice?.monthly}/month`,
+        hourly: linodePrice?.hourly ?? 0,
+        monthly: linodePrice?.monthly ?? 0,
         title: type.formattedLabel,
       }
     );
@@ -564,6 +580,7 @@ class LinodeCreateContainer extends React.PureComponent<CombinedProps, State> {
       ),
     });
   };
+
   setStackScript = (
     id: number,
     label: string,
@@ -614,6 +631,7 @@ class LinodeCreateContainer extends React.PureComponent<CombinedProps, State> {
       });
     }
   };
+
   setUDFs = (udfs: any) => this.setState({ udfs });
 
   setUserData = (userData: string) => this.setState({ userData });
@@ -738,7 +756,11 @@ class LinodeCreateContainer extends React.PureComponent<CombinedProps, State> {
 
     const request =
       createType === 'fromLinode'
-        ? () => cloneLinode(linodeID!, payload)
+        ? () =>
+            this.props.linodeActions.cloneLinode({
+              sourceLinodeId: linodeID!,
+              ...payload,
+            })
         : () => this.props.linodeActions.createLinode(payload);
 
     this.setState({ formIsSubmitting: true });
@@ -762,11 +784,6 @@ class LinodeCreateContainer extends React.PureComponent<CombinedProps, State> {
               this.props.queryClient
             ),
           });
-        }
-
-        /** if cloning a Linode, upsert Linode in redux */
-        if (createType === 'fromLinode') {
-          this.props.upsertLinode(response);
         }
 
         /** Analytics creation event */
@@ -806,6 +823,10 @@ class LinodeCreateContainer extends React.PureComponent<CombinedProps, State> {
 
   togglePrivateIPEnabled = () =>
     this.setState({ privateIPEnabled: !this.state.privateIPEnabled });
+
+  updateCustomLabel = (customLabel: string) => {
+    this.setState({ customLabel });
+  };
 }
 
 interface CreateType {
@@ -816,11 +837,7 @@ const mapStateToProps: MapState<CreateType, CombinedProps> = (state) => ({
   createType: state.createLinode.type,
 });
 
-interface DispatchProps {
-  upsertLinode: (l: Linode) => void;
-}
-
-const connected = connect(mapStateToProps, { upsertLinode });
+const connected = connect(mapStateToProps);
 
 export default recompose<CombinedProps, {}>(
   withImages,
@@ -829,7 +846,6 @@ export default recompose<CombinedProps, {}>(
   withTypes,
   connected,
   withSnackbar,
-  withLabelGenerator,
   withFlags,
   withProfile,
   withAgreements,

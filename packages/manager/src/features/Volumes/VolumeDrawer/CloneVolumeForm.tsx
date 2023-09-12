@@ -1,9 +1,8 @@
 import { CloneVolumeSchema } from '@linode/validation/lib/volumes.schema';
-import { Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import * as React from 'react';
 
 import { Typography } from 'src/components/Typography';
-import Form from 'src/components/core/Form';
 import { resetEventsPolling } from 'src/eventsPolling';
 import { useCloneVolumeMutation } from 'src/queries/volumes';
 import { getErrorMap } from 'src/utilities/errorUtils';
@@ -17,7 +16,10 @@ import NoticePanel from './NoticePanel';
 import { PricePanel } from './PricePanel';
 import VolumesActionsPanel from './VolumesActionsPanel';
 
+import type { FlagSet } from 'src/featureFlags';
+
 interface Props {
+  flags: FlagSet;
   onClose: () => void;
   volumeId: number;
   volumeLabel: string;
@@ -28,7 +30,14 @@ interface Props {
 const initialValues = { label: '' };
 
 export const CloneVolumeForm = (props: Props) => {
-  const { onClose, volumeId, volumeLabel, volumeRegion, volumeSize } = props;
+  const {
+    flags,
+    onClose,
+    volumeId,
+    volumeLabel,
+    volumeRegion,
+    volumeSize,
+  } = props;
 
   const { mutateAsync: cloneVolume } = useCloneVolumeMutation();
 
@@ -88,7 +97,12 @@ export const CloneVolumeForm = (props: Props) => {
               onChange={handleChange}
               value={values.label}
             />
-            <PricePanel currentSize={volumeSize} value={volumeSize} />
+            <PricePanel
+              currentSize={volumeSize}
+              flags={flags}
+              regionId={volumeRegion}
+              value={volumeSize}
+            />
             <VolumesActionsPanel
               onCancel={() => {
                 resetForm();

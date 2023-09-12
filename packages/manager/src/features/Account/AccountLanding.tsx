@@ -2,22 +2,27 @@ import * as React from 'react';
 import { matchPath, useHistory, useLocation } from 'react-router-dom';
 
 import { DocumentTitleSegment } from 'src/components/DocumentTitle';
-import LandingHeader, {
+import {
+  LandingHeader,
   LandingHeaderProps,
 } from 'src/components/LandingHeader';
+import { TabPanels } from 'src/components/ReachTabPanels';
+import { Tabs } from 'src/components/ReachTabs';
 import { SafeTabPanel } from 'src/components/SafeTabPanel/SafeTabPanel';
-import SuspenseLoader from 'src/components/SuspenseLoader';
+import { SuspenseLoader } from 'src/components/SuspenseLoader';
 import { TabLinkList } from 'src/components/TabLinkList/TabLinkList';
-import TabPanels from 'src/components/core/ReachTabPanels';
-import Tabs from 'src/components/core/ReachTabs';
 import { useAccount } from 'src/queries/account';
 import { useGrants } from 'src/queries/profile';
 
 import AccountLogins from './AccountLogins';
 
 const Billing = React.lazy(() => import('src/features/Billing'));
-const EntityTransfersLanding = React.lazy(
-  () => import('src/features/EntityTransfers/EntityTransfersLanding')
+const EntityTransfersLanding = React.lazy(() =>
+  import(
+    'src/features/EntityTransfers/EntityTransfersLanding/EntityTransfersLanding'
+  ).then((module) => ({
+    default: module.EntityTransfersLanding,
+  }))
 );
 const Users = React.lazy(() => import('src/features/Users'));
 const GlobalSettings = React.lazy(() => import('./GlobalSettings'));
@@ -117,7 +122,7 @@ const AccountLanding = () => {
   return (
     <React.Fragment>
       <DocumentTitleSegment segment="Account Settings" />
-      <LandingHeader {...landingHeaderProps} data-qa-profile-header />
+      <LandingHeader {...landingHeaderProps} />
 
       <Tabs index={getDefaultTabIndex()} onChange={handleTabChange}>
         <TabLinkList tabs={tabs} />

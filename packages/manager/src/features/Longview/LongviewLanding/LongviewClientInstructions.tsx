@@ -3,8 +3,8 @@ import { makeStyles } from '@mui/styles';
 import * as React from 'react';
 
 import { EditableEntityLabel } from 'src/components/EditableEntityLabel/EditableEntityLabel';
-import Grid from 'src/components/Grid';
-import Paper from 'src/components/core/Paper';
+import { Grid } from 'src/components/Grid';
+import { Paper } from 'src/components/Paper';
 import { DispatchProps } from 'src/containers/longview.container';
 import { getAPIErrorOrDefault } from 'src/utilities/errorUtils';
 
@@ -74,7 +74,7 @@ export const LongviewClientInstructions: React.FC<Props> = (props) => {
         spacing={2}
       >
         <Grid item xs={11}>
-          <Grid container>
+          <Grid container spacing={2}>
             <Grid item md={3} xs={12}>
               {userCanModifyClient ? (
                 <EditableEntityLabel
@@ -99,7 +99,7 @@ export const LongviewClientInstructions: React.FC<Props> = (props) => {
           </Grid>
         </Grid>
         <Grid item xs={1}>
-          <Grid container justifyContent="flex-end">
+          <Grid container justifyContent="flex-end" spacing={2}>
             <Grid item>
               <ActionMenu
                 longviewClientID={clientID}

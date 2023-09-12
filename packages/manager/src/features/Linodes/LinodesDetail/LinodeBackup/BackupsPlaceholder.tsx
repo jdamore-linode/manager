@@ -1,5 +1,6 @@
+import { PriceObject } from '@linode/api-v4';
+import { styled } from '@mui/material/styles';
 import * as React from 'react';
-import { makeStyles } from 'tss-react/mui';
 
 import VolumeIcon from 'src/assets/icons/entityIcons/volume.svg';
 import { Currency } from 'src/components/Currency';
@@ -10,22 +11,12 @@ import { LinodePermissionsError } from '../LinodePermissionsError';
 import { EnableBackupsDialog } from './EnableBackupsDialog';
 
 interface Props {
-  backupsMonthlyPrice?: number;
+  backupsMonthlyPrice?: PriceObject['monthly'];
   disabled: boolean;
   linodeId: number;
 }
 
-const useStyles = makeStyles()(() => ({
-  empty: {
-    '& svg': {
-      transform: 'scale(0.75)',
-    },
-  },
-}));
-
-export const BackupsPlaceholder = (props: Props) => {
-  const { classes } = useStyles();
-
+export const BackupsPlaceholder = React.memo((props: Props) => {
   const { backupsMonthlyPrice, disabled, linodeId } = props;
 
   const [dialogOpen, setDialogOpen] = React.useState(false);
@@ -51,7 +42,7 @@ export const BackupsPlaceholder = (props: Props) => {
   return (
     <>
       {disabled && <LinodePermissionsError />}
-      <Placeholder
+      <StyledPlaceholder
         buttonProps={[
           {
             children: 'Enable Backups',
@@ -59,14 +50,13 @@ export const BackupsPlaceholder = (props: Props) => {
             onClick: () => setDialogOpen(true),
           },
         ]}
-        className={classes.empty}
         icon={VolumeIcon}
         isEntity
         renderAsSecondary
         title="Backups"
       >
         {backupPlaceholderText}
-      </Placeholder>
+      </StyledPlaceholder>
       <EnableBackupsDialog
         linodeId={linodeId}
         onClose={() => setDialogOpen(false)}
@@ -74,6 +64,10 @@ export const BackupsPlaceholder = (props: Props) => {
       />
     </>
   );
-};
+});
 
-export default React.memo(BackupsPlaceholder);
+const StyledPlaceholder = styled(Placeholder, { label: 'StyledPlaceholder' })({
+  '& svg': {
+    transform: 'scale(0.75)',
+  },
+});

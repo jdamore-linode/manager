@@ -4,9 +4,8 @@ import { Theme } from '@mui/material/styles';
 import * as React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
-import ActionsPanel from 'src/components/ActionsPanel';
+import { ActionsPanel } from 'src/components/ActionsPanel/ActionsPanel';
 import AddNewLink from 'src/components/AddNewLink';
-import { Button } from 'src/components/Button/Button';
 import { ConfirmationDialog } from 'src/components/ConfirmationDialog/ConfirmationDialog';
 import { InlineMenuAction } from 'src/components/InlineMenuAction/InlineMenuAction';
 import { Notice } from 'src/components/Notice/Notice';
@@ -175,19 +174,14 @@ export const AccessControls = (props: Props) => {
   };
 
   const actionsPanel = (
-    <ActionsPanel>
-      <Button buttonType="secondary" onClick={handleDialogClose}>
-        Cancel
-      </Button>
-
-      <Button
-        buttonType="primary"
-        loading={databaseUpdating}
-        onClick={handleRemoveIPAddress}
-      >
-        Remove IP Address
-      </Button>
-    </ActionsPanel>
+    <ActionsPanel
+      primaryButtonProps={{
+        label: 'Remove IP Address',
+        loading: databaseUpdating,
+        onClick: handleRemoveIPAddress,
+      }}
+      secondaryButtonProps={{ label: 'Cancel', onClick: handleDialogClose }}
+    />
   );
 
   return (
@@ -212,7 +206,7 @@ export const AccessControls = (props: Props) => {
         open={isDialogOpen}
         title={`Remove IP Address ${accessControlToBeRemoved}`}
       >
-        {error ? <Notice error text={error} /> : null}
+        {error ? <Notice text={error} variant="error" /> : null}
         <Typography data-testid="ip-removal-confirmation-warning">
           IP {accessControlToBeRemoved} will lose all access to the data on this
           database cluster. This action cannot be undone, but you can re-enable
