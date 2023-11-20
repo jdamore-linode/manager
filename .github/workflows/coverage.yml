@@ -19,6 +19,9 @@ jobs:
       - name: Install dependencies
         run: yarn
 
+      - name: Check dir structure
+        run: ls . && ls ./node_modules && ls ./node_modules/@linode
+
       - name: Run base branch coverage
         run: yarn coverage:summary
 
