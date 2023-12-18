@@ -9,6 +9,18 @@ import { renderWithTheme } from 'src/utilities/testHelpers';
 
 import { CreateAPITokenDrawer } from './CreateAPITokenDrawer';
 
+const queryMocks = vi.hoisted(() => ({
+  useAccountUser: vi.fn().mockReturnValue({}),
+}));
+
+vi.mock('src/queries/accountUsers', async () => {
+  const actual = await vi.importActual<any>('src/queries/accountUsers');
+  return {
+    ...actual,
+    useAccountUser: queryMocks.useAccountUser,
+  };
+});
+
 const props = {
   onClose: vi.fn(),
   open: true,
@@ -87,11 +99,9 @@ describe('Create API Token Drawer', () => {
   });
 
   it('Should show the Child Account Access scope for a parent user account with the parent/child feature flag on', async () => {
-    server.use(
-      rest.get('*/account/users/*', (req, res, ctx) => {
-        return res(ctx.json(accountUserFactory.build({ user_type: 'parent' })));
-      })
-    );
+    queryMocks.useAccountUser.mockReturnValue({
+      data: accountUserFactory.build({ user_type: 'parent' }),
+    });
 
     const { findByText } = renderWithTheme(
       <CreateAPITokenDrawer {...props} />,
@@ -104,11 +114,9 @@ describe('Create API Token Drawer', () => {
   });
 
   it('Should not show the Child Account Access scope for a non-parent user account with the parent/child feature flag on', () => {
-    server.use(
-      rest.get('*/account/users/*', (req, res, ctx) => {
-        return res(ctx.json(accountUserFactory.build({ user_type: null })));
-      })
-    );
+    queryMocks.useAccountUser.mockReturnValue({
+      data: accountUserFactory.build({ user_type: null }),
+    });
 
     const { queryByText } = renderWithTheme(
       <CreateAPITokenDrawer {...props} />,
@@ -116,6 +124,7 @@ describe('Create API Token Drawer', () => {
         flags: { parentChildAccountAccess: true },
       }
     );
+
     const childScope = queryByText('Child Account Access');
     expect(childScope).not.toBeInTheDocument();
   });
