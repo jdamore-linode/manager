@@ -10,7 +10,7 @@ import {
   useQueryClient,
 } from 'react-query';
 
-import { ManagerPreferences } from 'src/types/ManagerPreferences';
+import type { ManagerPreferences } from 'src/types/ManagerPreferences';
 
 import { queryPresets } from './base';
 
