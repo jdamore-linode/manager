@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 
 import { getAll } from 'src/utilities/getAll';
 
-import { queryKey as accountQueryKey } from './account';
+import { queryKey as accountQueryKey } from './account.constants';
 
 export const queryKey = [accountQueryKey, 'notifications'];
 

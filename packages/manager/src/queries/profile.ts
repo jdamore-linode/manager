@@ -34,7 +34,7 @@ import {
 import { EventWithStore } from 'src/events';
 
 import { Grants } from '../../../api-v4/lib';
-import { queryKey as accountQueryKey } from './account';
+import { queryKey as accountQueryKey } from './account.constants';
 import { queryPresets } from './base';
 
 import type { RequestOptions } from '@linode/api-v4';

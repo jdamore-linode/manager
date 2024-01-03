@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import { useProfile } from 'src/queries/profile';
 
-import { queryKey } from './account';
+import { queryKey } from './account.constants';
 
 import type {
   APIError,

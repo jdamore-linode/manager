@@ -9,6 +9,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import { useGrants, useProfile } from 'src/queries/profile';
 
+import { queryKey } from './account.constants';
 import { useAccountUser } from './accountUsers';
 import { queryPresets } from './base';
 
@@ -20,8 +21,6 @@ import type {
   ResourcePage,
   Token,
 } from '@linode/api-v4';
-
-export const queryKey = 'account';
 
 export const useAccount = () => {
   const { data: profile } = useProfile();

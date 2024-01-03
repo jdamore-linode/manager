@@ -14,7 +14,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import { EventWithStore } from 'src/events';
 
-import { queryKey as accountQueryKey } from './account';
+import { queryKey as accountQueryKey } from './account.constants';
 
 const queryKey = [accountQueryKey, 'oauth'];
 

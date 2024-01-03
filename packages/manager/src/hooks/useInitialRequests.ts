@@ -7,7 +7,7 @@ import { useStore } from 'react-redux';
 import { startEventsInterval } from 'src/events';
 import { useAuthentication } from 'src/hooks/useAuthentication';
 import { usePendingUpload } from 'src/hooks/usePendingUpload';
-import { queryKey as accountQueryKey } from 'src/queries/account';
+import { queryKey as accountQueryKey } from 'src/queries/account.constants';
 import { redirectToLogin } from 'src/session';
 
 /**
