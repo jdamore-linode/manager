@@ -37,7 +37,7 @@ import { RevokeTokenDialog } from './RevokeTokenDialog';
 import { ViewAPITokenDrawer } from './ViewAPITokenDrawer';
 import { isWayInTheFuture } from './utils';
 
-export type APITokenType = 'OAuth Client Token' | 'Personal Access Token';
+import type { APITokenType } from './APITokenType';
 
 export type APITokenTitle =
   | 'Personal Access Tokens'

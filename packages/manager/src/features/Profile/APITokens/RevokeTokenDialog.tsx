@@ -10,7 +10,7 @@ import {
   useRevokePersonalAccessTokenMutation,
 } from 'src/queries/tokens';
 
-import { APITokenType } from './APITokenTable';
+import type { APITokenType } from './APITokenType';
 
 export interface Props {
   onClose: () => void;
