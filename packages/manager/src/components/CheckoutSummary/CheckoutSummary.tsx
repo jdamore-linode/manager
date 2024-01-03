@@ -6,20 +6,13 @@ import * as React from 'react';
 
 import { Paper } from '../Paper';
 import { Typography } from '../Typography';
-import { SummaryItem } from './SummaryItem';
+import { SummaryItem, SummaryItemProps } from './SummaryItem';
 
 interface Props {
   agreement?: JSX.Element;
   children?: JSX.Element | null;
-  displaySections: SummaryItem[];
+  displaySections: SummaryItemProps[];
   heading: string;
-}
-
-export interface SummaryItem {
-  details?: number | string;
-  hourly?: number;
-  monthly?: number;
-  title?: string;
 }
 
 export const CheckoutSummary = (props: Props) => {

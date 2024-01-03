@@ -3,9 +3,15 @@ import React from 'react';
 
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 import { Typography } from '../Typography';
-import { SummaryItem as Props } from './CheckoutSummary';
 
-export const SummaryItem = ({ details, title }: Props) => {
+export interface SummaryItemProps {
+  details?: number | string;
+  hourly?: number;
+  monthly?: number;
+  title?: string;
+}
+
+export const SummaryItem = ({ details, title }: SummaryItemProps) => {
   return (
     <StyledGrid>
       {title ? (
