@@ -1,0 +1,20 @@
+{
+  "tsConfig": "./tsconfig.json",
+  "fileExtensions": [
+    "ts",
+    "tsx"
+  ],
+  "excludeRegExp": [
+    ".*\\.test\\.tsx?",
+    ".*\\.d\\.ts",
+    ".*\\.stories\\.tsx?",
+    ".*/?__data__/.*",
+    ".*/?__mocks__/.*"
+  ],
+  "detectiveOptions": {
+    "ts": {
+      "skipTypeImports": true
+    }
+  },
+  "baseDir": "./src"
+}
