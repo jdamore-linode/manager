@@ -5,7 +5,8 @@ import React from 'react';
 import { breakpoints } from 'src/foundations/breakpoints';
 import { renderWithTheme, resizeScreenSize } from 'src/utilities/testHelpers';
 
-import { SIDEBAR_COLLAPSED_WIDTH, SIDEBAR_WIDTH, SideMenu } from './SideMenu';
+import { SIDEBAR_COLLAPSED_WIDTH, SIDEBAR_WIDTH } from './SideMenu.constants';
+import { SideMenu } from './SideMenu';
 
 // Mock PrimaryNav component
 vi.mock('./PrimaryNav', () => {

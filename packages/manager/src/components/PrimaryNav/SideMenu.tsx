@@ -4,10 +4,8 @@ import * as React from 'react';
 
 import { Hidden } from 'src/components/Hidden';
 
+import { SIDEBAR_WIDTH, SIDEBAR_COLLAPSED_WIDTH } from './SideMenu.constants';
 import PrimaryNav from './PrimaryNav';
-
-export const SIDEBAR_WIDTH = 190;
-export const SIDEBAR_COLLAPSED_WIDTH = 52;
 
 export interface SideMenuProps {
   /**

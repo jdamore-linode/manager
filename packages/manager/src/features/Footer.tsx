@@ -5,7 +5,7 @@ import { Link } from 'src/components/Link';
 import {
   SIDEBAR_COLLAPSED_WIDTH,
   SIDEBAR_WIDTH,
-} from 'src/components/PrimaryNav/SideMenu';
+} from 'src/components/PrimaryNav/SideMenu.constants';
 import { DEVELOPERS_LINK, FEEDBACK_LINK } from 'src/constants';
 
 import packageJson from '../../package.json';
