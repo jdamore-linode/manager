@@ -5,13 +5,13 @@ import { makeStyles } from 'tss-react/mui';
 
 import GooglePayIcon from 'src/assets/icons/payment/googlePay.svg';
 import { CircleProgress } from 'src/components/CircleProgress';
-import { PaymentMessage } from 'src/features/Billing/BillingPanels/PaymentInfoPanel/AddPaymentMethodDrawer/AddPaymentMethodDrawer';
 import {
   gPay,
   initGooglePaymentInstance,
 } from 'src/features/Billing/GooglePayProvider';
 import { useScript } from 'src/hooks/useScript';
 import { useClientToken } from 'src/queries/accountPayment';
+import type { PaymentMessage } from './PaymentMessage';
 
 const useStyles = makeStyles()(() => ({
   button: {

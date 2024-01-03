@@ -1,9 +1,7 @@
 import { PaymentMethod } from '@linode/api-v4/lib/account';
 import { Box } from 'src/components/Box';
 import Grid from '@mui/material/Unstable_Grid2';
-import { VariantType } from 'notistack';
 import * as React from 'react';
-
 import { Divider } from 'src/components/Divider';
 import { Drawer } from 'src/components/Drawer';
 import { LinearProgress } from 'src/components/LinearProgress';
@@ -17,15 +15,12 @@ import { PayPalChip } from '../PayPalChip';
 import { PayPalErrorBoundary } from '../PayPalErrorBoundary';
 import AddCreditCardForm from './AddCreditCardForm';
 
+import type { PaymentMessage } from '../PaymentMessage';
+
 interface Props {
   onClose: () => void;
   open: boolean;
   paymentMethods: PaymentMethod[] | undefined;
-}
-
-export interface PaymentMessage {
-  text: string;
-  variant: VariantType;
 }
 
 const sxBox = {

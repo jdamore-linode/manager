@@ -8,7 +8,6 @@ import { makeStyles } from 'tss-react/mui';
 import GooglePayIcon from 'src/assets/icons/payment/gPayButton.svg';
 import { CircleProgress } from 'src/components/CircleProgress';
 import { Tooltip } from 'src/components/Tooltip';
-import { PaymentMessage } from 'src/features/Billing/BillingPanels/PaymentInfoPanel/AddPaymentMethodDrawer/AddPaymentMethodDrawer';
 import {
   gPay,
   initGooglePaymentInstance,
@@ -19,6 +18,8 @@ import { useAccount } from 'src/queries/account';
 import { useClientToken } from 'src/queries/accountPayment';
 
 import { SetSuccess } from './types';
+
+import type { PaymentMessage } from '../../PaymentInfoPanel/PaymentMessage';
 
 const useStyles = makeStyles()((theme: Theme) => ({
   button: {

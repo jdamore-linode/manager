@@ -16,10 +16,11 @@ import { makeStyles } from 'tss-react/mui';
 
 import { CircleProgress } from 'src/components/CircleProgress';
 import { reportException } from 'src/exceptionReporting';
-import { PaymentMessage } from 'src/features/Billing/BillingPanels/PaymentInfoPanel/AddPaymentMethodDrawer/AddPaymentMethodDrawer';
 import { useClientToken } from 'src/queries/accountPayment';
 import { queryKey as accountPaymentKey } from 'src/queries/accountPayment';
 import { getAPIErrorOrDefault } from 'src/utilities/errorUtils';
+
+import type { PaymentMessage } from './PaymentMessage';
 
 const useStyles = makeStyles()(() => ({
   disabled: {
