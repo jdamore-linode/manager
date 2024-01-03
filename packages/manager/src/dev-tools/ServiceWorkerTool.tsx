@@ -1,14 +1,5 @@
 import * as React from 'react';
-
-const LOCAL_STORAGE_KEY = 'msw';
-
-export const isMSWEnabled =
-  localStorage.getItem(LOCAL_STORAGE_KEY) === 'enabled';
-
-export const setMSWEnabled = (enabled: boolean) => {
-  localStorage.setItem(LOCAL_STORAGE_KEY, enabled ? 'enabled' : 'disabled');
-  window.location.reload();
-};
+import { isMSWEnabled, setMSWEnabled } from './devToolsUtils';
 
 export const ServiceWorkerTool = () => {
   return (

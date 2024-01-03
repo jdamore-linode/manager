@@ -18,7 +18,8 @@ import { storeFactory } from 'src/store';
 import { App } from './App';
 import { LinodeThemeWrapper } from './LinodeThemeWrapper';
 import NullComponent from './components/NullComponent';
-import { loadDevTools, shouldEnableDevTools } from './dev-tools/load';
+import { shouldEnableDevTools } from './dev-tools/devToolsUtils';
+import { loadDevTools } from './dev-tools/load';
 import './index.css';
 import { queryClientFactory } from './queries/base';
 
