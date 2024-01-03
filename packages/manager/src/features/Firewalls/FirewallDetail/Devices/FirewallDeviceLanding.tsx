@@ -16,6 +16,8 @@ import { AddNodebalancerDrawer } from './AddNodebalancerDrawer';
 import { FirewallDeviceTable } from './FirewallDeviceTable';
 import { RemoveDeviceDialog } from './RemoveDeviceDialog';
 
+import { formattedTypes } from './firewallDeviceTypes';
+
 import type { FirewallDevice, FirewallDeviceEntityType } from '@linode/api-v4';
 
 export interface FirewallDeviceLandingProps {
@@ -24,11 +26,6 @@ export interface FirewallDeviceLandingProps {
   firewallLabel: string;
   type: FirewallDeviceEntityType;
 }
-
-export const formattedTypes = {
-  linode: 'Linode',
-  nodebalancer: 'NodeBalancer',
-};
 
 export const FirewallDeviceLanding = React.memo(
   (props: FirewallDeviceLandingProps) => {

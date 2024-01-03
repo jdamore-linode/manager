@@ -13,7 +13,7 @@ import { TableRow } from 'src/components/TableRow';
 import { TableSortCell } from 'src/components/TableSortCell';
 import { getAPIErrorOrDefault } from 'src/utilities/errorUtils';
 
-import { formattedTypes } from './FirewallDeviceLanding';
+import { formattedTypes } from './firewallDeviceTypes';
 import { FirewallDeviceRow } from './FirewallDeviceRow';
 
 import type { FirewallDeviceEntityType } from '@linode/api-v4';
