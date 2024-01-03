@@ -15,7 +15,7 @@ import {
   StyledTypography,
 } from './EditableInput.styles';
 
-export type EditableTextVariant = 'h1' | 'h2' | 'table-cell';
+import type { EditableTextVariant } from './EditableTextVariant';
 
 export interface EditableInputProps {
   cancelEdit: () => void;

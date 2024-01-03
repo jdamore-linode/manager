@@ -7,7 +7,7 @@ import { TextField, TextFieldProps } from 'src/components/TextField';
 import { Typography } from 'src/components/Typography';
 import { fadeIn } from 'src/styles/keyframes';
 
-import { EditableTextVariant } from './EditableInput';
+import type { EditableTextVariant } from './EditableTextVariant';
 
 export const StyledTypography = styled(Typography, {
   label: 'EditableInput__StyledTypography',
