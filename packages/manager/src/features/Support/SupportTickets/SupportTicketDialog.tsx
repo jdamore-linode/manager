@@ -16,7 +16,6 @@ import Select, { Item } from 'src/components/EnhancedSelect/Select';
 import { FormHelperText } from 'src/components/FormHelperText';
 import { Link } from 'src/components/Link';
 import { Notice } from 'src/components/Notice/Notice';
-import { EntityForTicketDetails } from 'src/components/SupportLink/SupportLink';
 import { TextField } from 'src/components/TextField';
 import { Typography } from 'src/components/Typography';
 import { useAccount } from 'src/queries/account';
@@ -47,6 +46,12 @@ import SupportTicketSMTPFields, {
   smtpHelperText,
 } from './SupportTicketSMTPFields';
 
+import type {
+  EntityForTicketDetails,
+  EntityType,
+  TicketType,
+} from 'src/components/SupportLink/SupportLink';
+
 const useStyles = makeStyles()((theme: Theme) => ({
   expPanelSummary: {
     backgroundColor: theme.name === 'dark' ? theme.bg.main : theme.bg.white,
@@ -75,19 +80,6 @@ interface AttachmentWithTarget {
   file: FormData;
   ticketId: number;
 }
-
-export type EntityType =
-  | 'database_id'
-  | 'domain_id'
-  | 'firewall_id'
-  | 'general'
-  | 'linode_id'
-  | 'lkecluster_id'
-  | 'nodebalancer_id'
-  | 'none'
-  | 'volume_id';
-
-export type TicketType = 'general' | 'smtp';
 
 interface TicketTypeData {
   dialogTitle: string;
