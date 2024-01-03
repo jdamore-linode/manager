@@ -1,7 +1,6 @@
 import { IPAddress, IPRange } from '@linode/api-v4/lib/networking';
 import { styled } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
-import { IPv6, parse as parseIP } from 'ipaddr.js';
 import * as React from 'react';
 
 import { CircleProgress } from 'src/components/CircleProgress';
@@ -9,7 +8,6 @@ import { CopyTooltip } from 'src/components/CopyTooltip/CopyTooltip';
 import { TableCell } from 'src/components/TableCell';
 import { Typography } from 'src/components/Typography';
 import { StyledTableRow } from 'src/features/Linodes/LinodeEntityDetail.styles';
-import { IPDisplay } from 'src/features/Linodes/LinodesDetail/LinodeNetworking/LinodeIPAddresses';
 import { useLinodeQuery } from 'src/queries/linodes/linodes';
 import {
   useAllIPsQuery,
@@ -18,6 +16,10 @@ import {
 
 import { StyledActionTableCell } from './LinodeIPAddresses.styles';
 import { LinodeNetworkingActionMenu } from './LinodeNetworkingActionMenu';
+import { listIPv6InRange } from './linodeNetworkingUtils';
+
+import type { IPDisplay } from './types';
+
 export interface IPAddressRowHandlers {
   handleOpenEditRDNS: (ip: IPAddress) => void;
   handleOpenEditRDNSForRange: (range: IPRange) => void;
@@ -183,36 +185,4 @@ const RangeRDNSCell = (props: {
       </Typography>
     </button>
   );
-};
-
-// Given a range, prefix, and a list of IPs, filter out the IPs that do not fall within the IPv6 range.
-export const listIPv6InRange = (
-  range: string,
-  prefix: number,
-  ips: IPAddress[] = []
-) => {
-  return ips.filter((thisIP) => {
-    // Only keep addresses that:
-    // 1. are part of an IPv6 range or pool
-    // 2. have RDNS set
-    if (
-      !['ipv6/pool', 'ipv6/range'].includes(thisIP.type) ||
-      thisIP.rdns === null
-    ) {
-      // eslint-disable-next-line array-callback-return
-      return;
-    }
-
-    // The ipaddr.js library throws an if it can't parse an IP address.
-    // We'll wrap this in a try/catch block just in case something is malformed.
-    try {
-      // We need to typecast here so that the overloaded `match()` is typed correctly.
-      const addr = parseIP(thisIP.address) as IPv6;
-      const parsedRange = parseIP(range) as IPv6;
-
-      return addr.match(parsedRange, prefix);
-    } catch {
-      return false;
-    }
-  });
 };

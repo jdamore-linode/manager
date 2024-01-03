@@ -37,7 +37,7 @@ import {
 import { ViewIPDrawer } from './ViewIPDrawer';
 import { ViewRDNSDrawer } from './ViewRDNSDrawer';
 import { ViewRangeDrawer } from './ViewRangeDrawer';
-import { IPTypes } from './types';
+import { IPTypes, IPDisplay } from './types';
 
 export const ipv4TableID = 'ips';
 
@@ -273,18 +273,6 @@ export const LinodeIPAddresses = (props: LinodeIPAddressesProps) => {
     </div>
   );
 };
-
-// Higher-level IP address display for the IP Table.
-export interface IPDisplay {
-  // Not for display, but useful for lower-level components.
-  _ip?: IPAddress;
-  _range?: IPRange;
-  address: string;
-  gateway: string;
-  rdns: string;
-  subnetMask: string;
-  type: IPTypes;
-}
 
 // Takes an IP Response object and returns high-level IP display rows.
 export const ipResponseToDisplayRows = (
