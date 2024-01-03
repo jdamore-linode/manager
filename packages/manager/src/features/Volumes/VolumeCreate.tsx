@@ -38,9 +38,7 @@ import { isNilOrEmpty } from 'src/utilities/isNilOrEmpty';
 import { maybeCastToNumber } from 'src/utilities/maybeCastToNumber';
 
 import { ConfigSelect } from './VolumeDrawer/ConfigSelect';
-import { SizeField } from './VolumeDrawer/SizeField';
-
-export const SIZE_FIELD_WIDTH = 160;
+import { SizeField, SIZE_FIELD_WIDTH } from './VolumeDrawer/SizeField';
 
 const useStyles = makeStyles()((theme: Theme) => ({
   agreement: {

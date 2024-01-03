@@ -11,7 +11,7 @@ import { MAX_VOLUME_SIZE } from 'src/constants';
 import { UNKNOWN_PRICE } from 'src/utilities/pricing/constants';
 import { getDynamicVolumePrice } from 'src/utilities/pricing/dynamicVolumePrice';
 
-import { SIZE_FIELD_WIDTH } from '../VolumeCreate';
+export const SIZE_FIELD_WIDTH = 160;
 
 interface Props {
   disabled?: boolean;
