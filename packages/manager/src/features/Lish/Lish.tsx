@@ -2,7 +2,6 @@ import { styled } from '@mui/material/styles';
 import * as React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
-import { CircleProgress } from 'src/components/CircleProgress';
 import { ErrorState } from 'src/components/ErrorState/ErrorState';
 import { SafeTabPanel } from 'src/components/Tabs/SafeTabPanel';
 import { TabLinkList } from 'src/components/Tabs/TabLinkList';
@@ -17,6 +16,7 @@ import {
 
 import '../../assets/weblish/weblish.css';
 import '../../assets/weblish/xterm.css';
+import { LishCircleProgress } from './LishCircleProgress';
 import Glish from './Glish';
 import Weblish from './Weblish';
 
@@ -88,7 +88,7 @@ const Lish = () => {
   };
 
   if (isLoading) {
-    return <StyledCircleProgress />;
+    return <LishCircleProgress />;
   }
 
   if (linodeError) {
@@ -162,11 +162,4 @@ const StyledTabs = styled(Tabs)(({ theme }) => ({
   },
   backgroundColor: 'black',
   margin: 0,
-}));
-
-export const StyledCircleProgress = styled(CircleProgress)(() => ({
-  left: '50%',
-  position: 'absolute',
-  top: '50%',
-  transform: 'translate(-50%, -50%)',
 }));

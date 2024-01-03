@@ -5,7 +5,7 @@ import { Terminal } from 'xterm';
 
 import { Box } from 'src/components/Box';
 import { ErrorState } from 'src/components/ErrorState/ErrorState';
-import { StyledCircleProgress } from 'src/features/Lish/Lish';
+import { LishCircleProgress } from './LishCircleProgress';
 
 import { getLishSchemeAndHostname, resizeViewPort } from './lishUtils';
 
@@ -86,7 +86,7 @@ export class Weblish extends React.Component<Props, State> {
         {this.socket && this.socket.readyState === this.socket.OPEN ? (
           <div className="terminal" id="terminal" />
         ) : (
-          <StyledCircleProgress />
+          <LishCircleProgress />
         )}
       </div>
     );
