@@ -2,7 +2,7 @@ import { styled } from '@mui/material/styles';
 
 import { omittedProps } from 'src/utilities/omittedProps';
 
-import { SearchSuggestionProps } from './SearchSuggestion';
+import type { SearchSuggestionProps } from './SearchSuggestion';
 
 export const StyledWrapperDiv = styled('div', {
   label: 'StyledWrapperDiv',
