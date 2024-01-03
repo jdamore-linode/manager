@@ -10,7 +10,7 @@ import { Link } from 'src/components/Link';
 import { Typography } from 'src/components/Typography';
 import { sanitizeHTML } from 'src/utilities/sanitizeHTML';
 
-import { ExtendedNotification } from './useFormattedNotifications';
+import type { ExtendedNotification } from './ExtendedNotification';
 
 interface Props {
   notification: ExtendedNotification;

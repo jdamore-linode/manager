@@ -26,9 +26,7 @@ import { NotificationItem } from '../NotificationSection';
 import RenderNotification from './RenderNotification';
 import { checkIfMaintenanceNotification } from './notificationUtils';
 
-export interface ExtendedNotification extends Notification {
-  jsx?: JSX.Element;
-}
+import type { ExtendedNotification } from './ExtendedNotification';
 
 export const useFormattedNotifications = (): NotificationItem[] => {
   const notificationContext = React.useContext(_notificationContext);
