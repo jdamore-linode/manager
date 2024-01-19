@@ -1,5 +1,6 @@
 import { Labelable } from './commands';
 
+import type { mount } from 'cypress/react';
 import type { LinodeVisitOptions } from './login.ts';
 
 declare global {
@@ -39,6 +40,8 @@ declare global {
        * @param state - Cypress internal state to retrieve.
        */
       state(state: string): any;
+
+      mount: typeof mount;
     }
   }
 }
