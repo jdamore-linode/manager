@@ -19,9 +19,10 @@ import {
   linodeFactory,
   linodeConfigFactory,
   LinodeConfigInterfaceFactoryWithVPC,
+  regionFactory,
 } from '@src/factories';
 import { ui } from 'support/ui';
-import { randomNumber, randomLabel } from 'support/util/random';
+import { randomNumber, randomLabel, randomString } from 'support/util/random';
 import { mockGetLinodes } from 'support/intercepts/linodes';
 import {
   mockCreateLinodeConfigInterfaces,
@@ -32,24 +33,31 @@ import {
   vpcAssignLinodeRebootNotice,
   vpcUnassignLinodeRebootNotice,
 } from 'support/constants/vpc';
-import { VPC, Linode, Config } from '@linode/api-v4';
+import { mockGetRegions } from 'support/intercepts/regions';
+
+const mockRegion = regionFactory.build({
+  label: randomLabel(),
+  id: randomString(),
+  capabilities: ['VPCs'],
+});
+
+const mockVPCs = vpcFactory.buildList(5, {
+  region: mockRegion.id,
+});
+
+const mockLinode = linodeFactory.build({
+  id: randomNumber(),
+  label: randomLabel(),
+  region: mockRegion.id,
+});
+
+const mockConfig = linodeConfigFactory.build({
+  id: randomNumber(),
+});
 
 describe('VPC assign/unassign flows', () => {
-  let mockVPCs: VPC[];
-  let mockLinode: Linode;
-  let mockConfig: Config;
-
-  before(() => {
-    mockVPCs = vpcFactory.buildList(5);
-
-    mockLinode = linodeFactory.build({
-      id: randomNumber(),
-      label: randomLabel(),
-    });
-
-    mockConfig = linodeConfigFactory.build({
-      id: randomNumber(),
-    });
+  beforeEach(() => {
+    mockGetRegions([mockRegion]);
   });
 
   /*
@@ -64,6 +72,7 @@ describe('VPC assign/unassign flows', () => {
     const mockVPC = vpcFactory.build({
       id: randomNumber(),
       label: randomLabel(),
+      region: mockRegion.id,
     });
 
     const mockVPCAfterSubnetCreation = vpcFactory.build({
@@ -89,6 +98,7 @@ describe('VPC assign/unassign flows', () => {
     mockGetVPC(mockVPC).as('getVPC');
     mockGetSubnets(mockVPC.id, []).as('getSubnets');
     mockCreateSubnet(mockVPC.id).as('createSubnet');
+    mockGetLinodes([mockLinode]).as('getLinodes');
 
     cy.visitWithLogin(`/vpcs/${mockVPC.id}`);
     cy.wait(['@getFeatureFlags', '@getClientStream', '@getVPC', '@getSubnets']);
@@ -131,12 +141,10 @@ describe('VPC assign/unassign flows', () => {
       .should('be.visible')
       .click();
 
-    mockGetLinodes([mockLinode]).as('getLinodes');
     ui.actionMenuItem
       .findByTitle('Assign Linodes')
       .should('be.visible')
       .click();
-    cy.wait('@getLinodes');
 
     ui.drawer
       .findByTitle(`Assign Linodes to subnet: ${mockSubnet.label} (0.0.0.0/0)`)
@@ -206,6 +214,7 @@ describe('VPC assign/unassign flows', () => {
     const mockSecondLinode = linodeFactory.build({
       id: randomNumber(),
       label: randomLabel(),
+      region: mockRegion.id,
     });
 
     const mockSubnet = subnetFactory.build({
@@ -218,6 +227,7 @@ describe('VPC assign/unassign flows', () => {
       id: randomNumber(),
       label: randomLabel(),
       subnets: [mockSubnet],
+      region: mockRegion.id,
     });
 
     const mockLinodeConfig = linodeConfigFactory.build({
