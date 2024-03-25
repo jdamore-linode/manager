@@ -13,7 +13,7 @@ import { apiMatcher } from 'support/util/intercepts';
 describe('help & support', () => {
   it('open support ticket', () => {
     const image = 'test_screenshot.png';
-    const ticketDescription = 'this is a test ticket';
+    const ticketDescription = 'this is a test ticket. 你好世界！这是一个测试';
     const ticketLabel = 'cy-test ticket';
     const ticketId = Math.floor(Math.random() * 99999999 + 10000000);
     const ts = new Date();
@@ -27,7 +27,7 @@ describe('help & support', () => {
         attachments: [image],
         closable: false,
         closed: null,
-        description: 'this is a test ticket',
+        description: ticketDescription,
         entity: null,
         id: ticketId,
         opened: ts.toISOString(),
@@ -73,7 +73,14 @@ describe('help & support', () => {
       getVisible('[value="test_screenshot.png"]');
       getClick('[data-qa-submit="true"]');
 
-      cy.wait('@createTicket').its('response.statusCode').should('eq', 200);
+      cy.wait('@createTicket')
+        // .its('response.statusCode')
+        // .should('eq', 200)
+        .then((xhr) => {
+          const body = xhr.request.body;
+          expect(body.description).to.eq(ticketDescription);
+          expect(xhr.response?.statusCode).to.eq(200);
+        });
       cy.wait('@attachmentPost').its('response.statusCode').should('eq', 200);
       cy.wait('@getReplies').its('response.statusCode').should('eq', 200);
       cy.wait('@getTicket').its('response.statusCode').should('eq', 200);
