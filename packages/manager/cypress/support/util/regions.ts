@@ -17,8 +17,38 @@ const disallowedRegionIds = [
   // Tokyo, JP
   'ap-northeast',
 
+  // Singapore
+  'ap-south',
+
+  // Sydney, AU
+  'ap-southeast',
+
+  // Mumbai, IN
+  'ap-west',
+
+  // Toronto, CA,
+  'ca-central',
+
+  // Frankfurt, DE
+  'eu-central',
+
+  // London, UK
+  'eu-west',
+
+  // Dallas, TX, USA
+  'us-central',
+
+  // Newark, NJ, USA
+  'us-east',
+
   // Washington, DC
   'us-iad',
+
+  // Atlanta, GA, USA
+  'us-southeast',
+
+  // Fremont, CA, USA
+  'us-west',
 ];
 
 /**
