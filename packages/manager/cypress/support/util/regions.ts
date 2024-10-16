@@ -5,6 +5,23 @@ import { getNewRegionLabel } from 'src/components/RegionSelect/RegionSelect.util
 import type { Capabilities, Region } from '@linode/api-v4';
 
 /**
+ * Regions that cannot be selected using `chooseRegion()` and `chooseRegions()`.
+ *
+ * This is useful for regions which have capabilities that are required for tests,
+ * but do not have capacity, resulting in 400 responses from the API.
+ *
+ * In the future we may be able to leverage the API to dynamically exclude regions
+ * that are lacking capacity.
+ */
+const disallowedRegionIds = [
+  // Tokyo, JP
+  'ap-northeast',
+
+  // Washington, DC
+  'us-iad',
+];
+
+/**
  * Extended Region type to assist with Cloud Manager-specific label handling.
  *
  * Cloud Manager mutates region labels in many places throughout the app, and
@@ -83,23 +100,6 @@ export const getRegionFromExtendedRegion = (
     site_type: extendedRegion.site_type,
   };
 };
-
-/**
- * Regions that cannot be selected using `chooseRegion()` and `chooseRegions()`.
- *
- * This is useful for regions which have capabilities that are required for tests,
- * but do not have capacity, resulting in 400 responses from the API.
- *
- * In the future we may be able to leverage the API to dynamically exclude regions
- * that are lacking capacity.
- */
-const disallowedRegionIds = [
-  // Tokyo, JP
-  'ap-northeast',
-
-  // Washington, DC
-  'us-iad',
-];
 
 /**
  * Returns an object describing a Cloud Manager region if specified by the user.
