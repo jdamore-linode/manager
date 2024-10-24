@@ -131,7 +131,7 @@ services:
     depends_on:
       web:
         condition: service_healthy
-    entrypoint: "caddy reverse-proxy --from $REVERSE_PROXY_URL --to $CYPRESS_BASE_URL & yarn"
+    entrypoint: "/caddy-entrypoint.sh"
 
   # Cypress component test runner service.
   #

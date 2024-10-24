@@ -27,6 +27,10 @@ RUN apt-get update \
     && apt-get update \
     && apt-get install caddy
 
+# Insert entrypoint script to be used when reverse proxy is desired.
+RUN echo "#!/bin/sh\ncaddy reverse-proxy --from \"$REVERSE_PROXY_URL\" --to \"$CYPRESS_BASE_URL\" &\nyarn \"$@\"" >> /caddy-entrypoint.sh \
+  && chmod +x /caddy-entrypoint.sh
+
 # e2e-install
 #
 # Installs Cypress and sets up cache directories.
