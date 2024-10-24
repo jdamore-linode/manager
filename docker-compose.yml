@@ -131,7 +131,10 @@ services:
     depends_on:
       web:
         condition: service_healthy
-    entrypoint: "/caddy-entrypoint.sh"
+    entrypoint:
+      - "sh"
+      - "-c"
+      - "/caddy-entrpoint.sh"
 
   # Cypress component test runner service.
   #
