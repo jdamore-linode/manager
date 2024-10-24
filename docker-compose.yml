@@ -132,10 +132,9 @@ services:
       web:
         condition: service_healthy
     entrypoint:
-      - "sh"
+      - "/bin/sh"
       - "-c"
-      - "/caddy-entrypoint.sh"
-      - "$@"
+      - "echo ${CYPRESS_BASE_URL} ${REVERSE_PROXY_URL} $0 $@"
 
   # Cypress component test runner service.
   #
