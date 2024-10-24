@@ -117,11 +117,20 @@ services:
       <<: *default-env
       MANAGER_OAUTH: ${MANAGER_OAUTH}
 
-  # Cypress test runner service to run tests against a locally-served Cloud instance.
+  # Cypress test runner service to run tests against a local containerized Cloud instance.
   #
   # This is useful when testing against a customized or in-development build of
   # Cloud Manager.
   cypress_local:
+    <<: *default-runner
+    environment:
+      <<: *default-env
+      MANAGER_OAUTH: ${MANAGER_OAUTH}
+    depends_on:
+      web:
+        condition: service_healthy
+
+  cypress_local_reverse_proxy:
     <<: *default-runner
     environment:
       <<: *default-env
