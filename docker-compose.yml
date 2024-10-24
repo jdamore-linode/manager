@@ -126,18 +126,12 @@ services:
     environment:
       <<: *default-env
       MANAGER_OAUTH: ${MANAGER_OAUTH}
+      CYPRESS_BASE_URL: "http://localhost:3000"
+      REVERSE_PROXY_URL: ${CYPRESS_BASE_URL}
     depends_on:
       web:
         condition: service_healthy
-
-  cypress_local_reverse_proxy:
-    <<: *default-runner
-    environment:
-      <<: *default-env
-      MANAGER_OAUTH: ${MANAGER_OAUTH}
-    depends_on:
-      web:
-        condition: service_healthy
+    entrypoint: "caddy reverse-proxy --from $REVERSE_PROXY_URL --to $CYPRESS_BASE_URL & yarn"
 
   # Cypress component test runner service.
   #
