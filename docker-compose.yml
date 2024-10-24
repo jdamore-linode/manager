@@ -134,7 +134,7 @@ services:
     entrypoint:
       - "sh"
       - "-c"
-      - "/caddy-entrpoint.sh"
+      - "/caddy-entrypoint.sh"
 
   # Cypress component test runner service.
   #
