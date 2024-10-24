@@ -134,7 +134,7 @@ services:
     entrypoint:
       - "/bin/sh"
       - "-c"
-      - "echo ${CYPRESS_BASE_URL} ${REVERSE_PROXY_URL} $0 $@"
+      - "echo 1 ${CYPRESS_BASE_URL} 2 ${REVERSE_PROXY_URL} 3 $0 4 $@"
 
   # Cypress component test runner service.
   #
