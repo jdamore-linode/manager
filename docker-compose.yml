@@ -151,6 +151,10 @@ services:
   # TODO Switch back to `cypress_containerized`.
   cypress_local:
     <<: *default-runner
+    build:
+      context: .
+      dockerfile: ./packages/manager/Dockerfile
+      target: e2e-reverse-proxy
     environment:
       <<: *default-env
       MANAGER_OAUTH: ${MANAGER_OAUTH}
