@@ -125,7 +125,8 @@ services:
   # If the local Cloud Manager instance is not served at `localhost:3000` (when
   # served from a container, for example), prefer the `cypress_containerized`
   # service instead.
-  cypress_local:
+  # TODO Switch back to `cypress_local`.
+  cypress_containerized:
     <<: *default-runner
     environment:
       <<: *default-env
@@ -147,7 +148,8 @@ services:
   # If the local Cloud Manager instance is served at `localhost:3000` (when
   # running Cloud Manager locally during development, for example), prefer the
   # `cypress_local` service instead.
-  cypress_containerized:
+  # TODO Switch back to `cypress_containerized`.
+  cypress_local:
     <<: *default-runner
     environment:
       <<: *default-env
