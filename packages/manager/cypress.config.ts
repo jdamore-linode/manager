@@ -19,6 +19,8 @@ import { logTestTagInfo } from './cypress/support/plugins/test-tagging-info';
 import cypressViteConfig from './cypress/vite.config';
 import { featureFlagOverrides } from './cypress/support/plugins/feature-flag-override';
 import { postRunCleanup } from './cypress/support/plugins/post-run-cleanup';
+import { displayBrowser } from './cypress/support/plugins/display-browser-info';
+import { onPluginHookProxy } from './cypress/support/plugins/plugin';
 
 /**
  * Exports a Cypress configuration object.
@@ -81,13 +83,15 @@ export default defineConfig({
     specPattern: 'cypress/e2e/core/**/*.spec.{ts,tsx}',
 
     setupNodeEvents(on, config) {
-      return setupPlugins(on, config, [
+      const proxiedOn = onPluginHookProxy(on);
+      return setupPlugins(proxiedOn, config, [
         loadEnvironmentConfig,
         nodeVersionCheck,
         configureApi,
         configureFileWatching,
         configureTestSuite,
         configureBrowser,
+        displayBrowser,
         vitePreprocess,
         discardPassedTestRecordings,
         fetchAccount,
