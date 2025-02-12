@@ -53,6 +53,26 @@ export const configureBrowser: CypressPlugin = (on, _config) => {
       },
     };
 
+    // Explicitly set Chrome pointer type.
+    //
+    // This is useful to for webpages/components that attempt to detect if a
+    // user is using a desktop device or a mobile device.
+    //
+    // MUI's date/time picker uses the `@media (pointer: fine)` media query
+    // to accomplish this, which does not match on headless CI environments,
+    // prompting the component to behave as if it were running on a mobile
+    // device.
+    //
+    // See also:
+    // - https://mui.com/x/react-date-pickers/date-time-picker/
+    // - https://mui.com/x/react-date-pickers/base-concepts/#testing-caveats
+    //
+    // See also: https://github.com/cypress-io/cypress/issues/27264
+    // Set Chrome's
+    if (browser.name === 'chrome' && browser.isHeadless) {
+      launchOptions.args.push('--blink-settings=primaryPointerType=4');
+    }
+
     displayBrowserInfo(browser, launchOptions);
 
     return launchOptions;
