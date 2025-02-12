@@ -66,9 +66,6 @@ export const configureBrowser: CypressPlugin = (on, _config) => {
     // See also:
     // - https://mui.com/x/react-date-pickers/date-time-picker/
     // - https://mui.com/x/react-date-pickers/base-concepts/#testing-caveats
-    //
-    // See also: https://github.com/cypress-io/cypress/issues/27264
-    // Set Chrome's
     if (browser.name === 'chrome' && browser.isHeadless) {
       launchOptions.args.push('--blink-settings=primaryPointerType=4');
     }
