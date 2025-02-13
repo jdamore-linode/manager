@@ -50,6 +50,7 @@ export const configureApi: CypressPlugin = async (
       ...(showUserInfo ? userInfo : {}),
     });
   } catch (e: any) {
+    console.log(e);
     console.error(
       'Failed to make successful request to Linode API using OAuth token.'
     );
