@@ -77,6 +77,7 @@ describe('clone linode', () => {
     const linodeRegion = chooseRegion({ capabilities: ['Vlans'] });
     const linodePayload = createLinodeRequestFactory.build({
       booted: false,
+      disk_encryption: 'disabled',
       label: randomLabel(),
       region: linodeRegion.id,
       type: 'g6-nanode-1',
