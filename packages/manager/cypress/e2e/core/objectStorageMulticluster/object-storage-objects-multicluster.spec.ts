@@ -1,4 +1,4 @@
-import { createBucket } from '@linode/api-v4';
+import { createBucket, ObjectStorageBucket } from '@linode/api-v4';
 import 'cypress-file-upload';
 import { authenticate } from 'support/api/authentication';
 import { mockAppendFeatureFlags } from 'support/intercepts/feature-flags';
@@ -119,6 +119,8 @@ describe('Object Storage Multicluster objects', () => {
     });
   });
 
+  //const clustersICareAbout = [getClusterById('us-iad-10')];
+  //clusters.forEach((cluster) => {
   /*
    * - Confirms that users can upload new objects.
    * - Confirms that users can replace objects with identical filenames.
@@ -130,7 +132,7 @@ describe('Object Storage Multicluster objects', () => {
    * - Confirms that private objects cannot be accessed over HTTP.
    * - Confirms that public objects can be accessed over HTTP.
    */
-  it('can upload, access, and delete objects', () => {
+  it(`can upload, access, and delete objects`, () => {
     const bucketLabel = randomLabel();
     const bucketClusterObj = chooseCluster();
     const bucketRegionId = bucketClusterObj.region;
@@ -143,12 +145,12 @@ describe('Object Storage Multicluster objects', () => {
     ];
 
     cy.defer(
-      () => setUpBucketMulticluster(bucketLabel, bucketRegionId),
+      () => setUpBucketMulticluster(bucketLabel, bucketRegionId, false),
       'creating Object Storage bucket'
-    ).then(() => {
+    ).then((bucket: ObjectStorageBucket) => {
       interceptUploadBucketObjectS3(
         bucketLabel,
-        bucketClusterObj.domain,
+        bucket.s3_endpoint ?? bucketClusterObj.domain,
         bucketFiles[0].name
       ).as('uploadObject');
 
@@ -201,13 +203,18 @@ describe('Object Storage Multicluster objects', () => {
       cy.findByText(emptyFolderMessage).should('be.visible');
       interceptUploadBucketObjectS3(
         bucketLabel,
-        bucketClusterObj.domain,
+        bucket.s3_endpoint ?? bucketClusterObj.domain,
         `${bucketFolderName}/${bucketFiles[1].name}`
       ).as('uploadObject');
+
+      //ui.button.findByTitle('Browse Files').should('be.visible').should('be.enabled');
       uploadFile(bucketFiles[1].path, bucketFiles[1].name);
       cy.wait('@uploadObject');
+      cy.get('[data-qa-file-upload-success]').should('be.visible');
 
       // Re-upload file to confirm replace prompt behavior.
+      // Wait for "Browse Files" button to become re-enabled before attempting upload.
+      //ui.button.findByTitle('Browse Files').should('be.visible').should('be.enabled');
       uploadFile(bucketFiles[1].path, bucketFiles[1].name);
       cy.findByText(
         'This file already exists. Are you sure you want to overwrite it?'
@@ -215,7 +222,7 @@ describe('Object Storage Multicluster objects', () => {
       ui.button.findByTitle('Replace').should('be.visible').click();
       cy.wait('@uploadObject');
 
-      // Confirm that you cannot delete a bucket with objects in it.
+      // // Confirm that you cannot delete a bucket with objects in it.
       cy.visitWithLogin('/object-storage/buckets');
       cy.findByText(bucketLabel)
         .should('be.visible')

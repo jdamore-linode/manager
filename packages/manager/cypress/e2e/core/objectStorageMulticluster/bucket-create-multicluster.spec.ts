@@ -1,5 +1,8 @@
 import { regionFactory } from '@linode/utilities';
-import { mockGetAccount } from 'support/intercepts/account';
+import {
+  interceptGetNetworkUtilization,
+  mockGetAccount,
+} from 'support/intercepts/account';
 import { mockAppendFeatureFlags } from 'support/intercepts/feature-flags';
 import {
   mockCreateBucket,
@@ -60,10 +63,11 @@ describe('Object Storage Multicluster Bucket create', () => {
 
     mockGetRegions(mockRegions).as('getRegions');
     mockGetBuckets([]).as('getBuckets');
+    interceptGetNetworkUtilization().as('getNetworkUtilization');
     mockCreateBucketError(mockErrorMessage).as('createBucket');
 
     cy.visitWithLogin('/object-storage');
-    cy.wait(['@getRegions', '@getBuckets']);
+    cy.wait(['@getRegions', '@getBuckets', '@getNetworkUtilization']);
 
     ui.button.findByTitle('Create Bucket').should('be.visible').click();
 

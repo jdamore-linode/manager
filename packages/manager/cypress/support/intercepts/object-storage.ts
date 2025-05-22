@@ -306,7 +306,12 @@ export const interceptUploadBucketObjectS3 = (
   domain: string,
   filename: string
 ): Cypress.Chainable<null> => {
-  return cy.intercept('PUT', `https://${domain}/${label}/${filename}*`);
+  return cy.intercept({
+    method: 'PUT',
+    https: true,
+    hostname: domain,
+    pathname: `/${label}/${filename}`,
+  });
 };
 
 /**
