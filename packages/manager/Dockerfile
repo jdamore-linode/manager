@@ -5,9 +5,6 @@ ARG IMAGE_REGISTRY=docker.io
 # Node.js version to use.
 ARG NODE_VERSION=22.19.0
 
-# Cypress version.
-ARG CYPRESS_VERSION=14.3.0
-
 # Chrome version.
 ARG CHROME_VERSION=140.0.7339.80-1
 
@@ -47,9 +44,18 @@ CMD pnpm start:manager:ci
 FROM ${IMAGE_REGISTRY}/cypress/factory:6.0.1 AS e2e-build
 ARG CYPRESS_VERSION
 ARG NODE_VERSION
-ARG CHROME_VERSION
+# Add Chrome apt repo
+RUN apt-get update \
+    && apt-get install -y wget gnupg2 \
+    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list \
+    && apt-get update
 
-RUN npm install -g pnpm bun
+RUN apt-get install -y google-chrome-stable \
+    && rm -rf /var/cache/apt/* \
+    && rm -rf /var/lib/apt/lists* \
+    && apt-get clean \
+    && npm install -g cypress@${CYPRESS_VERSION} pnpm bun yarn
 
 USER node
 WORKDIR /home/node/app
