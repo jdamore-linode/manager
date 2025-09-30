@@ -1876,22 +1876,23 @@ describe('smoketest for Nvidia Blackwell GPUs in kubernetes/create page', () => 
       class: 'gpu',
     })
   );
+
+  const mockRegionAvailability = mockBlackwellLinodeTypes.map((type) =>
+    regionAvailabilityFactory.build({
+      plan: type.label,
+      available: true,
+      region: mockRegion.id,
+    })
+  );
+
   beforeEach(() => {
     mockGetRegions([mockRegion]).as('getRegions');
-
-    // const mockLinodeTypes = [...mockBlackwellLinodeTypes, ...mockGpuTypes];
-
     mockGetLinodeTypes(mockBlackwellLinodeTypes).as('getLinodeTypes');
-    const mockRegionAvailability = mockBlackwellLinodeTypes.map((type) =>
-      regionAvailabilityFactory.build({
-        plan: type.label,
-        available: true,
-        region: mockRegion.id,
-      })
-    );
     mockGetRegionAvailability(mockRegion.id, mockRegionAvailability).as(
       'getRegionAvailability'
     );
+    mockGetTieredKubernetesVersions('standard', mockTieredStandardVersions);
+    mockGetTieredKubernetesVersions('enterprise', mockTieredEnterpriseVersions);
   });
 
   describe('standard tier', () => {
