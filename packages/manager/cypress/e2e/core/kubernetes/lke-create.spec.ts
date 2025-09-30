@@ -1900,6 +1900,13 @@ describe('smoketest for Nvidia Blackwell GPUs in kubernetes/create page', () => 
         kubernetesBlackwellPlans: true,
       }).as('getFeatureFlags');
       cy.visitWithLogin('/kubernetes/create');
+
+      mockGetAccount(
+        accountFactory.build({
+          capabilities: ['Linodes', 'Kubernetes', 'Kubernetes Enterprise'],
+        })
+      );
+
       cy.wait(['@getFeatureFlags', '@getRegions', '@getLinodeTypes']);
 
       ui.regionSelect.find().click();
@@ -1938,6 +1945,12 @@ describe('smoketest for Nvidia Blackwell GPUs in kubernetes/create page', () => 
         kubernetesBlackwellPlans: false,
       }).as('getFeatureFlags');
 
+      mockGetAccount(
+        accountFactory.build({
+          capabilities: ['Linodes', 'Kubernetes', 'Kubernetes Enterprise'],
+        })
+      );
+
       cy.visitWithLogin('/kubernetes/create');
       cy.wait(['@getFeatureFlags', '@getRegions', '@getLinodeTypes']);
 
@@ -1956,6 +1969,12 @@ describe('smoketest for Nvidia Blackwell GPUs in kubernetes/create page', () => 
           kubernetesBlackwellPlans: true,
         }).as('getFeatureFlags');
 
+        mockGetAccount(
+          accountFactory.build({
+            capabilities: ['Linodes', 'Kubernetes', 'Kubernetes Enterprise'],
+          })
+        );
+
         cy.visitWithLogin('/kubernetes/create');
         cy.wait(['@getFeatureFlags', '@getRegions', '@getLinodeTypes']);
 
@@ -1972,6 +1991,12 @@ describe('smoketest for Nvidia Blackwell GPUs in kubernetes/create page', () => 
         mockAppendFeatureFlags({
           kubernetesBlackwellPlans: false,
         }).as('getFeatureFlags');
+
+        mockGetAccount(
+          accountFactory.build({
+            capabilities: ['Linodes', 'Kubernetes', 'Kubernetes Enterprise'],
+          })
+        );
 
         cy.visitWithLogin('/kubernetes/create');
         cy.wait(['@getFeatureFlags', '@getRegions', '@getLinodeTypes']);
