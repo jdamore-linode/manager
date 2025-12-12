@@ -74,3 +74,7 @@ mockFeatureFlagRequests();
 mockFeatureFlagClientstream();
 deleteInternalHeader();
 blockAnalytics();
+
+beforeEach(() => {
+  cy.setCookie('X-use-alternate-origin', 's3');
+});
