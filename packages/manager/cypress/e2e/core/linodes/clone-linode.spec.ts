@@ -47,7 +47,7 @@ import {
 } from 'support/util/random';
 import { chooseRegion, extendRegion } from 'support/util/regions';
 
-import type { Event, Linode } from '@linode/api-v4';
+import type { Linode } from '@linode/api-v4';
 
 /**
  * Returns the Cloud Manager URL to clone a given Linode.
@@ -142,30 +142,22 @@ describe('clone linode', () => {
 
       ui.toast.assertMessage(`Your Linode ${newLinodeLabel} is being created.`);
 
-      // Change the way to check the clone progress due to M3-9860
-      cy.wait('@cloneEvents').then((xhr) => {
-        const eventData: Event[] = xhr.response?.body?.data;
-        const cloneEvents = eventData.filter(
-          (event: Event) =>
-            event['action'] === 'linode_clone' &&
-            event.entity &&
-            event.entity.label === newLinodeLabel
-        );
-        const cloneEvent = cloneEvents[0];
-        if (cloneEvent) {
-          cy.get('[id="menu-button--notification-events-menu"]').as(
-            'btnEventsMenu'
-          );
-          cy.get('@btnEventsMenu').scrollIntoView();
-          cy.get('@btnEventsMenu').should('be.visible').click();
-          cy.get(`[data-qa-event="${cloneEvent['id']}"]`).should('be.visible');
+      const notificationMessage = `Linode ${linodePayload.label} is being cloned to ${newLinodeLabel}.`;
+
+      cy.get('[id="menu-button--notification-events-menu"]').as(
+        'btnEventsMenu'
+      );
+      cy.get('@btnEventsMenu').scrollIntoView();
+      cy.get('@btnEventsMenu').should('be.visible').click();
+      cy.contains(notificationMessage)
+        .closest('[data-qa-event]')
+        .should('be.visible')
+        .within(() => {
           cy.get('[data-testid="linear-progress"]').should('be.visible');
-          // The progress bar should disappear when the clone is done.
           cy.get('[data-testid="linear-progress"]', {
             timeout: LINODE_CLONE_TIMEOUT,
           }).should('not.exist');
-        }
-      });
+        });
 
       cy.visit('/linodes');
       cy.findByText(newLinodeLabel, { timeout: LINODE_CLONE_TIMEOUT }).should(
